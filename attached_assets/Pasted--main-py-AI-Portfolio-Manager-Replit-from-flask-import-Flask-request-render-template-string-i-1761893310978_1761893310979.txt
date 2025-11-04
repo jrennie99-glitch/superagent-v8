@@ -1,0 +1,76 @@
+# main.py - AI Portfolio Manager (Replit)
+from flask import Flask, request, render_template_string
+import yfinance as yf
+import smtplib
+from email.mime.text import MIMEText
+from datetime import datetime
+import threading
+import time
+import requests
+import os
+
+app = Flask(__name__)
+
+# ========================================
+# CONFIGURE THESE 4 LINES ONLY
+# ========================================
+EMAIL_USER = "your_email@gmail.com"                    # CHANGE ME
+EMAIL_PASS = "your_16_digit_app_password"              # CHANGE ME (Gmail App Password)
+TELEGRAM_TOKEN = "123456789:ABCdefGHIjklMNOpqrSTU"      # CHANGE ME (from @BotFather)
+TELEGRAM_CHAT_ID = "123456789"                          # CHANGE ME (your Telegram ID)
+# ========================================
+
+# Client list: [Name, Email, QQQ shares, SPY shares, VTI shares]
+clients = [
+    ["John Doe", "john@example.com", 10, 8, 15],  # Test client (remove later)
+    # Add real clients here: ["Jane", "jane@gmail.com", 5, 12, 20],
+]
+
+# Get live ETF prices
+def get_prices():
+    try:
+        return {
+            "QQQ": yf.Ticker("QQQ").history(period="1d")["Close"].iloc[-1],
+            "SPY": yf.Ticker("SPY").history(period="1d")["Close"].iloc[-1],
+            "VTI": yf.Ticker("VTI").history(period="1d")["Close"].iloc[-1],
+        }
+    except:
+        return {"QQQ": 485.0, "SPY": 582.0, "VTI": 285.0}  # Fallback
+
+# Send email
+def send_email(to_email, subject, body):
+    if not EMAIL_USER or not EMAIL_PASS or "your_email" in EMAIL_USER:
+        print("Email not configured")
+        return
+    try:
+        msg = MIMEText(body)
+        msg["Subject"] = subject
+        msg["From"] = EMAIL_USER
+        msg["To"] = to_email
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(EMAIL_USER, EMAIL_PASS)
+            server.sendmail(EMAIL_USER, to_email, msg.as_string())
+        print(f"Email sent to {to_email}")
+    except Exception as e:
+        print(f"Email failed: {e}")
+
+# Send Telegram message
+def send_telegram(text):
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID or "123456" in TELEGRAM_TOKEN:
+        print("Telegram not configured")
+        return
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID, "text": text}, timeout=10)
+        print("Telegram sent")
+    except:
+        print("Telegram failed")
+
+# Generate full report
+def generate_report():
+    prices = get_prices()
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    full_report = f"AI REBALANCE REPORT - {date_str}\n\n"
+
+    for client in clients:
+        if len(client)

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Tracker - Live Prices</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .crypto-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .crypto-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .crypto-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .crypto-price {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .crypto-change {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .crypto-change.positive { color: #38ef7d; }
+        .crypto-change.negative { color: #f45c43; }
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            padding: 50px;
+        }
+        .timestamp {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Live Crypto Tracker</h1>
+        <div id="loading" class="loading">Loading prices...</div>
+        <div id="crypto-grid" class="crypto-grid" style="display:none;"></div>
+        <div id="timestamp" class="timestamp"></div>
+    </div>
+
+    <script>
+        async function loadPrices() {
+            try {
+                const response = await fetch('/api/crypto');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const grid = document.getElementById('crypto-grid');
+                    grid.innerHTML = data.cryptos.map(crypto => `
+                        <div class="crypto-card">
+                            <div>
+                                <div class="crypto-name">${crypto.name}</div>
+                                <div class="crypto-change ${crypto.change_24h >= 0 ? 'positive' : 'negative'}">
+                                    ${crypto.change_24h >= 0 ? '▲' : '▼'} ${Math.abs(crypto.change_24h)}%
+                                </div>
+                            </div>
+                            <div class="crypto-price">$${crypto.price.toLocaleString()}</div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('loading').style.display = 'none';
+                    grid.style.display = 'grid';
+                    document.getElementById('timestamp').textContent = 
+                        'Last updated: ' + new Date(data.timestamp).toLocaleString();
+                }
+            } catch (error) {
+                document.getElementById('loading').textContent = 'Error loading prices: ' + error.message;
+            }
+        }
+
+        loadPrices();
+        setInterval(loadPrices, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>

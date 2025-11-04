@@ -1,0 +1,125 @@
+# main.py – AI Stock Trading Agent (Paper-Trading)
+from flask import Flask, render_template_string
+import polygon
+import yfinance as yf
+import pandas as pd
+import numpy as np
+import alpaca_trade_api as tradeapi
+from datetime import datetime, timedelta
+import threading, time, os, json, requests
+
+app = Flask(__name__)
+
+# ================== CONFIG ==================
+# ---- Polygon (free) ----
+POLYGON_KEY = "YOUR_POLYGON_KEY"          # <-- CHANGE
+
+# ---- Alpaca Paper Trading ----
+ALPACA_KEY    = "YOUR_ALPACA_PAPER_KEY_ID"   # <-- CHANGE
+ALPACA_SECRET = "YOUR_ALPACA_PAPER_SECRET"  # <-- CHANGE
+ALPACA_BASE   = "https://paper-api.alpaca.markets"
+
+# ---- Trading Settings ----
+TICKER      = "AAPL"        # Change to any US stock
+CASH        = 100_000.0     # Paper account starting cash
+POSITION_PCT = 0.20         # Max 20% of equity per trade
+CHECK_EVERY = 300           # Seconds (5 min)
+
+# ===========================================
+
+client = polygon.RESTClient(POLYGON_KEY)
+api = tradeapi.REST(ALPACA_KEY, ALPACA_SECRET, ALPACA_BASE, api_version='v2')
+
+# ---------- Helper: Get latest data ----------
+def get_data(ticker, days=60):
+    end = datetime.now()
+    start = end - timedelta(days=days)
+    aggs = client.get_aggs(ticker, 1, "day",
+                          start.strftime("%Y-%m-%d"),
+                          end.strftime("%Y-%m-%d"))
+    df = pd.DataFrame([{
+        "date": pd.to_datetime(a.timestamp, unit='ms').date(),
+        "open": a.open, "high": a.high, "low": a.low,
+        "close": a.close, "volume": a.volume
+    } for a in aggs])
+    df.set_index("date", inplace=True)
+    return df
+
+# ---------- AI Strategy: RSI + Bollinger ----------
+def generate_signal(df):
+    close = df['close']
+    delta = close.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+    rs = gain / loss
+    df['rsi'] = 100 - (100 / (1 + rs))
+
+    df['ma20'] = close.rolling(20).mean()
+    df['std20'] = close.rolling(20).std()
+    df['upper'] = df['ma20'] + 2 * df['std20']
+    df['lower'] = df['ma20'] - 2 * df['std20']
+
+    latest = df.iloc[-1]
+    prev   = df.iloc[-2]
+
+    # BUY: price < lower band AND RSI < 30
+    # SELL: price > upper band AND RSI > 70
+    if latest['close'] < latest['lower'] and latest['rsi'] < 30:
+        return "BUY"
+    if latest['close'] > latest['upper'] and latest['rsi'] > 70:
+        return "SELL"
+    return "HOLD"
+
+# ---------- Execute Paper Trade ----------
+def trade(signal, price):
+    account = api.get_account()
+    equity = float(account.equity)
+    cash   = float(account.cash)
+
+    if signal == "BUY" and cash > 100:
+        qty = int((equity * POSITION_PCT) // price)
+        if qty > 0:
+            api.submit_order(symbol=TICKER, qty=qty, side='buy',
+                             type='market', time_in_force='gtc')
+            return f"BUY {qty} {TICKER} @ ${price:.2f}"
+    elif signal == "SELL":
+        pos = next((p for p in api.list_positions() if p.symbol == TICKER), None)
+        if pos and int(pos.qty) > 0:
+            api.submit_order(symbol=TICKER, qty=pos.qty, side='sell',
+                             type='market', time_in_force='gtc')
+            return f"SELL {pos.qty} {TICKER} @ ${price:.2f}"
+    return "HOLD"
+
+# ---------- Main AI Loop ----------
+def ai_loop():
+    while True:
+        try:
+            df = get_data(TICKER)
+            if len(df) < 30: raise ValueError("Not enough data")
+            signal = generate_signal(df)
+            latest_price = df['close'].iloc[-1]
+            action = trade(signal, latest_price)
+            log = f"[{datetime.now().strftime('%H:%M')}] {TICKER} ${latest_price:.2f} → {signal} → {action}"
+            print(log)
+            with open("log.txt", "a") as f:
+                f.write(log + "\n")
+        except Exception as e:
+            print("AI Error:", e)
+        time.sleep(CHECK_EVERY)
+
+# ---------- Web Dashboard ----------
+@app.route("/")
+def dashboard():
+    try:
+        df = get_data(TICKER, days=30)
+        latest = df.iloc[-1]
+        account = api.get_account()
+        pos = next((p for p in api.list_positions() if p.symbol == TICKER), None)
+        pos_qty = int(pos.qty) if pos else 0
+        pos_val = pos_qty * latest['close'] if pos_qty else 0
+
+        html = f"""
+        <div style="font-family:Arial; max-width:800px; margin:auto; padding:20px;">
+            <h1>AI Stock Trading Agent (Paper)</h1>
+            <p><strong>{TICKER}</strong> – Last: <strong>${latest['close']:.2f}</strong></p>
+            <p>RSI: {latest['rsi']:.1f} | BB-Lower:

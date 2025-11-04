@@ -1,0 +1,32 @@
+# Dockerfile for SuperAgent - Optimized for Railway
+
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (minimal)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first (for caching)
+# Use deployment-specific requirements (no voice/audio packages)
+COPY requirements-deploy.txt requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Expose port (Railway will provide actual PORT via env var)
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+# Run the API using Railway's PORT environment variable
+CMD python -m uvicorn superagent.api:app --host 0.0.0.0 --port ${PORT:-8000}

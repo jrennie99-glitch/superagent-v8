@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#9333EA">
+    <title>Project Manager - SuperAgent</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 16px;
+        }
+
+        .card {
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #C084FC;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(147, 51, 234, 0.5);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #9333EA;
+            background: rgba(147, 51, 234, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: #C084FC;
+            background: rgba(192, 132, 252, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: #C084FC;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 14px;
+            color: #888;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #9333EA;
+            color: #C084FC;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(147, 51, 234, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9333EA, #C084FC);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .result {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(147, 51, 234, 0.15);
+            border-radius: 12px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .result-icon {
+            font-size: 32px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .result-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(147, 51, 234, 0.2);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            color: #e0e0e0;
+            font-size: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #C084FC;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .files-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #a0a0a0;
+        }
+
+        .file-item .icon {
+            color: #9333EA;
+            margin-right: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(147, 51, 234, 0.3);
+            border-top: 3px solid #9333EA;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #C084FC;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/mobile" class="back-link">← Back to SuperAgent</a>
+        
+        <div class="header">
+            <h1>📦 Project Manager</h1>
+            <p>Upload, analyze, and scaffold projects to production-ready standard</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="card">
+            <h2>🚀 Upload Project</h2>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop ZIP file here</div>
+                <div class="upload-hint">or</div>
+                <button class="btn" onclick="document.getElementById('fileInput').click(); event.stopPropagation();" style="margin-top: 16px;">
+                    📂 Browse Files
+                </button>
+                <div class="upload-hint" style="margin-top: 12px;">SuperAgent will analyze and scaffold your project</div>
+            </div>
+            <input type="file" id="fileInput" accept=".zip">
+            
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="uploadResult" class="result">
+                <!-- Results will appear here -->
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="card">
+            <h2>📥 Export Current Project</h2>
+            <p style="color: #a0a0a0; margin-bottom: 20px;">
+                Download the current SuperAgent project as a ZIP file
+            </p>
+            <button class="btn" onclick="exportProject()">
+                📦 Export SuperAgent Project
+            </button>
+            <div id="exportResult" class="result"></div>
+        </div>
+
+        <!-- GitHub Deployment Section -->
+        <div class="card">
+            <h2>🐙 Deploy to GitHub</h2>
+            <p style="color: #a0a0a0; margin-bottom: 20px;">
+                One-click push your project to GitHub and deploy to any platform
+            </p>
+            
+            <div id="githubStatus" style="margin-bottom: 20px;">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Checking GitHub connection...
+                </div>
+            </div>
+
+            <div id="githubDeploySection" style="display: none;">
+                <div style="margin-bottom: 16px;">
+                    <label style="color: #C084FC; display: block; margin-bottom: 8px;">Repository Name:</label>
+                    <input type="text" id="repoName" placeholder="my-awesome-project" 
+                        style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(147,51,234,0.3); border-radius: 8px; color: #e0e0e0; font-size: 16px;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="color: #C084FC; display: block; margin-bottom: 8px;">Project Path:</label>
+                    <input type="text" id="projectPath" placeholder="output_projects/project_abc123" 
+                        style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(147,51,234,0.3); border-radius: 8px; color: #e0e0e0; font-size: 16px;">
+                    <small style="color: #888; display: block; margin-top: 4px;">Path to your scaffolded project</small>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; color: #a0a0a0; cursor: pointer;">
+                        <input type="checkbox" id="privateRepo" style="margin-right: 8px;">
+                        Make repository private
+                    </label>
+                </div>
+
+                <button class="btn" onclick="deployToGitHub()" style="margin-right: 12px;">
+                    🚀 Push to GitHub
+                </button>
+
+                <div id="githubResult" class="result"></div>
+            </div>
+
+            <div id="githubNotConfigured" style="display: none; padding: 20px; background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.3); border-radius: 8px;">
+                <p style="color: #FFC107; margin-bottom: 12px;">⚠️ GitHub not configured</p>
+                <p style="color: #a0a0a0; font-size: 14px;">
+                    To enable one-click GitHub deployment, set these environment variables:
+                </p>
+                <ul style="color: #888; font-size: 14px; margin-top: 8px; padding-left: 20px;">
+                    <li><code style="color: #C084FC;">GITHUB_TOKEN</code> - Your GitHub personal access token</li>
+                    <li><code style="color: #C084FC;">GITHUB_USERNAME</code> - Your GitHub username</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const uploadResult = document.getElementById('uploadResult');
+        const exportResult = document.getElementById('exportResult');
+
+        // Click to select file
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) uploadFile(file);
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.zip')) {
+                uploadFile(file);
+            } else {
+                alert('Please upload a ZIP file');
+            }
+        });
+
+        // Upload file
+        async function uploadFile(file) {
+            try {
+                // Show progress
+                progressBar.style.display = 'block';
+                progressFill.style.width = '0%';
+                uploadResult.classList.remove('show');
+                
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress >= 90) clearInterval(progressInterval);
+                    progressFill.style.width = progress + '%';
+                }, 200);
+
+                // Upload file
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('/api/v1/project/upload/multipart', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                // Complete progress
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                }, 500);
+
+                // Show results
+                if (result.success) {
+                    displayUploadResult(result);
+                } else {
+                    uploadResult.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-icon">❌</div>
+                            <div class="result-title">Upload Failed</div>
+                        </div>
+                        <p style="color: #ff6b6b;">${result.error}</p>
+                    `;
+                    uploadResult.classList.add('show');
+                }
+            } catch (error) {
+                progressBar.style.display = 'none';
+                uploadResult.innerHTML = `
+                    <div class="result-header">
+                        <div class="result-icon">❌</div>
+                        <div class="result-title">Error</div>
+                    </div>
+                    <p style="color: #ff6b6b;">${error.message}</p>
+                `;
+                uploadResult.classList.add('show');
+            }
+        }
+
+        // Display upload result
+        function displayUploadResult(result) {
+            const analysis = result.analysis;
+            const generatedFiles = result.generated_files || [];
+            
+            uploadResult.innerHTML = `
+                <div class="result-header">
+                    <div class="result-icon">✅</div>
+                    <div class="result-title">Project Scaffolded Successfully!</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Detected Language</div>
+                    <div class="result-value">
+                        <span class="badge">${analysis.detected_language}</span>
+                        ${analysis.framework !== 'unknown' ? `<span class="badge">${analysis.framework}</span>` : ''}
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Project Stats</div>
+                    <div class="result-value">
+                        ${analysis.file_count} files • ${(analysis.total_size / 1024).toFixed(1)} KB
+                    </div>
+                </div>
+
+                ${generatedFiles.length > 0 ? `
+                <div class="result-item">
+                    <div class="result-label">Generated Production Files</div>
+                    <div class="files-list">
+                        ${generatedFiles.map(file => `
+                            <div class="file-item">
+                                <span class="icon">✨</span>${file}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                ${analysis.recommendations && analysis.recommendations.length > 0 ? `
+                <div class="result-item">
+                    <div class="result-label">Recommendations</div>
+                    <div class="result-value">
+                        ${analysis.recommendations.map(rec => `
+                            <div class="file-item">
+                                <span class="icon">💡</span>${rec}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="result-item" style="border: none; margin-top: 16px;">
+                    <a href="${result.download_url}" class="btn" download>
+                        📥 Download Production-Ready Project
+                    </a>
+                </div>
+            `;
+            
+            uploadResult.classList.add('show');
+        }
+
+        // Export current project
+        async function exportProject() {
+            try {
+                exportResult.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Exporting project...</p>
+                    </div>
+                `;
+                exportResult.classList.add('show');
+
+                const response = await fetch('/api/v1/project/export', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ project_name: 'superagent' })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    exportResult.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-icon">✅</div>
+                            <div class="result-title">Export Complete!</div>
+                        </div>
+                        <div class="result-item" style="border: none; margin-top: 16px;">
+                            <a href="${result.download_url}" class="btn" download>
+                                📥 Download SuperAgent.zip
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    exportResult.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-icon">❌</div>
+                            <div class="result-title">Export Failed</div>
+                        </div>
+                        <p style="color: #ff6b6b;">${result.error}</p>
+                    `;
+                }
+            } catch (error) {
+                exportResult.innerHTML = `
+                    <div class="result-header">
+                        <div class="result-icon">❌</div>
+                        <div class="result-title">Error</div>
+                    </div>
+                    <p style="color: #ff6b6b;">${error.message}</p>
+                `;
+            }
+        }
+
+        // Check GitHub status on page load
+        async function checkGitHubStatus() {
+            try {
+                const response = await fetch('/api/v1/github/status');
+                const result = await response.json();
+
+                const statusDiv = document.getElementById('githubStatus');
+                const deploySection = document.getElementById('githubDeploySection');
+                const notConfigured = document.getElementById('githubNotConfigured');
+
+                if (result.configured) {
+                    statusDiv.innerHTML = `
+                        <p style="color: #4ade80;">✓ Connected to GitHub as <strong>${result.username}</strong></p>
+                    `;
+                    deploySection.style.display = 'block';
+                    notConfigured.style.display = 'none';
+                } else {
+                    statusDiv.style.display = 'none';
+                    deploySection.style.display = 'none';
+                    notConfigured.style.display = 'block';
+                }
+            } catch (error) {
+                const statusDiv = document.getElementById('githubStatus');
+                statusDiv.innerHTML = `<p style="color: #ff6b6b;">Error checking GitHub status</p>`;
+            }
+        }
+
+        // Deploy to GitHub
+        async function deployToGitHub() {
+            const repoName = document.getElementById('repoName').value.trim();
+            const projectPath = document.getElementById('projectPath').value.trim();
+            const isPrivate = document.getElementById('privateRepo').checked;
+            const resultDiv = document.getElementById('githubResult');
+
+            if (!repoName) {
+                alert('Please enter a repository name');
+                return;
+            }
+
+            if (!projectPath) {
+                alert('Please enter the project path (e.g., output_projects/project_abc123)');
+                return;
+            }
+
+            try {
+                resultDiv.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Deploying to GitHub...</p>
+                    </div>
+                `;
+                resultDiv.classList.add('show');
+
+                const response = await fetch('/api/v1/github/deploy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        project_path: projectPath,
+                        repo_name: repoName,
+                        commit_message: `Deploy from SuperAgent - ${new Date().toLocaleString()}`,
+                        private: isPrivate
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-icon">✅</div>
+                            <div class="result-title">Deployed to GitHub!</div>
+                        </div>
+
+                        <div class="result-item">
+                            <div class="result-label">Repository URL</div>
+                            <div class="result-value">
+                                <a href="${result.repo_url}" target="_blank" style="color: #C084FC; text-decoration: none;">
+                                    ${result.repo_url} →
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="result-item">
+                            <div class="result-label">Deployment Steps</div>
+                            <div class="files-list">
+                                ${result.steps.map(step => `
+                                    <div class="file-item">
+                                        <span class="icon">✓</span>${step}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="result-item" style="border: none; margin-top: 16px;">
+                            <p style="color: #a0a0a0; margin-bottom: 12px;">Now deploy to any platform:</p>
+                            <button class="btn-outline" onclick="showPlatformInstructions('vercel', '${result.repo_url}')" style="margin: 4px;">
+                                Vercel
+                            </button>
+                            <button class="btn-outline" onclick="showPlatformInstructions('railway', '${result.repo_url}')" style="margin: 4px;">
+                                Railway
+                            </button>
+                            <button class="btn-outline" onclick="showPlatformInstructions('render', '${result.repo_url}')" style="margin: 4px;">
+                                Render
+                            </button>
+                            <button class="btn-outline" onclick="showPlatformInstructions('fly', '${result.repo_url}')" style="margin: 4px;">
+                                Fly.io
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result-header">
+                            <div class="result-icon">❌</div>
+                            <div class="result-title">Deployment Failed</div>
+                        </div>
+                        <p style="color: #ff6b6b;">${result.error}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result-header">
+                        <div class="result-icon">❌</div>
+                        <div class="result-title">Error</div>
+                    </div>
+                    <p style="color: #ff6b6b;">${error.message}</p>
+                `;
+            }
+        }
+
+        // Show platform deployment instructions
+        async function showPlatformInstructions(platform, repoUrl) {
+            try {
+                const response = await fetch('/api/v1/github/platform-instructions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        platform: platform,
+                        repo_url: repoUrl
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Deploy to ${result.platform}:\n\n${result.steps.join('\n')}\n\nCLI: ${result.cli}`);
+                }
+            } catch (error) {
+                alert('Error fetching deployment instructions');
+            }
+        }
+
+        // Check GitHub status when page loads
+        checkGitHubStatus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAgent - Autonomous AI Development Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 18px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
+            border-color: rgba(147, 51, 234, 0.6);
+        }
+
+        .feature-card h3 {
+            color: #C084FC;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .feature-card li {
+            padding: 4px 0;
+            color: #b0b0b0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .feature-card li:before {
+            content: "✓";
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .demo-section {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 800px;
+        }
+
+        .demo-section h2 {
+            color: #C084FC;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .chat-interface {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            margin-bottom: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            margin-left: auto;
+        }
+
+        .message.agent {
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+        }
+        
+        .message strong {
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.8;
+            font-size: 13px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 15px;
+            padding-top: 10px;
+        }
+
+        .input-area textarea {
+            flex: 1;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 18px;
+            resize: none;
+            min-height: 120px;
+            max-height: 120px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .input-area textarea:focus {
+            outline: none;
+            border-color: rgba(147, 51, 234, 0.6);
+            box-shadow: 0 0 10px rgba(147, 51, 234, 0.2);
+        }
+
+        .input-area button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-self: flex-end;
+        }
+
+        .input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(147, 51, 234, 0.4);
+        }
+        
+        .input-area button:active {
+            transform: translateY(0);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card .label {
+            color: #a0a0a0;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            color: #C084FC;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(147, 51, 234, 0.3);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-button">← Back to Main App</a>
+
+        <div class="header">
+            <h1>🤖 SuperAgent Advanced Capabilities</h1>
+            <p>Truly Autonomous AI Development Platform - Now with Tool Calling & Intelligence</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🛠️ Tool-Calling System</h3>
+                <p>AI can now execute real actions:</p>
+                <ul>
+                    <li>Read and write files autonomously</li>
+                    <li>Execute shell commands safely</li>
+                    <li>Search codebase intelligently</li>
+                    <li>Analyze code structure with AST</li>
+                    <li>List directories and file info</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🧠 Advanced Context Management</h3>
+                <p>Intelligent memory and retrieval:</p>
+                <ul>
+                    <li>Persistent conversation history</li>
+                    <li>Semantic context search</li>
+                    <li>Project-specific memory</li>
+                    <li>Context-aware responses</li>
+                    <li>Smart relevance ranking</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🔍 Codebase Intelligence</h3>
+                <p>Deep code understanding:</p>
+                <ul>
+                    <li>Full AST parsing & analysis</li>
+                    <li>Dependency graph mapping</li>
+                    <li>Complexity calculation</li>
+                    <li>Unused imports detection</li>
+                    <li>Automatic refactor suggestions</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>🎯 Multi-Model Routing</h3>
+                <p>Intelligent AI model selection:</p>
+                <ul>
+                    <li>Gemini for code generation</li>
+                    <li>Claude for reasoning tasks</li>
+                    <li>GPT-4 for writing</li>
+                    <li>Auto task-type detection</li>
+                    <li>Optimal model for each task</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Try the Enhanced AI Agent</h2>
+            <div class="chat-interface" id="chatMessages">
+                <div class="message agent">
+                    <strong>SuperAgent (Claude Sonnet 3.5):</strong> Hello! I'm SuperAgent with <strong>advanced reasoning capabilities</strong> and access to <strong>50+ tools</strong>. I can help you with anything from code generation to deployment. Try asking me to:
+                    <ul style="margin-top: 10px;">
+                        <li>• Analyze and refactor your entire codebase</li>
+                        <li>• Generate tests with performance profiling</li>
+                        <li>• Debug complex issues with AI reasoning</li>
+                        <li>• Configure deployments and environments</li>
+                        <li>• Execute commands and manage Git operations</li>
+                        <li>• Scan for security vulnerabilities</li>
+                        <li>• Generate documentation automatically</li>
+                        <li>• Search the web for solutions</li>
+                    </ul>
+                    <br>
+                    <strong>🚀 Features Active:</strong> Claude reasoning • 50+ tools • Runway ML video generation • Cybersecurity AI • Context memory
+                </div>
+            </div>
+            
+            <!-- Video Generation Section -->
+            <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(147, 51, 234, 0.15)); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 8px;">
+                <h3 style="color: #EC4899; margin-bottom: 15px; font-size: 20px;">🎬 AI Video Generation (Runway ML)</h3>
+                <p style="color: #b0b0b0; margin-bottom: 15px; font-size: 14px;">Generate professional AI videos from text descriptions using Runway ML Gen-3 Alpha</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="videoPrompt" placeholder="Describe your video... (e.g., 'A cat walking through a futuristic city at sunset')" style="flex: 1; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 6px; color: white; font-size: 14px;">
+                    <select id="videoDuration" style="padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 6px; color: white;">
+                        <option value="5">5 seconds</option>
+                        <option value="10">10 seconds</option>
+                    </select>
+                    <button onclick="generateVideo()" style="padding: 12px 24px; background: linear-gradient(135deg, #EC4899, #9333EA); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer;">🎥 Generate Video</button>
+                </div>
+                
+                <div id="videoStatus" style="margin-top: 10px; color: #a0a0a0; font-size: 13px;"></div>
+                <div id="videoResult" style="margin-top: 15px;"></div>
+            </div>
+            <!-- Model Selector -->
+            <div style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center;">
+                <label style="color: #b0b0b0; font-size: 14px; font-weight: 600;">AI Model:</label>
+                <select id="modelSelector" style="padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(123, 97, 255, 0.3); border-radius: 6px; color: white; font-size: 14px; cursor: pointer;">
+                    <option value="auto">🎯 Auto (Smart Routing)</option>
+                    <option value="groq">⚡ Groq (Lightning Fast)</option>
+                    <option value="fast">🚀 Fast Mode (Groq)</option>
+                    <option value="code">💻 Code (Gemini)</option>
+                    <option value="reasoning">🧠 Reasoning (Claude)</option>
+                    <option value="writing">✍️ Writing (GPT-4)</option>
+                </select>
+                <span id="modelStatus" style="color: #10b981; font-size: 13px; font-weight: 600;"></span>
+            </div>
+            
+            <div class="input-area">
+                <textarea id="userInput" placeholder="Talk to me like you would in a conversation... Ask me to analyze code, write files, execute commands, or paste/upload code and I'll bring it to life!" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                <input type="file" id="fileUpload" style="display: none" accept=".py,.js,.html,.css,.json,.ts,.tsx,.jsx,.java,.cpp,.c,.go,.rs,.rb,.php,.swift,.kt" onchange="handleFileUpload(event)">
+                <button onclick="document.getElementById('fileUpload').click()" style="background: rgba(147, 51, 234, 0.3); margin-right: 5px;">📎 Upload Code</button>
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            <p style="color: #888; font-size: 13px; text-align: center; margin-top: 10px;">
+                Press Enter to send • Shift+Enter for new line
+            </p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">50+</div>
+                <div class="label">Tools Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">Claude</div>
+                <div class="label">Advanced Reasoning</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">✓</div>
+                <div class="label">Security Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">∞</div>
+                <div class="label">Capabilities</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFileContent = null;
+        let uploadedFileName = null;
+        
+        // Show Groq status on page load
+        window.addEventListener('load', function() {
+            const modelStatus = document.getElementById('modelStatus');
+            modelStatus.innerHTML = '✅ Groq Ready';
+            setTimeout(() => modelStatus.innerHTML = '', 3000);
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFileContent = e.target.result;
+                uploadedFileName = file.name;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Show file preview in chat
+                chatMessages.innerHTML += `
+                    <div class="message user" style="background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.4);">
+                        <strong>📎 File Uploaded: ${file.name}</strong>
+                        <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; margin-top: 10px; max-height: 200px; overflow-y: auto; font-size: 13px;">${escapeHtml(uploadedFileContent)}</pre>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Auto-populate input with helpful message
+                document.getElementById('userInput').value = `I uploaded ${file.name} - please analyze it and help me bring this code to life! Deploy it if it's ready, or tell me what's needed.`;
+            };
+            reader.readAsText(file);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Get selected model
+            const modelSelector = document.getElementById('modelSelector');
+            const selectedModel = modelSelector.value;
+            
+            // Add user message
+            const chatMessages = document.getElementById('chatMessages');
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user';
+            userMsgDiv.innerHTML = `<strong>You:</strong> ${escapeHtml(message)}`;
+            chatMessages.appendChild(userMsgDiv);
+            
+            input.value = '';
+            
+            // Clear uploaded file after sending
+            const fileWasSent = uploadedFileName !== null;
+            uploadedFileContent = null;
+            uploadedFileName = null;
+            
+            // Show loading with model indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message agent';
+            loadingDiv.id = 'loading';
+            const modelEmoji = selectedModel === 'groq' || selectedModel === 'fast' ? '⚡' : '🤖';
+            loadingDiv.innerHTML = `<strong>SuperAgent:</strong> <em>${modelEmoji} Thinking and using tools...</em>`;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            try {
+                // Call the Advanced Agent API with tool calling
+                const response = await fetch('/api/v1/agent/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer admin-token-2024'  // For demo - admin access
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        auto_execute_tools: true,
+                        model_type: selectedModel,  // Use selected model
+                        uploaded_file: uploadedFileName ? {
+                            name: uploadedFileName,
+                            content: uploadedFileContent
+                        } : null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Remove loading
+                document.getElementById('loading').remove();
+                
+                // Add agent response with full details
+                let responseHTML = `<div class="message agent"><strong>SuperAgent:</strong> ${data.response || 'Processing...'}`;
+                
+                // Add tool calls if any
+                if (data.tool_calls && data.tool_calls.length > 0) {
+                    responseHTML += '<br><br><strong>🛠️ Tools Used:</strong><ul>';
+                    data.tool_calls.forEach(tool => {
+                        responseHTML += `<li>${tool.name || tool.tool}: ${tool.result || 'Executed'}</li>`;
+                    });
+                    responseHTML += '</ul>';
+                }
+                
+                // Add model info if available
+                if (data.model_used || data.model) {
+                    const modelName = data.model_used || data.model;
+                    const modelColor = modelName.includes('groq') ? '#22c55e' : '#888';
+                    responseHTML += `<br><span style="color: ${modelColor}; font-size: 12px;">⚙️ Model: ${modelName}</span>`;
+                }
+                
+                responseHTML += '</div>';
+                chatMessages.innerHTML += responseHTML;
+                
+            } catch (error) {
+                document.getElementById('loading').remove();
+                chatMessages.innerHTML += `
+                    <div class="message agent">
+                        <strong>SuperAgent:</strong> <span style="color: #ef4444;">Error: ${error.message}. Make sure GEMINI_API_KEY is set.</span>
+                    </div>
+                `;
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Video Generation Function
+        async function generateVideo() {
+            const promptInput = document.getElementById('videoPrompt');
+            const durationSelect = document.getElementById('videoDuration');
+            const statusDiv = document.getElementById('videoStatus');
+            const resultDiv = document.getElementById('videoResult');
+            
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                statusDiv.innerHTML = '<span style="color: #ef4444;">❌ Please enter a video description</span>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<span style="color: #22c55e;">🎬 Generating video with Runway ML... This may take 1-2 minutes...</span>';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/v1/video/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer admin-token-2024'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        duration: parseInt(durationSelect.value),
+                        aspect_ratio: "16:9",
+                        model: "gen3a_turbo"
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.task_id) {
+                    statusDiv.innerHTML = `<span style="color: #22c55e;">✓ Task started! ID: ${data.task_id}</span><br><span style="color: #a0a0a0;">Checking status...</span>`;
+                    checkVideoStatus(data.task_id);
+                } else {
+                    statusDiv.innerHTML = `<span style="color: #ef4444;">❌ ${data.error || 'Failed'}</span>`;
+                    if (data.error && data.error.includes('RUNWAY_API_KEY')) {
+                        statusDiv.innerHTML += '<br><span style="color: #f59e0b;">💡 Get API key at: https://app.runwayml.com/settings/api-keys</span>';
+                    }
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: #ef4444;">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function checkVideoStatus(taskId) {
+            const statusDiv = document.getElementById('videoStatus');
+            const resultDiv = document.getElementById('videoResult');
+            let attempts = 0;
+            const maxAttempts = 30;
+            
+            const checkInterval = setInterval(async () => {
+                attempts++;
+                try {
+                    const response = await fetch('/api/v1/video/status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer admin-token-2024'
+                        },
+                        body: JSON.stringify({ task_id: taskId })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.status === 'succeeded' && data.video_url) {
+                        clearInterval(checkInterval);
+                        statusDiv.innerHTML = '<span style="color: #22c55e;">✓ Video ready!</span>';
+                        resultDiv.innerHTML = `
+                            <video controls style="width: 100%; max-width: 800px; border-radius: 8px;">
+                                <source src="${data.video_url}" type="video/mp4">
+                            </video>
+                            <br><a href="${data.video_url}" download style="display: inline-block; margin-top: 10px; padding: 10px 20px; background: #EC4899; color: white; text-decoration: none; border-radius: 6px;">⬇️ Download</a>
+                        `;
+                    } else if (data.status === 'failed') {
+                        clearInterval(checkInterval);
+                        statusDiv.innerHTML = `<span style="color: #ef4444;">❌ Failed: ${data.error || 'Unknown'}</span>`;
+                    } else {
+                        statusDiv.innerHTML = `<span style="color: #a0a0a0;">Processing... ${attempts * 10}s</span>`;
+                    }
+                    
+                    if (attempts >= maxAttempts) {
+                        clearInterval(checkInterval);
+                        statusDiv.innerHTML = '<span style="color: #f59e0b;">⏱️ Timeout</span>';
+                    }
+                } catch (error) {
+                    clearInterval(checkInterval);
+                    statusDiv.innerHTML = `<span style="color: #ef4444;">❌ ${error.message}</span>`;
+                }
+            }, 10000);
+        }
+        
+        // Focus input on load
+        window.addEventListener('load', () => {
+            document.getElementById('userInput').focus();
+        });
+    </script>
+</body>
+</html>

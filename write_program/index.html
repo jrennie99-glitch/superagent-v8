@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Greeter</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 20px 20px 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            color: #333;
+        }
+
+        .container {
+            margin: 0;
+            padding-left: 10px;
+            max-width: 750px;
+            width: 100%;
+            display: block; /* IMPORTANT: display: block; NOT flex */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        #greeting {
+            font-size: 1.5em;
+            color: #3498db;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+            input[type="text"], button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Personal Greeter!</h1>
+        <p>This simple program asks for your name and then greets you personally.  Enter your name below to get started.</p>
+
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <button onclick="greet()">Greet Me!</button>
+
+        <p id="greeting"></p>
+    </div>
+
+    <script>
+        function greet() {
+            let name = document.getElementById("nameInput").value;
+            if (name) {
+                document.getElementById("greeting").textContent = "Hello, " + name + "! It's great to meet you.";
+            } else {
+                document.getElementById("greeting").textContent = "Please enter your name!";
+            }
+        }
+    </script>
+
+</body>
+</html>

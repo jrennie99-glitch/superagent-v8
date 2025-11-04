@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperAgent Backend Admin</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  padding: 2rem;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+h1 {
+  background: linear-gradient(135deg, #9333EA, #A855F7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.subtitle { color: #888; margin-bottom: 2rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.card {
+  background: linear-gradient(135deg, rgba(35,15,42,0.8), rgba(59,30,70,0.8));
+  border: 1px solid rgba(147,51,234,0.3);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-4px); }
+.card h3 { color: #9333EA; margin-bottom: 0.5rem; font-size: 1.2rem; }
+.card p { color: #aaa; font-size: 0.9rem; margin-bottom: 1rem; }
+.btn {
+  background: linear-gradient(135deg, #9333EA, #A855F7);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-success { background: linear-gradient(135deg, #10B981, #34D399); }
+.btn-warning { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+.btn-danger { background: linear-gradient(135deg, #EF4444, #F87171); }
+.terminal {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 2rem;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+.terminal-line { margin-bottom: 0.5rem; color: #0f0; }
+.section { margin-bottom: 3rem; }
+.section h2 {
+  color: #34D399;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(52,211,153,0.3);
+  padding-bottom: 0.5rem;
+}
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: rgba(147,51,234,0.1);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.stat-label { color: #aaa; }
+.stat-value { color: #34D399; font-weight: 600; }
+input, textarea {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+  font-family: inherit;
+}
+textarea { min-height: 100px; resize: vertical; }
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <div>
+      <h1>🔧 SuperAgent Backend Admin</h1>
+      <p class="subtitle">Full access to all backend features, APIs, and system tools</p>
+    </div>
+    <div>
+      <button class="btn" onclick="window.location.href='/admin/login'" style="width:auto;padding:0.5rem 1rem;margin-right:0.5rem;" id="loginStatusBtn">
+        🔓 Not Logged In
+      </button>
+      <button class="btn btn-danger" onclick="logout()" style="width:auto;padding:0.5rem 1.5rem;display:none;" id="logoutBtn">
+        🔓 Logout
+      </button>
+    </div>
+  </div>
+  
+  <!-- System Status -->
+  <div class="section">
+    <h2>📊 System Status</h2>
+    <div id="systemStatus">
+      <div class="stat">
+        <span class="stat-label">Server Status</span>
+        <span class="stat-value" id="serverStatus">Checking...</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">API Version</span>
+        <span class="stat-value" id="apiVersion">-</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Self-Repair</span>
+        <span class="stat-value" id="selfRepairStatus">-</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Multiplayer Rooms</span>
+        <span class="stat-value" id="multiplayerRooms">-</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Quick Actions -->
+  <div class="section">
+    <h2>⚡ Quick Actions</h2>
+    <div class="grid">
+      
+      <div class="card">
+        <h3>🔍 Self-Repair Scan</h3>
+        <p>Scan logs and auto-fix errors</p>
+        <button class="btn btn-success" onclick="runSelfRepair()">Run Scan Now</button>
+      </div>
+      
+      <div class="card">
+        <h3>🔧 Code Generation</h3>
+        <p>Generate code with AI</p>
+        <input id="codePrompt" placeholder="Describe what to generate...">
+        <button class="btn" onclick="generateCode()">Generate</button>
+      </div>
+      
+      <div class="card">
+        <h3>👁️ Supervisor Verify</h3>
+        <p>99% accuracy code verification</p>
+        <textarea id="verifyCode" placeholder="Paste code to verify..."></textarea>
+        <button class="btn" onclick="verifySupervisor()">Verify Code</button>
+      </div>
+      
+      <div class="card">
+        <h3>👥 Multiplayer Rooms</h3>
+        <p>View active collaboration rooms</p>
+        <button class="btn" onclick="listRooms()">List Rooms</button>
+      </div>
+      
+      <div class="card">
+        <h3>📊 View Logs</h3>
+        <p>View recent system logs</p>
+        <button class="btn btn-warning" onclick="viewLogs()">Show Logs</button>
+      </div>
+      
+      <div class="card">
+        <h3>🗄️ Database Query</h3>
+        <p>Execute SQL queries</p>
+        <input id="sqlQuery" placeholder="SELECT * FROM ...">
+        <button class="btn" onclick="runQuery()">Execute</button>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- User Management -->
+  <div class="section">
+    <h2>👥 User Management</h2>
+    <div class="grid">
+      
+      <div class="card">
+        <h3>➕ Create New User</h3>
+        <input id="newUsername" placeholder="Username" style="margin-top:0.5rem;">
+        <input id="newPassword" type="password" placeholder="Password">
+        <select id="newTier" style="width:100%;background:#1a1a1a;border:1px solid #444;border-radius:0.5rem;padding:0.75rem;color:#e0e0e0;margin-bottom:1rem;">
+          <option value="free">Free Tier (Unlimited)</option>
+          <option value="pro">Pro Tier ($29/mo)</option>
+          <option value="team">Team Tier ($99/mo)</option>
+          <option value="enterprise">Enterprise ($299/mo)</option>
+        </select>
+        <input id="newNotes" placeholder="Notes (optional)">
+        <button class="btn btn-success" onclick="createUser()">Create User</button>
+      </div>
+      
+      <div class="card">
+        <h3>👁️ View All Users</h3>
+        <p>List all registered users</p>
+        <button class="btn" onclick="listUsers()">Load Users</button>
+        <div id="userCount" style="margin-top:1rem;color:#34D399;font-weight:600;"></div>
+      </div>
+      
+      <div class="card">
+        <h3>🔒 Revoke/Enable Access</h3>
+        <input id="toggleUsername" placeholder="Username">
+        <select id="toggleAccess" style="width:100%;background:#1a1a1a;border:1px solid #444;border-radius:0.5rem;padding:0.75rem;color:#e0e0e0;margin-bottom:1rem;">
+          <option value="false">Revoke Access</option>
+          <option value="true">Enable Access</option>
+        </select>
+        <button class="btn btn-warning" onclick="toggleUserAccess()">Update Access</button>
+      </div>
+      
+      <div class="card">
+        <h3>🗑️ Delete User</h3>
+        <input id="deleteUsername" placeholder="Username to delete">
+        <button class="btn btn-danger" onclick="deleteUser()">Delete User</button>
+      </div>
+      
+    </div>
+    
+    <!-- Users Table -->
+    <div id="usersTable" style="margin-top:2rem;display:none;">
+      <h3 style="color:#34D399;margin-bottom:1rem;">📋 Registered Users</h3>
+      <div style="background:#1a1a1a;border-radius:0.5rem;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(147,51,234,0.2);">
+              <th style="padding:1rem;text-align:left;color:#9333EA;">Username</th>
+              <th style="padding:1rem;text-align:left;color:#9333EA;">Tier</th>
+              <th style="padding:1rem;text-align:left;color:#9333EA;">Access</th>
+              <th style="padding:1rem;text-align:left;color:#9333EA;">Created</th>
+              <th style="padding:1rem;text-align:left;color:#9333EA;">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- API Endpoints -->
+  <div class="section">
+    <h2>🌐 API Endpoints</h2>
+    <div class="grid">
+      
+      <div class="card">
+        <h3>Core APIs</h3>
+        <p style="font-size:0.8rem;font-family:monospace;">
+          POST /generate<br>
+          POST /build<br>
+          POST /verify-code<br>
+          GET /health
+        </p>
+      </div>
+      
+      <div class="card">
+        <h3>Self-Repair</h3>
+        <p style="font-size:0.8rem;font-family:monospace;">
+          POST /self-repair/scan<br>
+          GET /self-repair/health<br>
+          GET /self-repair/errors<br>
+          GET /self-repair/repairs
+        </p>
+      </div>
+      
+      <div class="card">
+        <h3>Multiplayer</h3>
+        <p style="font-size:0.8rem;font-family:monospace;">
+          POST /multiplayer/create-room<br>
+          GET /multiplayer/rooms<br>
+          WS /multiplayer/ws/{id}
+        </p>
+      </div>
+      
+      <div class="card">
+        <h3>Intelligence</h3>
+        <p style="font-size:0.8rem;font-family:monospace;">
+          POST /intelligence/smart-model<br>
+          POST /build-modes/strategy<br>
+          POST /plan-mode/create
+        </p>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Terminal Output -->
+  <div class="section">
+    <h2>💻 Terminal Output</h2>
+    <div class="terminal" id="terminal">
+      <div class="terminal-line">> Backend admin panel loaded successfully</div>
+      <div class="terminal-line">> Ready for commands...</div>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+const terminal = document.getElementById('terminal');
+
+// Get auth token if available (optional)
+const token = localStorage.getItem('admin_token');
+
+function getHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+function log(message, color = '#0f0') {
+  const line = document.createElement('div');
+  line.className = 'terminal-line';
+  line.style.color = color;
+  line.textContent = `> ${message}`;
+  terminal.appendChild(line);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+// Load system status
+async function loadStatus() {
+  try {
+    const health = await fetch('/health').then(r => r.json());
+    document.getElementById('serverStatus').textContent = health.status === 'healthy' ? '✅ Healthy' : '❌ Error';
+    document.getElementById('apiVersion').textContent = health.version || '2.0.0';
+    
+    const repair = await fetch('/self-repair/health').then(r => r.json());
+    document.getElementById('selfRepairStatus').textContent = repair.status === 'healthy' ? '✅ Active' : '⚠️ Inactive';
+    
+    const rooms = await fetch('/multiplayer/rooms').then(r => r.json());
+    document.getElementById('multiplayerRooms').textContent = rooms.rooms?.length || '0';
+    
+    log('System status loaded', '#34D399');
+  } catch (error) {
+    log('Failed to load status: ' + error.message, '#EF4444');
+  }
+}
+
+async function runSelfRepair() {
+  log('Running self-repair scan...', '#F59E0B');
+  try {
+    const response = await fetch('/self-repair/scan', { method: 'POST' });
+    const data = await response.json();
+    log(`Scan complete: ${data.errors_detected} errors, ${data.repairs_successful} fixed`, '#34D399');
+  } catch (error) {
+    log('Scan failed: ' + error.message, '#EF4444');
+  }
+}
+
+async function generateCode() {
+  const prompt = document.getElementById('codePrompt').value;
+  if (!prompt) return log('Please enter a prompt', '#EF4444');
+  
+  log('Generating code...', '#F59E0B');
+  try {
+    const response = await fetch('/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instruction: prompt })
+    });
+    const data = await response.json();
+    log('Code generated successfully!', '#34D399');
+    log(data.code?.substring(0, 100) + '...', '#aaa');
+  } catch (error) {
+    log('Generation failed: ' + error.message, '#EF4444');
+  }
+}
+
+async function verifySupervisor() {
+  const code = document.getElementById('verifyCode').value;
+  if (!code) return log('Please enter code to verify', '#EF4444');
+  
+  log('Running supervisor verification...', '#F59E0B');
+  try {
+    const response = await fetch('/supervisor/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, language: 'python' })
+    });
+    const data = await response.json();
+    log('Verification complete!', '#34D399');
+    log(`Issues found: ${data.issues?.length || 0}`, '#aaa');
+  } catch (error) {
+    log('Verification failed: ' + error.message, '#EF4444');
+  }
+}
+
+async function listRooms() {
+  log('Fetching multiplayer rooms...', '#F59E0B');
+  try {
+    const response = await fetch('/multiplayer/rooms');
+    const data = await response.json();
+    log(`Active rooms: ${data.rooms?.length || 0}`, '#34D399');
+    data.rooms?.forEach((room, i) => {
+      log(`Room ${i+1}: ${room.user_count} users`, '#aaa');
+    });
+  } catch (error) {
+    log('Failed to fetch rooms: ' + error.message, '#EF4444');
+  }
+}
+
+async function viewLogs() {
+  log('Fetching recent logs...', '#F59E0B');
+  try {
+    const response = await fetch('/logs/recent');
+    const data = await response.json();
+    log('Recent logs loaded', '#34D399');
+    data.logs?.slice(0, 5).forEach(l => log(l, '#aaa'));
+  } catch (error) {
+    log('No logs endpoint available', '#F59E0B');
+  }
+}
+
+async function runQuery() {
+  const query = document.getElementById('sqlQuery').value;
+  if (!query) return log('Please enter a SQL query', '#EF4444');
+  
+  log('Executing query...', '#F59E0B');
+  log('Note: Database queries are restricted for security', '#F59E0B');
+}
+
+// ==================== USER MANAGEMENT FUNCTIONS ====================
+
+async function createUser() {
+  const username = document.getElementById('newUsername').value;
+  const password = document.getElementById('newPassword').value;
+  const tier = document.getElementById('newTier').value;
+  const notes = document.getElementById('newNotes').value;
+  
+  if (!username || !password) {
+    return log('Please enter username and password', '#EF4444');
+  }
+  
+  log(`Creating user: ${username}...`, '#F59E0B');
+  try {
+    const response = await fetch('/admin/users/create', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ username, password, tier, notes })
+    });
+    
+    const data = await response.json();
+    if (response.ok && data.success) {
+      log(`User created: ${username} (${tier} tier)`, '#34D399');
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('newNotes').value = '';
+      listUsers(); // Refresh user list
+    } else {
+      log(`Failed to create user: ${data.message || 'Unknown error'}`, '#EF4444');
+    }
+  } catch (error) {
+    log('Error creating user: ' + error.message, '#EF4444');
+  }
+}
+
+async function listUsers() {
+  log('Loading users...', '#F59E0B');
+  try {
+    const response = await fetch('/admin/users/list', {
+      headers: getHeaders()
+    });
+    
+    const data = await response.json();
+    if (response.ok && data.success) {
+      const users = data.users || [];
+      log(`Found ${users.length} users`, '#34D399');
+      document.getElementById('userCount').textContent = `Total Users: ${users.length}`;
+      
+      // Show users table
+      document.getElementById('usersTable').style.display = 'block';
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+      
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid rgba(147,51,234,0.2)';
+        row.innerHTML = `
+          <td style="padding:1rem;color:#e0e0e0;">${user.username}</td>
+          <td style="padding:1rem;color:#9333EA;font-weight:600;text-transform:uppercase;">${user.tier}</td>
+          <td style="padding:1rem;">
+            <span style="color:${user.access_enabled ? '#34D399' : '#EF4444'};font-weight:600;">
+              ${user.access_enabled ? '✅ Enabled' : '❌ Revoked'}
+            </span>
+          </td>
+          <td style="padding:1rem;color:#aaa;">${new Date(user.created_at).toLocaleDateString()}</td>
+          <td style="padding:1rem;color:#aaa;font-size:0.85rem;">${user.notes || '-'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    } else {
+      log('Failed to load users', '#EF4444');
+    }
+  } catch (error) {
+    log('Error loading users: ' + error.message, '#EF4444');
+  }
+}
+
+async function toggleUserAccess() {
+  const username = document.getElementById('toggleUsername').value;
+  const enabled = document.getElementById('toggleAccess').value === 'true';
+  
+  if (!username) {
+    return log('Please enter username', '#EF4444');
+  }
+  
+  log(`${enabled ? 'Enabling' : 'Revoking'} access for ${username}...`, '#F59E0B');
+  try {
+    const response = await fetch('/admin/users/toggle-access', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ username, enabled })
+    });
+    
+    const data = await response.json();
+    if (response.ok && data.success) {
+      log(`Access ${enabled ? 'enabled' : 'revoked'} for ${username}`, '#34D399');
+      document.getElementById('toggleUsername').value = '';
+      listUsers(); // Refresh user list
+    } else {
+      log(`Failed: ${data.message || 'Unknown error'}`, '#EF4444');
+    }
+  } catch (error) {
+    log('Error toggling access: ' + error.message, '#EF4444');
+  }
+}
+
+async function deleteUser() {
+  const username = document.getElementById('deleteUsername').value;
+  
+  if (!username) {
+    return log('Please enter username', '#EF4444');
+  }
+  
+  if (!confirm(`Are you sure you want to delete user "${username}"? This cannot be undone.`)) {
+    return;
+  }
+  
+  log(`Deleting user: ${username}...`, '#F59E0B');
+  try {
+    const response = await fetch(`/admin/users/${username}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    
+    const data = await response.json();
+    if (response.ok && data.success) {
+      log(`User deleted: ${username}`, '#34D399');
+      document.getElementById('deleteUsername').value = '';
+      listUsers(); // Refresh user list
+    } else {
+      log(`Failed to delete: ${data.message || 'Unknown error'}`, '#EF4444');
+    }
+  } catch (error) {
+    log('Error deleting user: ' + error.message, '#EF4444');
+  }
+}
+
+async function logout() {
+  try {
+    await fetch('/admin/logout', {
+      method: 'POST',
+      headers: getHeaders()
+    });
+  } catch (e) {}
+  
+  localStorage.removeItem('admin_token');
+  window.location.href = '/admin/login';
+}
+
+// Update login status UI
+if (token) {
+  document.getElementById('loginStatusBtn').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'inline-block';
+}
+
+// Load status on page load
+loadStatus();
+setInterval(loadStatus, 30000); // Refresh every 30 seconds
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+agent:
+  name: "SuperAgent"
+  version: "1.0.0"
+  max_iterations: 50
+  timeout_seconds: 300
+  
+performance:
+  async_enabled: true
+  parallel_tasks: true
+  max_workers: 8
+  cache_ttl: 3600
+  use_gpu: false
+  
+models:
+  primary:
+    provider: "anthropic"
+    name: "claude-sonnet-4-5-20250929"  # Latest Claude 4.5 Sonnet (September 2025) - NEWEST!
+    # Alternative options:
+    # - claude-3-5-sonnet-20241022 (Previous generation, still excellent)
+    # - claude-3-opus-20240229 (Most capable Claude 3, slower, more expensive)
+    # - claude-3-sonnet-20240229 (Balanced)
+    # - claude-3-haiku-20240307 (Fastest, cheapest)
+    temperature: 0.7
+    max_tokens: 8000
+    top_p: 0.95
+  fallback:
+    provider: "openai"
+    name: "gpt-4-turbo-preview"
+    temperature: 0.7
+    max_tokens: 4000
+  
+  # Model selection strategy
+  auto_select: true  # Automatically select best model for task
+  prioritize_speed: false  # Use faster models
+  prioritize_cost: false  # Use cheaper models
+  
+  # Task-specific models (optional overrides)
+  task_models:
+    code_generation: "claude-sonnet-4-5-20250929"
+    debugging: "claude-sonnet-4-5-20250929"
+    refactoring: "claude-sonnet-4-5-20250929"
+    autonomous_work: "claude-sonnet-4-5-20250929"
+    simple_tasks: "claude-3-haiku-20240307"
+    complex_problems: "claude-sonnet-4-5-20250929"
+    
+code_generation:
+  supported_languages:
+    - python
+    - javascript
+    - typescript
+    - java
+    - go
+    - rust
+    - cpp
+  quality_threshold: 0.85
+  enable_static_analysis: true
+  auto_format: true
+  
+debugging:
+  auto_fix_enabled: true
+  fix_confidence_threshold: 0.9
+  max_fix_attempts: 3
+  trace_depth: 10
+  visual_debugging: true
+  
+testing:
+  auto_generate_tests: true
+  coverage_threshold: 80
+  run_tests_before_deploy: true
+  frameworks:
+    python: pytest
+    javascript: jest
+    java: junit
+    
+deployment:
+  auto_deploy: false
+  platforms:
+    - heroku
+    - vercel
+    - aws
+    - gcp
+  git_auto_commit: true
+  
+multi_agent:
+  enabled: true
+  max_agents: 4
+  roles:
+    - coder
+    - debugger
+    - tester
+    - reviewer
+

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, AI World!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 20px 20px 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #f0f0f0, #e0e0e0);
+            color: #333;
+            line-height: 1.6;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            margin: 0;
+            padding-left: 10px;
+            max-width: 750px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #3498db;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .code-block pre {
+            margin: 0;
+        }
+
+        .output-section {
+            margin-top: 30px;
+            border-top: 2px solid #3498db;
+            padding-top: 20px;
+        }
+
+        #output {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #27ae60;
+            background-color: #f0fdf4;
+            padding: 10px;
+            border: 1px solid #bbf7d0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .code-block {
+                font-size: 0.9em;
+            }
+
+            button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, AI World!</h1>
+        <p>This page demonstrates a simple Python script that prints "Hello, AI World!" and counts to 10.</p>
+
+        <h2>Python Code:</h2>
+        <div class="code-block">
+            <pre>
+<code>
+print("Hello, AI World!")
+for i in range(1, 11):
+    print(i)
+</code>
+            </pre>
+        </div>
+
+        <p>Click the button below to execute the Python code and see the output.</p>
+
+        <button onclick="executePython()">Run Script</button>
+
+        <div class="output-section">
+            <h2>Output:</h2>
+            <div id="output"></div>
+        </div>
+    </div>
+
+    <script>
+        function executePython() {
+            let outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ""; // Clear previous output
+
+            // Simulate Python script execution in JavaScript (for demonstration)
+            outputDiv.innerHTML += "Hello, AI World!\n";
+            for (let i = 1; i <= 10; i++) {
+                outputDiv.innerHTML += i + "\n";
+            }
+        }
+    </script>
+</body>
+</html>

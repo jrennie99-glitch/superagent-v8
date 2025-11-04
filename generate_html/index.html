@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Me!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 20px 20px 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            color: #333;
+            display: block;
+        }
+
+        .container {
+            margin: 0;
+            padding-left: 10px;
+            max-width: 750px;
+            width: 100%;
+            display: block; /* Ensure block display */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-align: left;
+            margin-bottom: 20px;
+            color: #555;
+            animation: fadeIn 1s ease-in-out;
+            display: block;
+        }
+
+        button {
+            background: linear-gradient(to right, #4CAF50, #388E3C);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: block;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #388E3C, #4CAF50);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            button {
+                padding: 12px 24px;
+                font-size: 1em;
+            }
+        }
+
+        #message {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1.1em;
+            color: #444;
+            text-align: left;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Click the Button!</h1>
+        <button onclick="showMessage()">Click Me!</button>
+        <div id="message">You clicked the button!  Well done!</div>
+    </div>
+
+    <script>
+        function showMessage() {
+            var messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'block';
+            setTimeout(function() {
+                messageDiv.style.opacity = 1;
+            }, 10); // Small delay to ensure display is set before opacity change
+        }
+    </script>
+
+</body>
+</html>

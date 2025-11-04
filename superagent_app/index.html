@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Portfolio Manager Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px 20px 20px 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(to right, #f0f2f5, #e1e5ea);
+            color: #333;
+        }
+
+        .container {
+            margin: 0;
+            padding-left: 10px;
+            max-width: 750px;
+            width: 100%;
+            display: block;
+        }
+
+        h1 {
+            color: #007bff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #28a745;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .report-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .report-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .price-table th, .price-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .price-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .client-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .client-table th, .client-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .client-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .notification {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #777;
+            font-size: 0.8em;
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-left: 5px solid #ccc;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Portfolio Manager Report</h1>
+
+        <section class="report-section fade-in">
+            <h2>Executive Summary</h2>
+            <p>This report provides a snapshot of your current investment portfolio managed by our AI-driven system. It includes real-time ETF prices and client portfolio details.</p>
+        </section>
+
+        <section class="report-section fade-in">
+            <h2>Live ETF Prices</h2>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>QQQ</td>
+                        <td>$485.00</td>
+                    </tr>
+                    <tr>
+                        <td>SPY</td>
+                        <td>$582.00</td>
+                    </tr>
+                    <tr>
+                        <td>VTI</td>
+                        <td>$285.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="report-section fade-in">
+            <h2>Client Portfolio Overview</h2>
+            <table class="client-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>QQQ Shares</th>
+                        <th>SPY Shares</th>
+                        <th>VTI Shares</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>john@example.com</td>
+                        <td>10</td>
+                        <td>8</td>
+                        <td>15</td>
+                    </tr>
+                    <!-- Add more clients here -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="report-section fade-in">
+            <h2>Recommendations</h2>
+            <p>Based on the current market conditions and your portfolio allocation, our AI recommends the following adjustments:</p>
+            <ul>
+                <li>Consider rebalancing your portfolio to maintain your target asset allocation.</li>
+                <li>Evaluate opportunities to diversify into other sectors for risk mitigation.</li>
+                <li>Monitor market volatility closely and adjust positions as needed.</li>
+            </ul>
+        </section>
+
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> This report is for informational purposes only and does not constitute financial advice. Investment decisions should be made based on your own research and risk tolerance.
+        </div>
+
+        <div class="footer">
+            &copy; 2024 AI Portfolio Manager. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#9333EA">
+    <title>Memory - SuperAgent</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(147, 51, 234, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(147, 51, 234, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #C084FC;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            color: #C084FC;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            color: white;
+            border-color: #9333EA;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 16px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(147, 51, 234, 0.15);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+
+        /* Conversation Items */
+        .conversation-item, .project-item, .lesson-item {
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .item-badge {
+            padding: 4px 8px;
+            background: rgba(147, 51, 234, 0.3);
+            border-radius: 8px;
+            font-size: 11px;
+            color: #C084FC;
+        }
+
+        .item-message {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+
+        .item-response {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #b0b0b0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #9333EA;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #C084FC;
+        }
+
+        .spinner {
+            border: 3px solid rgba(147, 51, 234, 0.3);
+            border-top: 3px solid #9333EA;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="window.location.href='/mobile'">←</button>
+                <h1>🧠 Memory</h1>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="stats">📊 Stats</button>
+                <button class="tab-btn" data-tab="history">💬 History</button>
+                <button class="tab-btn" data-tab="projects">🚀 Projects</button>
+                <button class="tab-btn" data-tab="lessons">💡 Lessons</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Stats Tab -->
+            <div class="tab-content active" id="stats-tab">
+                <div class="loading" id="stats-loading">
+                    <div class="spinner"></div>
+                    <p>Loading memory stats...</p>
+                </div>
+                <div id="stats-content" style="display: none;">
+                    <div class="stats-grid" id="stats-grid"></div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" id="history-tab">
+                <input type="text" class="search-box" id="search-input" placeholder="🔍 Search conversations...">
+                <div class="loading" id="history-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Searching...</p>
+                </div>
+                <div id="history-content"></div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div class="tab-content" id="projects-tab">
+                <div class="loading" id="projects-loading">
+                    <div class="spinner"></div>
+                    <p>Loading projects...</p>
+                </div>
+                <div id="projects-content"></div>
+            </div>
+
+            <!-- Lessons Tab -->
+            <div class="tab-content" id="lessons-tab">
+                <div class="loading" id="lessons-loading">
+                    <div class="spinner"></div>
+                    <p>Loading lessons...</p>
+                </div>
+                <div id="lessons-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('superagent_token') || 'demo-mode';
+        let searchTimeout;
+
+        // Tab Switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update active tab content
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                // Load data for the tab
+                loadTabData(tabName);
+            });
+        });
+
+        // Load Memory Stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/v1/memory/stats', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.stats;
+                    document.getElementById('stats-grid').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_conversations}</div>
+                            <div class="stat-label">Conversations</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_projects}</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_lessons}</div>
+                            <div class="stat-label">Lessons Learned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_patterns}</div>
+                            <div class="stat-label">Patterns</div>
+                        </div>
+                    `;
+                    document.getElementById('stats-loading').style.display = 'none';
+                    document.getElementById('stats-content').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('stats-loading').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading stats</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Conversation History
+        async function loadHistory(searchQuery = '') {
+            document.getElementById('history-loading').style.display = searchQuery ? 'block' : 'none';
+            
+            try {
+                const url = searchQuery 
+                    ? `/api/v1/memory/conversations?search=${encodeURIComponent(searchQuery)}`
+                    : '/api/v1/memory/conversations';
+                    
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                const container = document.getElementById('history-content');
+                
+                if (data.success && data.conversations.length > 0) {
+                    container.innerHTML = data.conversations.map(conv => {
+                        const date = new Date(conv.timestamp);
+                        const timeStr = date.toLocaleString();
+                        
+                        return `
+                            <div class="conversation-item">
+                                <div class="item-header">
+                                    <span class="item-time">${timeStr}</span>
+                                </div>
+                                <div class="item-message">
+                                    <strong>You:</strong> ${escapeHtml(conv.user_message)}
+                                </div>
+                                <div class="item-response">
+                                    <strong>AI:</strong> ${escapeHtml(conv.assistant_response.substring(0, 200))}${conv.assistant_response.length > 200 ? '...' : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💭</div>
+                            <p>No conversations found</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('history-loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('history-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading history</p>
+                    </div>
+                `;
+                document.getElementById('history-loading').style.display = 'none';
+            }
+        }
+
+        // Load Projects
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/v1/memory/projects', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                const container = document.getElementById('projects-content');
+                
+                if (data.success && data.projects.length > 0) {
+                    container.innerHTML = data.projects.map(proj => {
+                        const date = new Date(proj.created_at);
+                        const score = proj.verification_score || 0;
+                        
+                        return `
+                            <div class="project-item">
+                                <div class="item-header">
+                                    <span class="item-badge">${proj.language}</span>
+                                    <span class="item-time">${date.toLocaleDateString()}</span>
+                                </div>
+                                <div class="item-message">${escapeHtml(proj.instruction)}</div>
+                                ${score > 0 ? `<div class="item-time">✓ Score: ${score}/100</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🚀</div>
+                            <p>No projects yet</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('projects-loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('projects-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading projects</p>
+                    </div>
+                `;
+                document.getElementById('projects-loading').style.display = 'none';
+            }
+        }
+
+        // Load Lessons
+        async function loadLessons() {
+            try {
+                const response = await fetch('/api/v1/memory/lessons', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                const container = document.getElementById('lessons-content');
+                
+                if (data.success && data.lessons.length > 0) {
+                    container.innerHTML = data.lessons.map(lesson => {
+                        const date = new Date(lesson.created_at);
+                        
+                        return `
+                            <div class="lesson-item">
+                                <div class="item-header">
+                                    <span class="item-badge">${lesson.category}</span>
+                                    <span class="item-time">${date.toLocaleDateString()}</span>
+                                </div>
+                                <div class="item-message">💡 ${escapeHtml(lesson.lesson)}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💡</div>
+                            <p>No lessons learned yet</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('lessons-loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('lessons-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading lessons</p>
+                    </div>
+                `;
+                document.getElementById('lessons-loading').style.display = 'none';
+            }
+        }
+
+        // Search Input Handler
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            searchTimeout = setTimeout(() => {
+                loadHistory(query);
+            }, 500);
+        });
+
+        // Load Tab Data
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'stats':
+                    loadStats();
+                    break;
+                case 'history':
+                    loadHistory();
+                    break;
+                case 'projects':
+                    loadProjects();
+                    break;
+                case 'lessons':
+                    loadLessons();
+                    break;
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize - load stats on page load
+        loadStats();
+    </script>
+</body>
+</html>

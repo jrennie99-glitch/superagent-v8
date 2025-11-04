@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern JavaScript Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px 20px 20px 0; /* Adjusted padding */
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0f5f9, #d0e1e9);
+            color: #333;
+            overflow-x: hidden;
+            display: block;
+        }
+
+        .container {
+            margin: 0; /* Reset margin */
+            padding-left: 10px; /* Keep content to the left */
+            max-width: 750px;
+            width: 100%;
+            display: block;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: left; /* Align to the left */
+            margin-bottom: 20px;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 350px;
+            margin: 0 auto;
+            transition: transform 0.3s ease-in-out;
+            display: block;
+        }
+
+        .calculator:hover {
+            transform: scale(1.03);
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: right;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+            display: block;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            display: block;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            display: block;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .operator {
+            background-color: #e74c3c;
+        }
+
+        .operator:hover {
+            background-color: #c0392b;
+        }
+
+        .clear {
+            background-color: #f39c12;
+            color: #fff;
+        }
+
+        .clear:hover {
+            background-color: #d35400;
+        }
+
+        @media (max-width: 600px) {
+            .calculator {
+                max-width: 90%;
+            }
+            .container {
+                padding-left: 5px;
+            }
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 0.9em;
+            color: #777;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Modern JavaScript Calculator</h1>
+
+        <div class="calculator">
+            <input type="text" id="display" readonly>
+            <div class="buttons">
+                <button onclick="appendToDisplay('7')">7</button>
+                <button onclick="appendToDisplay('8')">8</button>
+                <button onclick="appendToDisplay('9')">9</button>
+                <button class="operator" onclick="appendToDisplay('+')">+</button>
+
+                <button onclick="appendToDisplay('4')">4</button>
+                <button onclick="appendToDisplay('5')">5</button>
+                <button onclick="appendToDisplay('6')">6</button>
+                <button class="operator" onclick="appendToDisplay('-')">-</button>
+
+                <button onclick="appendToDisplay('1')">1</button>
+                <button onclick="appendToDisplay('2')">2</button>
+                <button onclick="appendToDisplay('3')">3</button>
+                <button class="operator" onclick="appendToDisplay('*')">*</button>
+
+                <button onclick="appendToDisplay('0')">0</button>
+                <button onclick="appendToDisplay('.')">.</button>
+                <button class="operator" onclick="calculate()">=</button>
+                <button class="operator" onclick="appendToDisplay('/')">/</button>
+
+                <button class="clear" onclick="clearDisplay()">Clear</button>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2024 JavaScript Calculator. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+
+        function calculate() {
+            try {
+                document.getElementById('display').value = eval(document.getElementById('display').value);
+            } catch (error) {
+                document.getElementById('display').value = 'Error';
+            }
+        }
+    </script>
+
+</body>
+</html>

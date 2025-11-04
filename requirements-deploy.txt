@@ -1,0 +1,55 @@
+# Deployment requirements - Essential packages only for API
+# This is optimized for cloud deployment (Railway, Render, etc.)
+
+# Web framework
+fastapi
+uvicorn[standard]
+
+# Core API dependencies
+groq
+pydantic
+google-generativeai
+asyncpg
+bleach
+psycopg2-binary
+bcrypt
+cryptography
+python-multipart
+requests
+
+# AI/ML providers (optional - add as needed)
+anthropic
+
+# Utilities
+structlog
+pyyaml
+click
+rich
+python-dotenv
+tenacity
+aiofiles
+
+# Code analysis
+radon
+pylint
+
+# Graph/networking
+networkx
+
+# Testing
+pytest
+
+# Caching (optional but recommended for production)
+redis==7.0.1
+diskcache
+
+# Rate limiting
+slowapi==0.1.9
+
+# Docker sandbox execution
+docker==7.1.0
+
+# Browser automation (LARGE - 920MB, optional for production)
+# Uncomment if you need Playwright browser testing:
+# playwright==1.55.0
+

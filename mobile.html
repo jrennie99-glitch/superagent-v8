@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#9333EA">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="SuperAgent - Complete Replit Agent clone for mobile">
+    <title>SuperAgent</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(147, 51, 234, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(147, 51, 234, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #9333EA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .model-selector {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .model-selector::-webkit-scrollbar {
+            display: none;
+        }
+
+        .model-btn {
+            padding: 6px 12px;
+            background: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            color: #C084FC;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .model-btn.active {
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            color: white;
+            border-color: #9333EA;
+        }
+
+        /* Chat Area */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.agent {
+            background: rgba(147, 51, 234, 0.15);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+
+        .message code {
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+            background: rgba(147, 51, 234, 0.15);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 16px;
+            max-width: 60px;
+            margin-right: auto;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #C084FC;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        /* Input Area */
+        .input-container {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(147, 51, 234, 0.3);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .input-area {
+            flex: 1;
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #e0e0e0;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            max-height: 120px;
+            min-height: 42px;
+        }
+
+        .input-area:focus {
+            outline: none;
+            border-color: #9333EA;
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            border: none;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Install PWA Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #9333EA, #7928CA);
+            padding: 16px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.5);
+            z-index: 1000;
+        }
+
+        .install-prompt.show {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .install-prompt button {
+            background: white;
+            color: #9333EA;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .install-prompt .close-btn {
+            background: transparent;
+            color: white;
+            padding: 4px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #C084FC;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <h1>SuperAgent</h1>
+                <button class="model-btn" onclick="window.location.href='/memory'" style="padding: 8px 12px;">
+                    🧠 Memory
+                </button>
+            </div>
+            <div class="model-selector">
+                <button class="model-btn active" data-model="auto">🚀 Auto</button>
+                <button class="model-btn" data-model="groq">⚡ Groq</button>
+                <button class="model-btn" data-model="gemini">💎 Gemini</button>
+                <button class="model-btn" data-model="claude">🧠 Claude</button>
+                <button class="model-btn" data-model="gpt4">✨ GPT-4</button>
+                <button class="model-btn" data-model="fast">🏃 Fast</button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-container" id="chat">
+            <div class="message agent">
+                👋 Hi! I'm SuperAgent, your AI development assistant. I can:
+                <br><br>
+                • Generate complete apps from descriptions<br>
+                • Write and debug code<br>
+                • Create AI-powered features<br>
+                • Deploy to production<br>
+                <br>
+                What would you like to build today?
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typing">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    id="messageInput" 
+                    class="input-area" 
+                    placeholder="Message SuperAgent..."
+                    rows="1"
+                ></textarea>
+                <button class="send-btn" id="sendBtn">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Install PWA Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div style="flex: 1;">
+            <strong>Install SuperAgent</strong><br>
+            <small>Add to home screen for best experience</small>
+        </div>
+        <button id="installBtn">Install</button>
+        <button class="close-btn" id="closeInstall">✕</button>
+    </div>
+
+    <script>
+        let selectedModel = 'auto';
+        let conversationHistory = [];
+        let deferredPrompt;
+        let authToken = null;
+
+        // Initialize auth token from localStorage or prompt for login
+        function initAuth() {
+            authToken = localStorage.getItem('superagent_token');
+            if (!authToken) {
+                // Show simple login prompt
+                const token = prompt('Enter your SuperAgent API token (or leave empty for demo mode):');
+                if (token && token.trim()) {
+                    authToken = token.trim();
+                    localStorage.setItem('superagent_token', authToken);
+                } else {
+                    // Demo mode - limited access (for testing only)
+                    authToken = 'demo-mode';
+                    alert('Running in demo mode. Some features may be limited.');
+                }
+            }
+        }
+
+        // Call on page load
+        initAuth();
+
+        // Model Selection
+        document.querySelectorAll('.model-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedModel = btn.dataset.model;
+            });
+        });
+
+        // Auto-resize textarea
+        const messageInput = document.getElementById('messageInput');
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Send message on Enter (Shift+Enter for new line)
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Send button
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Show typing indicator
+            document.getElementById('typing').classList.add('active');
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const response = await fetch('/api/v1/agent/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        model_type: selectedModel,
+                        auto_execute_tools: false,
+                        conversation_history: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage(data.response, 'agent');
+                    conversationHistory = data.conversation_history || conversationHistory;
+                } else {
+                    addMessage('❌ Error: ' + (data.error || 'Unknown error'), 'agent');
+                }
+            } catch (error) {
+                addMessage('❌ Network error: ' + error.message, 'agent');
+            } finally {
+                document.getElementById('typing').classList.remove('active');
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        function addMessage(text, type) {
+            const chat = document.getElementById('chat');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            // Simple markdown rendering for code blocks
+            const formatted = text.replace(/```(\w+)?\n([\s\S]*?)```/g, 
+                '<pre><code>$2</code></pre>');
+            messageDiv.innerHTML = formatted;
+            
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        document.getElementById('closeInstall').addEventListener('click', () => {
+            document.getElementById('installPrompt').classList.remove('show');
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+
+        // Handle iOS standalone mode
+        if (window.navigator.standalone) {
+            document.body.style.paddingTop = '20px';
+        }
+    </script>
+</body>
+</html>

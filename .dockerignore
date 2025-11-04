@@ -1,0 +1,44 @@
+# .dockerignore - Exclude files from Docker build
+
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Docs
+*.md
+docs/
+
+# Tests
+tests/
+test_*.py
+
+# Local workspace
+workspace/
+*.log
+
+# macOS
+.DS_Store
+
+# Vercel (keep HTML files for frontend)
+api/
+vercel.json
+

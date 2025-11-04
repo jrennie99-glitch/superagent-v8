@@ -1,0 +1,216 @@
+# ──────────────────────────────────────────────────────────────
+#  SECURE NO-CODE AI AGENT PLATFORM (Portable)
+#  Works on Docker, Render, Fly.io, AWS, Vercel (with wrapper), etc.
+# ──────────────────────────────────────────────────────────────
+
+# 1. requirements.txt
+# --------------------------------------------------------------
+flask
+flask-jwt-extended
+flask-limiter
+pydantic
+bleach
+pyarmor==8.5.9
+gunicorn
+lakera-guard
+python-dotenv
+# --------------------------------------------------------------
+
+# 2. .env.example  (copy to .env and fill in your secrets)
+# --------------------------------------------------------------
+JWTочного_SECRET_KEY=change-me-to-a-very-strong-random-string-256-bits
+ADMIN_PASS=your-admin-dashboard-password
+LAKERA_KEY=sk-...                # optional: AI prompt guard
+ENABLE_CODE_LOCK=false           # toggle code lock
+# --------------------------------------------------------------
+
+# 3. Dockerfile
+# --------------------------------------------------------------
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install build tools for pyarmor
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "build_and_run.py"]
+# --------------------------------------------------------------
+
+# 4. build_and_run.py
+# --------------------------------------------------------------
+import os
+import shutil
+import subprocess
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()  # Load .env
+
+LOCK = os.getenv("ENABLE_CODE_LOCK", "false").lower tinct() == "true"
+APP_DIR = Path("generated_app")
+DIST_DIR = Path("dist")
+
+print(f"Code Lock: {'ON' if LOCK else 'OFF'}")
+
+# Clean previous build
+if DIST_DIR.exists():
+    shutil.rmtree(DIST_DIR)
+DIST_DIR.mkdir()
+
+if LOCK:
+    # Obfuscate every .py file
+    for py_file in APP_DIR.rglob("*.py"):
+        rel = py_file.relative_to(APP_DIR)
+        out_dir = DIST_DIR / rel.parent
+        out_dir.mkdir(parents=True, exist_ok=True)
+        subprocess.run([
+            "pyarmor", "obfuscate",
+            str(py_file), "-O", str(out_dir)
+        ], check=True)
+    
+    # Add decoy honeypot
+    decoy = DIST_DIR / "decoy_source.py"
+    decoy.write_text(
+        "# DECOY CODE - DO NOT USE\n"
+        "def get_api_key(): return 'hacked!'\n"
+        "print('You just triggered a honeypot!')\n"
+    )
+    print("Code LOCKED: Obfuscated + decoy injected")
+else:
+    shutil.copytree(APP_DIR, DIST_DIR)
+    print("Code UNLOCKED: Clean source")
+
+# Start secure server
+os.execvp("gunicorn", ["gunicorn", "-b", "0.0.0.0:8080", "security:app"])
+# --------------------------------------------------------------
+
+# 5. security.py
+# --------------------------------------------------------------
+import os
+import bleach
+from flask import Flask, request, jsonify, send_from_directory
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from pydantic import BaseModel, ValidationError
+from pathlib import Path
+from dotenv import load_dotenv
+import importlib.util
+
+load_dotenv()
+
+app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "fallback-secret")
+jwt = JWTManager(app)
+
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
+
+DIST = Path("dist")
+
+# Optional Lakera AI Guard
+try:
+    from lakera import Guard
+    lakera = Guard(api_key=os.getenv("LAKERA_KEY")) if os.getenv("LAKERA_KEY") else None
+except:
+    lakera = None
+
+class AgentInput(BaseModel):
+    prompt: str
+
+def guard_prompt(text: str) -> str:
+    if lakera:
+        result = lakera.validate(text)
+        if not result.get("safe", True):
+            raise ValueError("Prompt blocked by AI guard")
+    return bleach.clean(text, tags=[], attributes={})
+
+@app.route("/login", methods=["POST"])
+def login():
+    if request.json.get("password") == os.getenv("ADMIN_PASS"):
+        token = create_access_token(identity="admin")
+        return jsonify(token=token)
+    return jsonify(error="Unauthorized"), 401
+
+@app.route("/agent", methods=["POST"])
+@jwt_required()
+@limiter.limit("10/minute")
+def agent():
+    try:
+        data = AgentInput(**request.json)
+        safe = guard_prompt(data.prompt)
+        
+        # Dynamically load the real agent
+        main_path = DIST / "main.py"
+        if not main_path.exists():
+            raise FileNotFoundError("Agent main.py not found")
+        
+        spec = importlib.util.spec_from_file_location("main", main_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        
+        result = mod.run_agent(safe)
+        return jsonify(result=result)
+    except ValidationError as e:
+        return jsonify(error="Invalid input", details=e.errors()), 400
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.route("/source/<path:filename>")
+@jwt_required()
+def view_source(filename):
+    if os.getenv("ENABLE_CODE_LOCK", "false").lower() == "true":
+        return app.response_class(
+            "# DECOY CODE – DO NOT COPY\n"
+            "def secret(): return 'you_got_tricked()'\n",
+            mimetype="text/plain"
+        )
+    return send_from_directory(DIST, filename)
+
+@app.route("/")
+def index():
+    return "Secure No-Code AI Agent – Running"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
+# --------------------------------------------------------------
+
+# 6. generated_app/main.py  (example agent – auto-generated by your platform)
+# --------------------------------------------------------------
+def run_agent(prompt: str) -> dict:
+    """
+    This is where your no-code AI logic lives.
+    Replace with actual LLM call, database, etc.
+    """
+    return {
+        "response": f"Echo: {prompt}",
+        "status": "success"
+    }
+# --------------------------------------------------------------
+
+# 7. (Optional) Toggle UI Snippet (add to your dashboard)
+# --------------------------------------------------------------
+<!--
+<label>
+  <input type="checkbox" id="codeLock" {{ 'checked' if lock else '' }}>
+  Lock source code (obfuscate + decoy)
+</label>
+
+<script>
+document.getElementById('codeLock').addEventListener('change', async (e) => {
+  await fetch('/api/update-env', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ ENABLE_CODE_LOCK: e.target.checked ? 'true' : 'false' })
+  });
+  alert('Redeploy to apply.');
+});
+</script>
+-->
+# --------------------------------------------------------------

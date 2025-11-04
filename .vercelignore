@@ -1,0 +1,19 @@
+# Ignore the full SuperAgent framework
+superagent/
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore test files
+tests/
+test_*.py
+
+# Ignore deployment scripts
+*.sh
+
+# Ignore other config
+config.yaml
+.env
+.env.*
+

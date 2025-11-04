@@ -1,0 +1,12 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "gitsafe-backup"]
+	url = git://gitsafe:5418/backup.git
+	fetch = +refs/heads/*:refs/remotes/gitsafe-backup/*
+	skipFetchAll = true
+[remote "origin"]
+	url = https://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@github.com/jrennie99-glitch/supermen-v8.git
+	fetch = +refs/heads/*:refs/remotes/origin/*

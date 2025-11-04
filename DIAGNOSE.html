@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SuperAgent Diagnostic Tool</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Courier New',monospace;
+  background:#0a0e27;
+  color:#00ff00;
+  padding:20px;
+  line-height:1.6;
+}
+.container{max-width:900px;margin:0 auto;}
+h1{
+  color:#00ff00;
+  text-align:center;
+  margin-bottom:30px;
+  font-size:24px;
+  border-bottom:2px solid #00ff00;
+  padding-bottom:10px;
+}
+.test-section{
+  background:#1a1f3a;
+  border:2px solid #00ff00;
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:20px;
+}
+.test-section h2{
+  color:#00ffff;
+  font-size:18px;
+  margin-bottom:15px;
+}
+.test-result{
+  padding:10px;
+  margin:10px 0;
+  border-radius:4px;
+  font-weight:bold;
+}
+.pass{background:#0d4d0d;color:#00ff00;border-left:4px solid #00ff00;}
+.fail{background:#4d0d0d;color:#ff0000;border-left:4px solid #ff0000;}
+.warn{background:#4d4d0d;color:#ffaa00;border-left:4px solid #ffaa00;}
+.info{background:#0d2d4d;color:#00aaff;border-left:4px solid #00aaff;}
+button{
+  background:#00ff00;
+  color:#0a0e27;
+  border:none;
+  padding:12px 24px;
+  border-radius:4px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:10px 10px 10px 0;
+}
+button:hover{background:#00cc00;}
+button:active{transform:scale(0.95);}
+.code{
+  background:#000;
+  color:#00ff00;
+  padding:10px;
+  border-radius:4px;
+  overflow-x:auto;
+  font-size:12px;
+  margin:10px 0;
+}
+input{
+  width:100%;
+  padding:10px;
+  background:#0a0e27;
+  border:2px solid #00ff00;
+  color:#00ff00;
+  font-family:'Courier New',monospace;
+  border-radius:4px;
+  margin:10px 0;
+}
+.spinner{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border:2px solid #00ff00;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔍 SUPERAGENT DIAGNOSTIC TOOL</h1>
+  
+  <!-- Test 1: JavaScript -->
+  <div class="test-section">
+    <h2>TEST 1: JavaScript Execution</h2>
+    <div id="test1-result" class="test-result info">⏳ Running test...</div>
+  </div>
+  
+  <!-- Test 2: DOM Access -->
+  <div class="test-section">
+    <h2>TEST 2: DOM Manipulation</h2>
+    <div id="test2-result" class="test-result info">⏳ Running test...</div>
+    <div id="test2-demo"></div>
+  </div>
+  
+  <!-- Test 3: Event Listeners -->
+  <div class="test-section">
+    <h2>TEST 3: Button Click Events</h2>
+    <div id="test3-result" class="test-result info">⏳ Waiting for button click...</div>
+    <button onclick="testButtonClick()">🖱️ CLICK THIS BUTTON</button>
+  </div>
+  
+  <!-- Test 4: Fetch API -->
+  <div class="test-section">
+    <h2>TEST 4: Backend Connection</h2>
+    <div id="test4-result" class="test-result info">⏳ Running test...</div>
+    <input type="text" id="backendUrl" placeholder="Enter your Koyeb URL (e.g., https://your-app.koyeb.app)">
+    <button onclick="testBackend()">🌐 TEST BACKEND</button>
+  </div>
+  
+  <!-- Test 5: Modal Test -->
+  <div class="test-section">
+    <h2>TEST 5: Modal/Popup Test</h2>
+    <div id="test5-result" class="test-result info">⏳ Click button to test modal</div>
+    <button onclick="testModal()">📱 TEST MODAL</button>
+  </div>
+  
+  <!-- Test 6: Form Input -->
+  <div class="test-section">
+    <h2>TEST 6: Form Input & Validation</h2>
+    <div id="test6-result" class="test-result info">⏳ Type something below...</div>
+    <input type="text" id="testInput" placeholder="Type anything here and press Enter" onkeyup="testInput(event)">
+  </div>
+  
+  <!-- Test 7: Browser Info -->
+  <div class="test-section">
+    <h2>TEST 7: Browser Environment</h2>
+    <div id="test7-result" class="test-result info">⏳ Detecting...</div>
+  </div>
+  
+  <!-- Summary -->
+  <div class="test-section">
+    <h2>📊 TEST SUMMARY</h2>
+    <div id="summary" class="test-result info">Running diagnostics...</div>
+  </div>
+  
+  <!-- Instructions -->
+  <div class="test-section">
+    <h2>📋 NEXT STEPS</h2>
+    <div id="instructions" class="info" style="padding:15px;">
+      <strong>After all tests complete, send me:</strong><br><br>
+      1. Which tests PASSED (green) ✅<br>
+      2. Which tests FAILED (red) ❌<br>
+      3. Your Koyeb URL (if you have one)<br>
+      4. How you're testing (Koyeb URL or local file?)<br><br>
+      This will tell me EXACTLY what's wrong! 🔍
+    </div>
+  </div>
+</div>
+
+<!-- Simple Modal for Test 5 -->
+<div id="testModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;">
+  <div style="background:#1a1f3a;border:2px solid #00ff00;max-width:500px;margin:100px auto;padding:30px;border-radius:8px;text-align:center;">
+    <h2 style="color:#00ff00;margin-bottom:20px;">✅ MODAL WORKS!</h2>
+    <p style="color:#00ffff;margin-bottom:20px;">If you can see this, modals are working correctly!</p>
+    <button onclick="closeTestModal()">CLOSE</button>
+  </div>
+</div>
+
+<script>
+let testResults = {
+  test1: false,
+  test2: false,
+  test3: false,
+  test4: null,
+  test5: false,
+  test6: false,
+  test7: false
+};
+
+// Test 1: JavaScript Execution
+try {
+  console.log('✅ Test 1: JavaScript is executing');
+  document.getElementById('test1-result').className = 'test-result pass';
+  document.getElementById('test1-result').innerHTML = '✅ PASS: JavaScript is executing correctly';
+  testResults.test1 = true;
+} catch (e) {
+  document.getElementById('test1-result').className = 'test-result fail';
+  document.getElementById('test1-result').innerHTML = '❌ FAIL: ' + e.message;
+}
+
+// Test 2: DOM Manipulation
+try {
+  const demo = document.getElementById('test2-demo');
+  demo.innerHTML = '<div class="test-result pass">✅ DOM manipulation working!</div>';
+  document.getElementById('test2-result').className = 'test-result pass';
+  document.getElementById('test2-result').innerHTML = '✅ PASS: Can manipulate DOM elements';
+  testResults.test2 = true;
+  console.log('✅ Test 2: DOM manipulation works');
+} catch (e) {
+  document.getElementById('test2-result').className = 'test-result fail';
+  document.getElementById('test2-result').innerHTML = '❌ FAIL: ' + e.message;
+  console.error('❌ Test 2 failed:', e);
+}
+
+// Test 3: Button Click
+function testButtonClick() {
+  try {
+    document.getElementById('test3-result').className = 'test-result pass';
+    document.getElementById('test3-result').innerHTML = '✅ PASS: Button clicks work! Event listeners are functioning.';
+    testResults.test3 = true;
+    console.log('✅ Test 3: Button click event works');
+    updateSummary();
+  } catch (e) {
+    document.getElementById('test3-result').className = 'test-result fail';
+    document.getElementById('test3-result').innerHTML = '❌ FAIL: ' + e.message;
+    console.error('❌ Test 3 failed:', e);
+  }
+}
+
+// Test 4: Backend Connection
+async function testBackend() {
+  const url = document.getElementById('backendUrl').value.trim();
+  
+  if (!url) {
+    document.getElementById('test4-result').className = 'test-result warn';
+    document.getElementById('test4-result').innerHTML = '⚠️ Please enter your Koyeb URL first';
+    return;
+  }
+  
+  document.getElementById('test4-result').className = 'test-result info';
+  document.getElementById('test4-result').innerHTML = '<span class="spinner"></span> Testing backend connection...';
+  
+  try {
+    const healthUrl = url + (url.endsWith('/') ? 'health' : '/health');
+    console.log('Testing backend:', healthUrl);
+    
+    const response = await fetch(healthUrl, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-cache'
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      document.getElementById('test4-result').className = 'test-result pass';
+      document.getElementById('test4-result').innerHTML = '✅ PASS: Backend is online and responding!<div class="code">' + JSON.stringify(data, null, 2) + '</div>';
+      testResults.test4 = true;
+      console.log('✅ Test 4: Backend online', data);
+    } else {
+      throw new Error('Backend returned status ' + response.status);
+    }
+  } catch (e) {
+    document.getElementById('test4-result').className = 'test-result fail';
+    document.getElementById('test4-result').innerHTML = '❌ FAIL: Cannot connect to backend<br><small>' + e.message + '</small><br><br><strong>Possible reasons:</strong><br>1. Backend not deployed yet<br>2. Wrong URL<br>3. Backend crashed<br>4. CORS issue (if testing locally)';
+    testResults.test4 = false;
+    console.error('❌ Test 4 failed:', e);
+  }
+  
+  updateSummary();
+}
+
+// Test 5: Modal
+function testModal() {
+  try {
+    document.getElementById('testModal').style.display = 'block';
+    document.getElementById('test5-result').className = 'test-result pass';
+    document.getElementById('test5-result').innerHTML = '✅ PASS: Modal opened successfully!';
+    testResults.test5 = true;
+    console.log('✅ Test 5: Modal works');
+    updateSummary();
+  } catch (e) {
+    document.getElementById('test5-result').className = 'test-result fail';
+    document.getElementById('test5-result').innerHTML = '❌ FAIL: ' + e.message;
+    console.error('❌ Test 5 failed:', e);
+  }
+}
+
+function closeTestModal() {
+  document.getElementById('testModal').style.display = 'none';
+}
+
+// Test 6: Input
+function testInput(event) {
+  const value = document.getElementById('testInput').value;
+  if (value.length > 0) {
+    document.getElementById('test6-result').className = 'test-result pass';
+    document.getElementById('test6-result').innerHTML = '✅ PASS: Form input works! You typed: <strong>' + value + '</strong>';
+    testResults.test6 = true;
+    console.log('✅ Test 6: Input works, value:', value);
+    updateSummary();
+  }
+}
+
+// Test 7: Browser Info
+try {
+  const info = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    online: navigator.onLine,
+    cookiesEnabled: navigator.cookieEnabled,
+    screenResolution: window.screen.width + 'x' + window.screen.height,
+    windowSize: window.innerWidth + 'x' + window.innerHeight,
+    protocol: window.location.protocol,
+    hostname: window.location.hostname
+  };
+  
+  let infoHtml = '<div class="code">';
+  for (let key in info) {
+    infoHtml += key + ': ' + info[key] + '<br>';
+  }
+  infoHtml += '</div>';
+  
+  let warnings = [];
+  if (window.location.protocol === 'file:') {
+    warnings.push('⚠️ You are testing from local file (file://). Backend connections will NOT work. You must test on Koyeb URL!');
+  }
+  if (!navigator.onLine) {
+    warnings.push('⚠️ Browser reports offline. Check your internet connection.');
+  }
+  
+  document.getElementById('test7-result').className = warnings.length > 0 ? 'test-result warn' : 'test-result pass';
+  document.getElementById('test7-result').innerHTML = (warnings.length > 0 ? warnings.join('<br>') + '<br><br>' : '✅ PASS: Browser environment looks good<br><br>') + infoHtml;
+  testResults.test7 = warnings.length === 0;
+  
+  console.log('✅ Test 7: Browser info collected', info);
+} catch (e) {
+  document.getElementById('test7-result').className = 'test-result fail';
+  document.getElementById('test7-result').innerHTML = '❌ FAIL: ' + e.message;
+  console.error('❌ Test 7 failed:', e);
+}
+
+// Update Summary
+function updateSummary() {
+  const passed = Object.values(testResults).filter(v => v === true).length;
+  const failed = Object.values(testResults).filter(v => v === false).length;
+  const pending = Object.values(testResults).filter(v => v === null).length;
+  
+  let summaryHtml = '<strong>RESULTS:</strong><br><br>';
+  summaryHtml += '✅ PASSED: ' + passed + '<br>';
+  summaryHtml += '❌ FAILED: ' + failed + '<br>';
+  summaryHtml += '⏳ PENDING: ' + pending + '<br><br>';
+  
+  if (testResults.test1 && testResults.test2 && testResults.test3 && testResults.test5 && testResults.test6) {
+    summaryHtml += '<div class="test-result pass">✅ All basic functionality works! If buttons still don\'t work on your main page, the issue is likely:<br>1. Testing from local file (use Koyeb URL instead)<br>2. Backend not deployed<br>3. Cached old version (hard refresh needed)</div>';
+  } else {
+    summaryHtml += '<div class="test-result fail">❌ Some basic functionality is broken. This needs to be fixed first!</div>';
+  }
+  
+  document.getElementById('summary').innerHTML = summaryHtml;
+}
+
+// Initial summary
+updateSummary();
+
+// Log to console
+console.log('═══════════════════════════════════════════════════════');
+console.log('🔍 SUPERAGENT DIAGNOSTIC TOOL LOADED');
+console.log('═══════════════════════════════════════════════════════');
+console.log('Complete all tests above, then share the results!');
+console.log('═══════════════════════════════════════════════════════');
+</script>
+
+</body>
+</html>
+

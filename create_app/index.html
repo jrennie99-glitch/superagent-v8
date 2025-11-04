@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Perfect Business Contract</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 20px 20px 0;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #f0f4f8, #e0e8ef);
+            color: #333;
+        }
+
+        .container {
+            margin: 0;
+            padding-left: 10px;
+            max-width: 750px;
+            width: 100%;
+            display: block; /* Crucial for iframe compatibility */
+        }
+
+        header {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #777;
+        }
+
+        .search-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: block;
+        }
+
+        .search-form input[type="text"],
+        .search-form select,
+        .search-form button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            width: calc(100% - 24px);
+            display: block; /* Crucial for iframe compatibility */
+        }
+
+        .search-form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .search-form button:hover {
+            background-color: #2980b9;
+        }
+
+        .contract-types {
+            margin-bottom: 30px;
+        }
+
+        .contract-types h2 {
+            font-size: 1.6em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .contract-types ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contract-types li {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            margin-bottom: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .contract-types li:hover {
+            transform: translateY(-3px);
+        }
+
+        .contract-types li a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        footer {
+            text-align: left;
+            color: #777;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .search-form input[type="text"],
+            .search-form select,
+            .search-form button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .contract-types h2 {
+                font-size: 1.4em;
+            }
+
+            .contract-types li a {
+                font-size: 1em;
+            }
+        }
+
+        /* Animation for search button */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+            }
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+            }
+        }
+
+        .search-form button.animate {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Find the Right Business Contract</h1>
+            <p>Simplify your legal needs with our comprehensive contract finder. Easily search and discover the perfect contract for your business needs.</p>
+        </header>
+
+        <section class="search-section">
+            <h2>Search for a Contract</h2>
+            <form class="search-form" id="searchForm">
+                <input type="text" id="contractName" placeholder="Enter contract name or keywords">
+                <select id="contractType">
+                    <option value="">Select Contract Type</option>
+                    <option value="NDA">Non-Disclosure Agreement (NDA)</option>
+                    <option value="ServiceAgreement">Service Agreement</option>
+                    <option value="PartnershipAgreement">Partnership Agreement</option>
+                    <option value="EmploymentAgreement">Employment Agreement</option>
+                    <option value="SalesAgreement">Sales Agreement</option>
+                    <option value="LeaseAgreement">Lease Agreement</option>
+                    <option value="ConsultingAgreement">Consulting Agreement</option>
+                </select>
+                <button type="button" onclick="searchContracts()">Find Contract</button>
+            </form>
+        </section>
+
+        <section class="contract-types">
+            <h2>Popular Contract Types</h2>
+            <ul>
+                <li><a href="#">Non-Disclosure Agreement (NDA)</a></li>
+                <li><a href="#">Service Agreement</a></li>
+                <li><a href="#">Partnership Agreement</a></li>
+                <li><a href="#">Employment Agreement</a></li>
+                <li><a href="#">Sales Agreement</a></li>
+                <li><a href="#">Lease Agreement</a></li>
+                <li><a href="#">Consulting Agreement</a></li>
+            </ul>
+        </section>
+
+        <footer>
+            &copy; 2024 Contract Finder. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        function searchContracts() {
+            // Placeholder for actual search functionality
+            let contractName = document.getElementById('contractName').value;
+            let contractType = document.getElementById('contractType').value;
+
+            if (contractName === '' && contractType === '') {
+                alert('Please enter a contract name or select a contract type.');
+                return;
+            }
+
+            alert('Searching for contracts with name: ' + contractName + ' and type: ' + contractType);
+            // Add your search logic here (e.g., API call, data filtering)
+
+            //Animate button on click
+            let button = document.querySelector('.search-form button');
+            button.classList.add('animate');
+
+            setTimeout(() => {
+                button.classList.remove('animate');
+            }, 1500) //remove animation class after 1.5 seconds
+        }
+    </script>
+
+</body>
+</html>

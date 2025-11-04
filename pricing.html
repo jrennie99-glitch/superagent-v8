@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - SuperAgent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d0d0d;
+            --bg-secondary: #1a1a1a;
+            --bg-hover: #242424;
+            --border: #2a2a2a;
+            --text: #e3e3e3;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6b6b6b;
+            --primary: #9333EA;
+            --primary-hover: #7928CA;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            margin: 0 auto;
+            padding: 0 60px;
+            width: 100%;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        main {
+            padding: 60px 0;
+            background: linear-gradient(180deg, transparent, rgba(147, 51, 234, 0.03), transparent);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .billing-toggle {
+            display: inline-flex;
+            gap: 8px;
+            padding: 4px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .billing-toggle button {
+            padding: 8px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .billing-toggle button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 80px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(79, 70, 229, 0.05));
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 8px;
+            padding: 32px;
+            transition: all 0.2s;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(147, 51, 234, 0.5);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            position: relative;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
+        }
+
+        .badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .plan-price {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .plan-period {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .plan-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            padding: 10px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .payment-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .payment-card {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(79, 70, 229, 0.05));
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .payment-card:hover {
+            border-color: rgba(147, 51, 234, 0.5);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+            transform: translateY(-2px);
+        }
+
+        .payment-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .payment-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .payment-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .faq {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(79, 70, 229, 0.05));
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        
+        .faq-item:hover {
+            border-color: rgba(147, 51, 234, 0.5);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+        }
+
+        .faq-question {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .payment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 32px;
+            }
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">SuperAgent</a>
+                <a href="/" class="btn btn-secondary">Back to App</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>Choose Your Plan</h1>
+                <p class="subtitle">Start free, scale as you grow</p>
+                <div class="billing-toggle">
+                    <button class="active" onclick="toggleBilling('monthly')">Monthly</button>
+                    <button onclick="toggleBilling('yearly')">Yearly <span style="color: var(--success);">-20%</span></button>
+                </div>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price">$0</div>
+                    <div class="plan-period">Forever free</div>
+                    <p class="plan-description">Perfect for trying out SuperAgent</p>
+                    <ul class="plan-features">
+                        <li>10 generations per day</li>
+                        <li>All programming languages</li>
+                        <li>Basic code quality</li>
+                        <li>Community support</li>
+                    </ul>
+                    <a href="/"><button class="btn btn-secondary cta-button">Start Free</button></a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="badge">Most Popular</div>
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price" id="proPriceMonthly">$29</div>
+                    <div class="plan-price" id="proPriceYearly" style="display: none;">$23</div>
+                    <div class="plan-period">/month</div>
+                    <p class="plan-description">For professional developers</p>
+                    <ul class="plan-features">
+                        <li>Unlimited generations</li>
+                        <li>Premium code quality</li>
+                        <li>Priority support (24h)</li>
+                        <li>API key included</li>
+                        <li>Advanced debugging</li>
+                        <li>Export to GitHub</li>
+                    </ul>
+                    <button class="btn btn-primary cta-button" onclick="openCheckout('pro')">Get Pro</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price" id="enterprisePriceMonthly">$99</div>
+                    <div class="plan-price" id="enterprisePriceYearly" style="display: none;">$79</div>
+                    <div class="plan-period">/month</div>
+                    <p class="plan-description">For teams and businesses</p>
+                    <ul class="plan-features">
+                        <li>Everything in Pro</li>
+                        <li>Team collaboration (10 seats)</li>
+                        <li>Custom AI models</li>
+                        <li>Dedicated support (2h)</li>
+                        <li>SSO & SAML</li>
+                        <li>SLA guarantee</li>
+                    </ul>
+                    <button class="btn btn-primary cta-button" onclick="openCheckout('enterprise')">Get Enterprise</button>
+                </div>
+            </div>
+
+            <div class="payment-section">
+                <h2 class="section-title">Payment Methods</h2>
+                <p class="section-subtitle">Choose the payment method that works best for you</p>
+                <div class="payment-grid">
+                    <div class="payment-card">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-name">Cards</div>
+                        <p class="payment-desc">Visa, Mastercard, Amex</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">₿</div>
+                        <div class="payment-name">Crypto</div>
+                        <p class="payment-desc">BTC, ETH, USDT</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">📱</div>
+                        <div class="payment-name">Cash App</div>
+                        <p class="payment-desc">Instant payment</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">💵</div>
+                        <div class="payment-name">Zelle</div>
+                        <p class="payment-desc">Bank transfer</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq">
+                <h2 class="section-title">FAQ</h2>
+                <div class="faq-item">
+                    <div class="faq-question">Can I switch plans anytime?</div>
+                    <div class="faq-answer">Yes, you can upgrade, downgrade, or cancel your subscription at any time.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What payment methods do you accept?</div>
+                    <div class="faq-answer">We accept credit/debit cards, cryptocurrency (Bitcoin, Ethereum, USDT), Cash App, and Zelle.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Do you offer refunds?</div>
+                    <div class="faq-answer">Yes, we offer a 30-day money-back guarantee on all paid plans.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let billingCycle = 'monthly';
+
+        function toggleBilling(cycle) {
+            billingCycle = cycle;
+            const buttons = document.querySelectorAll('.billing-toggle button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (cycle === 'yearly') {
+                document.getElementById('proPriceMonthly').style.display = 'none';
+                document.getElementById('proPriceYearly').style.display = 'block';
+                document.getElementById('enterprisePriceMonthly').style.display = 'none';
+                document.getElementById('enterprisePriceYearly').style.display = 'block';
+            } else {
+                document.getElementById('proPriceMonthly').style.display = 'block';
+                document.getElementById('proPriceYearly').style.display = 'none';
+                document.getElementById('enterprisePriceMonthly').style.display = 'block';
+                document.getElementById('enterprisePriceYearly').style.display = 'none';
+            }
+        }
+
+        function openCheckout(plan) {
+            const prices = {
+                pro: billingCycle === 'monthly' ? '$29/month' : '$276/year (save 20%)',
+                enterprise: billingCycle === 'monthly' ? '$99/month' : '$948/year (save 20%)'
+            };
+            
+            alert(`Subscribe to ${plan.toUpperCase()}\n\nPrice: ${prices[plan]}\n\nPayment methods:\n• Credit/Debit Cards (Coming soon - Stripe)\n• Crypto: BTC, ETH, USDT (5% discount)\n• Cash App: $SuperAgentAI\n• Zelle: payments@superagent.ai\n\nContact: payments@superagent.ai`);
+        }
+    </script>
+</body>
+</html>
