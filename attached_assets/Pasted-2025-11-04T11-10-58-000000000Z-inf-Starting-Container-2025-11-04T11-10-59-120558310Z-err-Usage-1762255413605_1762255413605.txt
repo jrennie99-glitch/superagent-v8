@@ -1,0 +1,45 @@
+2025-11-04T11:10:58.000000000Z [inf]  Starting Container
+2025-11-04T11:10:59.120558310Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:10:59.120562186Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:10:59.120565932Z [err]  
+2025-11-04T11:10:59.120570097Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:01.261600729Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:01.261607496Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:01.261614015Z [err]  
+2025-11-04T11:11:01.261619722Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:02.385157397Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:02.385169008Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:02.385176431Z [err]  
+2025-11-04T11:11:02.385183742Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:04.112108777Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:04.112115153Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:04.112121077Z [err]  
+2025-11-04T11:11:04.112126055Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:05.180271991Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:05.180277986Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:05.180282570Z [err]  
+2025-11-04T11:11:05.180287210Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:07.180614348Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:07.180620406Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:07.180626053Z [err]  
+2025-11-04T11:11:07.180631583Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:08.328319975Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:08.328333908Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:08.328342060Z [err]  
+2025-11-04T11:11:08.328349105Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:10.463981746Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:10.463990368Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:10.464003575Z [err]  
+2025-11-04T11:11:10.464011410Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:12.473448739Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:12.473456211Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:12.473463060Z [err]  
+2025-11-04T11:11:12.473471628Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:14.805055606Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:14.805063105Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:14.805071291Z [err]  
+2025-11-04T11:11:14.805078457Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
+2025-11-04T11:11:16.828416472Z [err]  Usage: python -m uvicorn [OPTIONS] APP
+2025-11-04T11:11:16.828432241Z [err]  Try 'python -m uvicorn --help' for help.
+2025-11-04T11:11:16.828440388Z [err]  
+2025-11-04T11:11:16.828446504Z [err]  Error: Invalid value for '--port': '$PORT' is not a valid integer.
