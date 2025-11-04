@@ -12,10 +12,18 @@ from psycopg2.extras import RealDictCursor
 class UserManager:
     def __init__(self):
         self.db_url = os.getenv("DATABASE_URL")
-        self._init_database()
+        self.db_available = bool(self.db_url)
+        
+        # Only initialize if DATABASE_URL exists
+        if self.db_available:
+            self._init_database()
+        else:
+            print("⚠️ DATABASE_URL not set - User management disabled")
     
     def _get_connection(self):
         """Get database connection"""
+        if not self.db_available:
+            raise Exception("Database not configured - set DATABASE_URL environment variable")
         return psycopg2.connect(self.db_url)
     
     def _init_database(self):
@@ -71,6 +79,7 @@ class UserManager:
             print("✅ User management database initialized")
         except Exception as e:
             print(f"⚠️ Database init error: {e}")
+            self.db_available = False
     
     def hash_password(self, password: str) -> str:
         """Hash password with bcrypt (industry-standard KDF with key stretching)"""
