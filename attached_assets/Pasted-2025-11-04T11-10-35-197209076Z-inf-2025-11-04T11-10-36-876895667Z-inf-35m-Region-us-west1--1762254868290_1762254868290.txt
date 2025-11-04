@@ -1,0 +1,63 @@
+2025-11-04T11:10:35.197209076Z [inf]  
+2025-11-04T11:10:36.876895667Z [inf]  [35m[Region: us-west1][0m
+2025-11-04T11:10:36.888801816Z [inf]  [35m=========================
+2025-11-04T11:10:36.888843780Z [inf]  Using Detected Dockerfile
+2025-11-04T11:10:36.888848053Z [inf]  =========================
+2025-11-04T11:10:36.888851403Z [inf]  [0m
+2025-11-04T11:10:36.888864752Z [inf]  context: 46p4-xrxd
+2025-11-04T11:10:37.041303263Z [inf]  [internal] load build definition from Dockerfile.railway
+2025-11-04T11:10:37.041344583Z [inf]  [internal] load build definition from Dockerfile.railway
+2025-11-04T11:10:37.041357842Z [inf]  [internal] load build definition from Dockerfile.railway
+2025-11-04T11:10:37.041368459Z [inf]  [internal] load build definition from Dockerfile.railway
+2025-11-04T11:10:37.052079493Z [inf]  [internal] load build definition from Dockerfile.railway
+2025-11-04T11:10:37.054264514Z [inf]  [internal] load metadata for docker.io/library/python:3.11-slim
+2025-11-04T11:10:37.057721067Z [inf]  [auth] library/python:pull token for registry-1.docker.io
+2025-11-04T11:10:37.057777267Z [inf]  [auth] library/python:pull token for registry-1.docker.io
+2025-11-04T11:10:37.566080302Z [inf]  [internal] load metadata for docker.io/library/python:3.11-slim
+2025-11-04T11:10:37.566294270Z [inf]  [internal] load .dockerignore
+2025-11-04T11:10:37.566323307Z [inf]  [internal] load .dockerignore
+2025-11-04T11:10:37.566345172Z [inf]  [internal] load .dockerignore
+2025-11-04T11:10:37.566594211Z [inf]  [internal] load .dockerignore
+2025-11-04T11:10:37.576433424Z [inf]  [internal] load .dockerignore
+2025-11-04T11:10:37.579827196Z [inf]  [6/6] COPY . .
+2025-11-04T11:10:37.579864661Z [inf]  [5/6] RUN pip install --no-cache-dir -r requirements.txt
+2025-11-04T11:10:37.579877636Z [inf]  [4/6] COPY requirements-deploy.txt requirements.txt
+2025-11-04T11:10:37.579886119Z [inf]  [internal] load build context
+2025-11-04T11:10:37.579894231Z [inf]  [3/6] RUN apt-get update && apt-get install -y --no-install-recommends     gcc     curl     && rm -rf /var/lib/apt/lists/*
+2025-11-04T11:10:37.579900316Z [inf]  [2/6] WORKDIR /app
+2025-11-04T11:10:37.579905896Z [inf]  [1/6] FROM docker.io/library/python:3.11-slim@sha256:d4ee051786f0d345977c9352635478919b5e595da3bf5a25e9662e5dadc77157
+2025-11-04T11:10:37.579923559Z [inf]  [1/6] FROM docker.io/library/python:3.11-slim@sha256:d4ee051786f0d345977c9352635478919b5e595da3bf5a25e9662e5dadc77157
+2025-11-04T11:10:37.579944511Z [inf]  [internal] load build context
+2025-11-04T11:10:37.579953184Z [inf]  [internal] load build context
+2025-11-04T11:10:37.588951478Z [inf]  [1/6] FROM docker.io/library/python:3.11-slim@sha256:d4ee051786f0d345977c9352635478919b5e595da3bf5a25e9662e5dadc77157
+2025-11-04T11:10:37.958876254Z [inf]  [internal] load build context
+2025-11-04T11:10:37.961712164Z [inf]  [2/6] WORKDIR /app
+2025-11-04T11:10:37.961742338Z [inf]  [3/6] RUN apt-get update && apt-get install -y --no-install-recommends     gcc     curl     && rm -rf /var/lib/apt/lists/*
+2025-11-04T11:10:37.961752795Z [inf]  [4/6] COPY requirements-deploy.txt requirements.txt
+2025-11-04T11:10:37.961764852Z [inf]  [5/6] RUN pip install --no-cache-dir -r requirements.txt
+2025-11-04T11:10:37.961774751Z [inf]  [6/6] COPY . .
+2025-11-04T11:10:37.962433787Z [inf]  exporting to docker image format
+2025-11-04T11:10:37.962447329Z [inf]  exporting to image
+2025-11-04T11:10:38.134384617Z [inf]  [auth] sharing credentials for production-us-west2.railway-registry.com
+2025-11-04T11:10:38.134481356Z [inf]  [auth] sharing credentials for production-us-west2.railway-registry.com
+2025-11-04T11:10:39.244134639Z [inf]  importing to docker
+2025-11-04T11:10:47.732478857Z [inf]  importing to docker
+2025-11-04T11:10:47.773516532Z [inf]  [92mBuild time: 10.88 seconds[0m
+2025-11-04T11:11:00.060396763Z [inf]  
+2025-11-04T11:11:00.060474228Z [inf]  [35m====================
+Starting Healthcheck
+====================
+[0m
+2025-11-04T11:11:00.060478288Z [inf]  [37mPath: /health[0m
+2025-11-04T11:11:00.060480639Z [inf]  [37mRetry window: 5m0s[0m
+2025-11-04T11:11:00.060482549Z [inf]  
+2025-11-04T11:11:10.252254262Z [inf]  [93mAttempt #1 failed with service unavailable. Continuing to retry for 4m49s[0m
+2025-11-04T11:11:11.298340831Z [inf]  [93mAttempt #2 failed with service unavailable. Continuing to retry for 4m48s[0m
+2025-11-04T11:11:15.399932514Z [inf]  [93mAttempt #3 failed with service unavailable. Continuing to retry for 4m44s[0m
+2025-11-04T11:11:19.461062096Z [inf]  [93mAttempt #4 failed with service unavailable. Continuing to retry for 4m40s[0m
+2025-11-04T11:11:27.736022338Z [inf]  [93mAttempt #5 failed with service unavailable. Continuing to retry for 4m32s[0m
+2025-11-04T11:11:43.830325030Z [inf]  [93mAttempt #6 failed with service unavailable. Continuing to retry for 4m16s[0m
+2025-11-04T11:12:13.870624318Z [inf]  [93mAttempt #7 failed with service unavailable. Continuing to retry for 3m46s[0m
+2025-11-04T11:12:43.937072839Z [inf]  [93mAttempt #8 failed with service unavailable. Continuing to retry for 3m16s[0m
+2025-11-04T11:13:13.996159918Z [inf]  [93mAttempt #9 failed with service unavailable. Continuing to retry for 2m46s[0m
+2025-11-04T11:13:44.061817077Z [inf]  [93mAttempt #10 failed with service unavailable. Continuing to retry for 2m16s[0m
