@@ -201,10 +201,12 @@ Return ONLY the complete HTML code, nothing else."""
                 except Exception as openai_error:
                     print(f"❌ OpenAI failed: {openai_error}")
             elif not generated_code:
-                print("⚠️ No OPENAI_API_KEY found")
-            
+                          # If all AI providers failed, use template generator as fallback
             if not generated_code:
-                raise Exception("No AI API key configured or all AI providers failed. Please set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY in your Render environment variables.")
+                print("⚠️ All AI providers failed, using template generator as fallback")
+                from template_generator import generate_app_from_template
+                generated_code = generate_app_from_template(prompt, build_type)
+                print("✅ Template generator succeeded!")
             
             # Clean up code markers
             generated_code = generated_code.replace('```html', '').replace('```', '').strip()
