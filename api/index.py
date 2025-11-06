@@ -122,6 +122,9 @@ from api.advanced_endpoints import router as advanced_router
 # Import Final 99.5% Production-Ready System
 from api.final_995_endpoint import router as final_995_router
 
+# Import Zero-Setup Wizard
+from api.zero_setup_wizard import router as zero_setup_router
+
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
 git_integration = GitIntegration()
@@ -234,6 +237,9 @@ app.include_router(advanced_router, tags=["98-99% Production Ready"])
 
 # Include Final 99.5% Production-Ready System
 app.include_router(final_995_router, tags=["99.5% Production Ready"])
+
+# Add Zero-Setup Wizard
+app.include_router(zero_setup_router, tags=["Zero-Setup Onboarding"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
