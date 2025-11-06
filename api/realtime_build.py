@@ -204,7 +204,7 @@ Return ONLY the complete HTML code, nothing else."""
             # If all AI providers failed, use template generator as fallback
             if not generated_code:
                 print("⚠️ All AI providers failed, using template generator as fallback")
-                from template_generator import generate_app_from_template
+                from api.template_generator import generate_app_from_template
                 generated_code = generate_app_from_template(prompt, build_type)
                 print("✅ Template generator succeeded!")
             
