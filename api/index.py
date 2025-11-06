@@ -141,6 +141,7 @@ from api.enhanced_monitoring import router as enhanced_monitoring_router
 # Import Replit Agent 3 competitive features
 from api.browser_testing import router as browser_testing_router
 from api.agent_builder import router as agent_builder_router
+from api.realtime_build import router as realtime_build_router
 
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
@@ -274,6 +275,7 @@ app.include_router(enhanced_monitoring_router, tags=["Enhanced Monitoring & Self
 # Replit Agent 3 competitive features
 app.include_router(browser_testing_router, tags=["Browser Testing - Matches Replit"])
 app.include_router(agent_builder_router, tags=["Agent Builder - Matches Replit"])
+app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
