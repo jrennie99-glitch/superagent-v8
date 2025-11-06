@@ -138,6 +138,10 @@ from api.enhanced_memory import router as enhanced_memory_router
 from api.specialized_agents import router as specialized_agents_router
 from api.enhanced_monitoring import router as enhanced_monitoring_router
 
+# Import Replit Agent 3 competitive features
+from api.browser_testing import router as browser_testing_router
+from api.agent_builder import router as agent_builder_router
+
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
 git_integration = GitIntegration()
@@ -266,6 +270,10 @@ app.include_router(enhanced_autonomy_router, tags=["Enhanced Autonomy"])
 app.include_router(enhanced_memory_router, tags=["Enhanced Memory"])
 app.include_router(specialized_agents_router, tags=["Specialized Agents"])
 app.include_router(enhanced_monitoring_router, tags=["Enhanced Monitoring & Self-Healing"])
+
+# Replit Agent 3 competitive features
+app.include_router(browser_testing_router, tags=["Browser Testing - Matches Replit"])
+app.include_router(agent_builder_router, tags=["Agent Builder - Matches Replit"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
