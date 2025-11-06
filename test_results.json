@@ -1,0 +1,195 @@
+{
+  "timestamp": "2025-11-06 03:15:44",
+  "total_tests": 45,
+  "passed": 45,
+  "failed": 0,
+  "warnings": 0,
+  "skipped": 0,
+  "details": {
+    "passed": [
+      {
+        "test": "Health Check",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Root Endpoint",
+        "details": "Status: 200"
+      },
+      {
+        "test": "API Documentation",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Files",
+        "details": "Status: 200"
+      },
+      {
+        "test": "File Search",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Templates",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Project Analysis",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Project Type Detection",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Git Status",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Git Status (Enhanced)",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Environment Variables",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Available Modules",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Installed Modules",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Workflows",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Checkpoints",
+        "details": "Status: 200"
+      },
+      {
+        "test": "System Diagnostics",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Memory Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Memory Conversations",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Memory Projects",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Cache Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List AI Providers",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Cybersecurity Status",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Plugins",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Voice Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Available Voices",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Sandbox Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Sandbox Images",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Review Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Codebase Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Error Stats",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Visual Components",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Active Plan",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Rooms",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Self-Repair Health",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Self-Repair Errors",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Self-Repair Repairs",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Recent Logs",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Redis Health",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Integrations",
+        "details": "Status: 200"
+      },
+      {
+        "test": "List Screenshots",
+        "details": "Status: 200"
+      },
+      {
+        "test": "GitHub Status",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Enterprise Capabilities",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Build Endpoint Error Handling",
+        "details": "Correctly returns API key error"
+      },
+      {
+        "test": "Code Search",
+        "details": "Status: 200"
+      },
+      {
+        "test": "Web Search",
+        "details": "Status: 200"
+      }
+    ],
+    "failed": [],
+    "warnings": [],
+    "skipped": []
+  }
+}
