@@ -21,6 +21,8 @@ build_progress_store = {}
 
 class BuildRequest(BaseModel):
     instruction: str
+    plan_id: Optional[str] = None
+    build_type: str = 'full'  # 'design' or 'full'
     plan_mode: bool = True
     enterprise_mode: bool = True
     live_preview: bool = True
@@ -69,7 +71,7 @@ def add_step(build_id: str, title: str, detail: str, status: str = 'active'):
             'time_elapsed': 0.0
         })
 
-async def build_app_with_progress(build_id: str, instruction: str, plan_mode: bool, enterprise_mode: bool, live_preview: bool, auto_deploy: bool):
+async def build_app_with_progress(build_id: str, instruction: str, build_type: str, plan_mode: bool, enterprise_mode: bool, live_preview: bool, auto_deploy: bool):
     """Actually build the app and update progress in real-time"""
     try:
         start_time = datetime.now()
@@ -100,15 +102,32 @@ async def build_app_with_progress(build_id: str, instruction: str, plan_mode: bo
             gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
             groq_key = os.getenv("GROQ_API_KEY")
             
-            prompt = f"""Create a complete, production-ready application for: {instruction}
+            # Create prompt based on build type
+            if build_type == 'design':
+                prompt = f"""Create a DESIGN/PROTOTYPE mockup for: {instruction}
+
+Requirements:
+- Generate a BEAUTIFUL, STATIC design mockup (HTML + CSS only)
+- NO JavaScript functionality (design only)
+- Include placeholder content and sample data
+- Make it visually stunning with modern design
+- Use beautiful colors, typography, and spacing
+- Make it mobile-responsive
+- Focus on aesthetics and user interface
+
+Return ONLY the complete HTML code with inline CSS, nothing else."""
+            else:  # full build
+                prompt = f"""Create a complete, production-ready application for: {instruction}
 
 Requirements:
 - Generate COMPLETE, WORKING code (not placeholders)
 - Include ALL necessary HTML, CSS, and JavaScript
 - Make it visually beautiful with modern design
-- Add interactive features
+- Add FULL interactive features and functionality
 - Include proper error handling
 - Make it mobile-responsive
+- Add data persistence (localStorage)
+- Make it production-ready
 
 Return ONLY the complete HTML code, nothing else."""
             
@@ -224,6 +243,7 @@ async def start_realtime_build(request: BuildRequest, background_tasks: Backgrou
         build_app_with_progress,
         build_id,
         request.instruction,
+        request.build_type,
         request.plan_mode,
         request.enterprise_mode,
         request.live_preview,
