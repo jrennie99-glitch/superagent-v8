@@ -95,6 +95,9 @@ from api.background_monitor import background_monitor
 # Import Cybersecurity AI
 from api.cybersecurity_ai import cybersecurity_agent
 
+# Import Health Check
+from api.health_check import health_check
+
 # Import Advanced Agent System (NEW - Enhanced SuperAgent capabilities)
 from api.advanced_agent import router as advanced_agent_router
 
@@ -451,6 +454,11 @@ class ErrorPredictRequest(BaseModel):
     language: str
 
 # Routes
+@app.get("/health")
+def health():
+    """Health check endpoint - shows system status and configuration"""
+    return health_check.get_health_status()
+
 @app.get("/")
 def root():
     try:
@@ -1521,7 +1529,10 @@ async def build_complete_app(req: BuildAppRequest):
         # Step 1: Generate code with AI
         gemini_key = os.getenv("GEMINI_API_KEY")
         if not gemini_key:
-            raise HTTPException(status_code=500, detail="GEMINI_API_KEY not configured")
+            raise HTTPException(
+                status_code=500, 
+                detail="GEMINI_API_KEY not configured. Please set your Gemini API key in the .env file. Get one at: https://makersuite.google.com/app/apikey"
+            )
         
         genai.configure(api_key=gemini_key)
         model = genai.GenerativeModel('gemini-2.0-flash')
