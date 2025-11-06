@@ -125,6 +125,12 @@ from api.final_995_endpoint import router as final_995_router
 # Import Zero-Setup Wizard
 from api.zero_setup_wizard import router as zero_setup_router
 
+# Import competitive advantage features
+from api.live_preview import router as live_preview_router
+from api.ide_integration import router as ide_integration_router
+from api.component_library import router as component_library_router
+from api.developer_workflow import router as developer_workflow_router
+
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
 git_integration = GitIntegration()
@@ -240,6 +246,12 @@ app.include_router(final_995_router, tags=["99.5% Production Ready"])
 
 # Add Zero-Setup Wizard
 app.include_router(zero_setup_router, tags=["Zero-Setup Onboarding"])
+
+# Add competitive advantage routers
+app.include_router(live_preview_router, tags=["Live Preview - Beats Bolt"])
+app.include_router(ide_integration_router, tags=["IDE Integration - Beats Cursor/Windsurf"])
+app.include_router(component_library_router, tags=["Component Library - Beats v0"])
+app.include_router(developer_workflow_router, tags=["Developer Workflow - Beats All"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
