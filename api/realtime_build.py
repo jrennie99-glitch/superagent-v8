@@ -158,20 +158,27 @@ Return ONLY the complete HTML code, nothing else."""
             else:
                 print("⚠️ No GEMINI_API_KEY found")
             
-            # Try Groq if Gemini failed or wasn't available
+            # Try Groq if Gemini failed or wasn't available (using direct HTTP API)
             if not generated_code and groq_key:
                 print(f"Trying Groq with key: {groq_key[:10]}...")
                 try:
-                    from groq import Groq
-                    client = Groq(api_key=groq_key)
-                    response = client.chat.completions.create(
-                        model="llama-3.1-70b-versatile",
-                        messages=[{"role": "user", "content": prompt}]
+                    import requests
+                    response = requests.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {groq_key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": "llama-3.1-70b-versatile",
+                            "messages": [{"role": "user", "content": prompt}]
+                        }
                     )
-                    generated_code = response.choices[0].message.content
-                    print("✅ Groq succeeded!")
-                except ImportError as ie:
-                    print(f"❌ Groq import failed: {ie}. Library not installed.")
+                    if response.status_code == 200:
+                        generated_code = response.json()["choices"][0]["message"]["content"]
+                        print("✅ Groq succeeded!")
+                    else:
+                        print(f"❌ Groq API returned {response.status_code}: {response.text}")
                 except Exception as groq_error:
                     print(f"❌ Groq failed: {groq_error}")
             elif not generated_code:
