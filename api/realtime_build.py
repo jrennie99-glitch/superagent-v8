@@ -116,7 +116,7 @@ Return ONLY the complete HTML code, nothing else."""
                 # Use Gemini
                 import google.generativeai as genai
                 genai.configure(api_key=gemini_key)
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                model = genai.GenerativeModel("gemini-pro")
                 response = model.generate_content(prompt)
                 generated_code = response.text
             elif groq_key:
