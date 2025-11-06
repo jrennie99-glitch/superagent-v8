@@ -242,6 +242,13 @@ app.add_middleware(
 # Mount static files for PWA
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Mount workspace directory for serving built applications
+# Apps are built in the workspace root (current directory)
+try:
+    app.mount("/apps", StaticFiles(directory=str(Path.cwd()), html=True), name="built_apps")
+except Exception as e:
+    print(f"Warning: Could not mount apps directory: {e}")
+
 # Include Advanced Agent Router (NEW Enhanced Capabilities)
 app.include_router(advanced_agent_router, prefix="/api/v1", tags=["Advanced Agent"])
 

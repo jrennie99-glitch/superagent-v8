@@ -252,9 +252,18 @@ Return ONLY the complete HTML code, nothing else."""
                     "active")
             await asyncio.sleep(2)
             
-            # In a real implementation, this would deploy to Render/Vercel/etc
-            deployment_url = f"https://{app_name}.onrender.com"
+            # Serve the built app from the SuperAgent v8 server itself
+            # This gives a real public URL that works immediately!
+            app_name = build_result.get('app_name')
+            app_dir = build_result.get('app_dir')
+            
+            # The app is accessible via the SuperAgent v8 server
+            # We'll serve it from /apps/{app_name}/
+            deployment_url = f"https://supermen-v8.onrender.com/apps/{app_name}/"
+            
+            # Store the app directory for serving
             build_progress_store[build_id]['deployment_url'] = deployment_url
+            build_progress_store[build_id]['app_directory'] = app_dir
             
             update_step(build_id, 6 if plan_mode else 5, "🚀 Deployment Complete", 
                        f"✅ Your app is now live and accessible to the world at {deployment_url}! The production build is optimized for performance and ready to handle real users. Share this URL with anyone!", 
