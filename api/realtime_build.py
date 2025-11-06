@@ -151,9 +151,10 @@ Return ONLY the complete HTML code, nothing else."""
                     response = model.generate_content(prompt)
                     generated_code = response.text
                     print("✅ Gemini succeeded!")
+                except ImportError as ie:
+                    print(f"❌ Gemini import failed: {ie}. Library not installed.")
                 except Exception as gemini_error:
-                    print(f"❌ Gemini failed: {gemini_error}. Trying Groq...")
-                    # Fall through to try Groq
+                    print(f"❌ Gemini failed: {gemini_error}")
             else:
                 print("⚠️ No GEMINI_API_KEY found")
             
@@ -169,6 +170,8 @@ Return ONLY the complete HTML code, nothing else."""
                     )
                     generated_code = response.choices[0].message.content
                     print("✅ Groq succeeded!")
+                except ImportError as ie:
+                    print(f"❌ Groq import failed: {ie}. Library not installed.")
                 except Exception as groq_error:
                     print(f"❌ Groq failed: {groq_error}")
             elif not generated_code:
@@ -186,6 +189,8 @@ Return ONLY the complete HTML code, nothing else."""
                     )
                     generated_code = response.choices[0].message.content
                     print("✅ OpenAI succeeded!")
+                except ImportError as ie:
+                    print(f"❌ OpenAI import failed: {ie}. Library not installed.")
                 except Exception as openai_error:
                     print(f"❌ OpenAI failed: {openai_error}")
             elif not generated_code:
