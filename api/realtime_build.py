@@ -143,18 +143,23 @@ Return ONLY the complete HTML code, nothing else."""
             
             # Try Gemini first
             if gemini_key:
+                print(f"Trying Gemini with key: {gemini_key[:10]}...")
                 try:
                     import google.generativeai as genai
                     genai.configure(api_key=gemini_key)
                     model = genai.GenerativeModel("gemini-pro")
                     response = model.generate_content(prompt)
                     generated_code = response.text
+                    print("✅ Gemini succeeded!")
                 except Exception as gemini_error:
-                    print(f"Gemini failed: {gemini_error}. Trying Groq...")
+                    print(f"❌ Gemini failed: {gemini_error}. Trying Groq...")
                     # Fall through to try Groq
+            else:
+                print("⚠️ No GEMINI_API_KEY found")
             
             # Try Groq if Gemini failed or wasn't available
             if not generated_code and groq_key:
+                print(f"Trying Groq with key: {groq_key[:10]}...")
                 try:
                     from groq import Groq
                     client = Groq(api_key=groq_key)
@@ -163,11 +168,15 @@ Return ONLY the complete HTML code, nothing else."""
                         messages=[{"role": "user", "content": prompt}]
                     )
                     generated_code = response.choices[0].message.content
+                    print("✅ Groq succeeded!")
                 except Exception as groq_error:
-                    print(f"Groq failed: {groq_error}")
+                    print(f"❌ Groq failed: {groq_error}")
+            elif not generated_code:
+                print("⚠️ No GROQ_API_KEY found")
             
             # Try OpenAI if Gemini and Groq failed
             if not generated_code and openai_key:
+                print(f"Trying OpenAI with key: {openai_key[:10]}...")
                 try:
                     from openai import OpenAI
                     client = OpenAI()
@@ -176,8 +185,11 @@ Return ONLY the complete HTML code, nothing else."""
                         messages=[{"role": "user", "content": prompt}]
                     )
                     generated_code = response.choices[0].message.content
+                    print("✅ OpenAI succeeded!")
                 except Exception as openai_error:
-                    print(f"OpenAI failed: {openai_error}")
+                    print(f"❌ OpenAI failed: {openai_error}")
+            elif not generated_code:
+                print("⚠️ No OPENAI_API_KEY found")
             
             if not generated_code:
                 raise Exception("No AI API key configured or all AI providers failed. Please set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY in your Render environment variables.")
