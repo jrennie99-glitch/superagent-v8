@@ -131,6 +131,13 @@ from api.ide_integration import router as ide_integration_router
 from api.component_library import router as component_library_router
 from api.developer_workflow import router as developer_workflow_router
 
+# Import enhancement modules
+from api.enhanced_tools import router as enhanced_tools_router
+from api.enhanced_autonomy import router as enhanced_autonomy_router
+from api.enhanced_memory import router as enhanced_memory_router
+from api.specialized_agents import router as specialized_agents_router
+from api.enhanced_monitoring import router as enhanced_monitoring_router
+
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
 git_integration = GitIntegration()
@@ -252,6 +259,13 @@ app.include_router(live_preview_router, tags=["Live Preview - Beats Bolt"])
 app.include_router(ide_integration_router, tags=["IDE Integration - Beats Cursor/Windsurf"])
 app.include_router(component_library_router, tags=["Component Library - Beats v0"])
 app.include_router(developer_workflow_router, tags=["Developer Workflow - Beats All"])
+
+# Add enhancement routers
+app.include_router(enhanced_tools_router, tags=["Enhanced Tools & Integrations"])
+app.include_router(enhanced_autonomy_router, tags=["Enhanced Autonomy"])
+app.include_router(enhanced_memory_router, tags=["Enhanced Memory"])
+app.include_router(specialized_agents_router, tags=["Specialized Agents"])
+app.include_router(enhanced_monitoring_router, tags=["Enhanced Monitoring & Self-Healing"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
