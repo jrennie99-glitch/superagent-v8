@@ -119,6 +119,9 @@ from api.enhanced_endpoints import router as enhanced_router
 # Import Advanced 98-99% Production-Ready System
 from api.advanced_endpoints import router as advanced_router
 
+# Import Final 99.5% Production-Ready System
+from api.final_995_endpoint import router as final_995_router
+
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
 git_integration = GitIntegration()
@@ -228,6 +231,9 @@ app.include_router(enhanced_router, tags=["100% Production Ready"])
 
 # Include Advanced 98-99% Production-Ready System
 app.include_router(advanced_router, tags=["98-99% Production Ready"])
+
+# Include Final 99.5% Production-Ready System
+app.include_router(final_995_router, tags=["99.5% Production Ready"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
