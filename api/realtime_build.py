@@ -112,24 +112,35 @@ Requirements:
 
 Return ONLY the complete HTML code, nothing else."""
             
+            generated_code = None
+            
+            # Try Gemini first
             if gemini_key:
-                # Use Gemini
-                import google.generativeai as genai
-                genai.configure(api_key=gemini_key)
-                model = genai.GenerativeModel("gemini-pro")
-                response = model.generate_content(prompt)
-                generated_code = response.text
-            elif groq_key:
-                # Use Groq as fallback
-                from groq import Groq
-                client = Groq(api_key=groq_key)
-                response = client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                generated_code = response.choices[0].message.content
-            else:
-                raise Exception("No AI API key configured. Please set GEMINI_API_KEY or GROQ_API_KEY in your Render environment variables.")
+                try:
+                    import google.generativeai as genai
+                    genai.configure(api_key=gemini_key)
+                    model = genai.GenerativeModel("gemini-pro")
+                    response = model.generate_content(prompt)
+                    generated_code = response.text
+                except Exception as gemini_error:
+                    print(f"Gemini failed: {gemini_error}. Trying Groq...")
+                    # Fall through to try Groq
+            
+            # Try Groq if Gemini failed or wasn't available
+            if not generated_code and groq_key:
+                try:
+                    from groq import Groq
+                    client = Groq(api_key=groq_key)
+                    response = client.chat.completions.create(
+                        model="llama-3.1-70b-versatile",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    generated_code = response.choices[0].message.content
+                except Exception as groq_error:
+                    print(f"Groq failed: {groq_error}")
+            
+            if not generated_code:
+                raise Exception("No AI API key configured or all AI providers failed. Please set GEMINI_API_KEY or GROQ_API_KEY in your Render environment variables.")
             
             # Clean up code markers
             generated_code = generated_code.replace('```html', '').replace('```', '').strip()
