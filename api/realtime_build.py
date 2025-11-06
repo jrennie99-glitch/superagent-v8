@@ -108,6 +108,7 @@ async def build_app_with_progress(build_id: str, instruction: str, build_type: s
         try:
             gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
             groq_key = os.getenv("GROQ_API_KEY")
+            openai_key = os.getenv("OPENAI_API_KEY")
             
             # Create prompt based on build type
             if build_type == 'design':
@@ -165,8 +166,21 @@ Return ONLY the complete HTML code, nothing else."""
                 except Exception as groq_error:
                     print(f"Groq failed: {groq_error}")
             
+            # Try OpenAI if Gemini and Groq failed
+            if not generated_code and openai_key:
+                try:
+                    from openai import OpenAI
+                    client = OpenAI()
+                    response = client.chat.completions.create(
+                        model="gpt-4.1-mini",
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    generated_code = response.choices[0].message.content
+                except Exception as openai_error:
+                    print(f"OpenAI failed: {openai_error}")
+            
             if not generated_code:
-                raise Exception("No AI API key configured or all AI providers failed. Please set GEMINI_API_KEY or GROQ_API_KEY in your Render environment variables.")
+                raise Exception("No AI API key configured or all AI providers failed. Please set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY in your Render environment variables.")
             
             # Clean up code markers
             generated_code = generated_code.replace('```html', '').replace('```', '').strip()
