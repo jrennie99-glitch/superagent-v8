@@ -356,6 +356,7 @@ textarea:focus {
 }
 </style>
 <link rel="stylesheet" href="/static/plan_confirmation.css">
+<link rel="stylesheet" href="/static/input_toolbar.css">
 </head>
 <body>
   <!-- Header -->
@@ -384,6 +385,9 @@ textarea:focus {
       <div class="input-section">
         <h2>What would you like to build?</h2>
         <textarea id="userInput" placeholder="Example: Create a todo list app with user authentication, dark mode, and local storage"></textarea>
+        
+        <!-- Input Toolbar -->
+        <div id="inputToolbar"></div>
       </div>
 
       <div class="options">
@@ -673,6 +677,7 @@ textarea:focus {
       }, 1500);
     }
   </script>
+  <script src="/static/input_toolbar.js"></script>
   <script src="/static/plan_confirmation.js"></script>
 </body>
 </html>

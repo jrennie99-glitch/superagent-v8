@@ -143,6 +143,7 @@ from api.browser_testing import router as browser_testing_router
 from api.agent_builder import router as agent_builder_router
 from api.realtime_build import router as realtime_build_router
 from api.plan_analyzer import router as plan_analyzer_router
+from api.file_upload import router as file_upload_router
 
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
@@ -277,6 +278,7 @@ app.include_router(enhanced_monitoring_router, tags=["Enhanced Monitoring & Self
 app.include_router(browser_testing_router, tags=["Browser Testing - Matches Replit"])
 app.include_router(agent_builder_router, tags=["Agent Builder - Matches Replit"])
 app.include_router(plan_analyzer_router, tags=["Plan Analyzer - Replit-style Confirmation"])
+app.include_router(file_upload_router, tags=["File Upload - Images/Videos/Audio/Documents"])
 app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
 
 # API Key Security - REQUIRED for dangerous operations

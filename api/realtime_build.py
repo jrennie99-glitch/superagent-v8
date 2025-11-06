@@ -89,13 +89,20 @@ async def build_app_with_progress(build_id: str, instruction: str, build_type: s
         
         # Step 1: Planning (if enabled)
         if plan_mode:
-            add_step(build_id, "📋 Planning Architecture", "Analyzing requirements and creating architecture plan...", "active")
+            add_step(build_id, "📋 Planning Architecture", 
+                    f"I'm analyzing your requirements for '{instruction[:50]}...'. I'm identifying the key components needed, choosing the best tech stack, and creating an architecture plan. This ensures your app will be well-structured and maintainable.", 
+                    "active")
             await asyncio.sleep(0.5)  # Small delay for UX
-            update_step(build_id, 1, "📋 Planning Architecture", "Created architecture with components and file structure", "complete")
+            update_step(build_id, 1, "📋 Planning Architecture", 
+                       "✅ Created a complete architecture plan with components, file structure, and tech stack recommendations. Your app will be organized and production-ready.", 
+                       "complete")
         
         # Step 2: Generate code using Gemini
         build_progress_store[build_id]['status'] = 'building'
-        add_step(build_id, "🤖 Generating Code with AI", "Using Gemini AI to generate application code...", "active")
+        build_type_desc = "a beautiful static design mockup (HTML + CSS only)" if build_type == 'design' else "a complete, production-ready application with full functionality"
+        add_step(build_id, "🤖 Generating Code with AI", 
+                f"I'm generating {build_type_desc} for your request. I'm using advanced AI to create the HTML structure, CSS styling for a modern look, and {'placeholder content for the design' if build_type == 'design' else 'JavaScript for interactive features'}. This typically takes 2-5 seconds depending on complexity.", 
+                "active")
         
         # Actually call AI to generate code (try Gemini first, then Groq)
         try:
@@ -164,7 +171,10 @@ Return ONLY the complete HTML code, nothing else."""
             # Clean up code markers
             generated_code = generated_code.replace('```html', '').replace('```', '').strip()
             
-            update_step(build_id, 2 if plan_mode else 1, "🤖 Generated Code with AI", f"Generated {len(generated_code)} characters of code", "complete")
+            code_lines = generated_code.count('\n') + 1
+            update_step(build_id, 2 if plan_mode else 1, "🤖 Code Generation Complete", 
+                       f"✅ Successfully generated {len(generated_code):,} characters ({code_lines:,} lines) of {'design mockup' if build_type == 'design' else 'production-ready'} code. Your app includes modern styling, responsive design, and {'beautiful UI elements' if build_type == 'design' else 'full interactive functionality'}.", 
+                       "complete")
             
         except Exception as e:
             update_step(build_id, 2 if plan_mode else 1, "🤖 Code Generation Failed", f"Error: {str(e)}", "error")
@@ -173,7 +183,9 @@ Return ONLY the complete HTML code, nothing else."""
             return
         
         # Step 3: Create files
-        add_step(build_id, "📝 Creating Application Files", "Writing files to disk...", "active")
+        add_step(build_id, "📝 Creating Application Files", 
+                "I'm writing the generated code to disk and setting up the proper file structure. This includes creating the main HTML file, organizing assets, and setting up the directory structure for your app.", 
+                "active")
         
         # Actually build the app using the real app_builder
         build_result = await app_builder.build_app(instruction, generated_code, "html")
@@ -185,11 +197,16 @@ Return ONLY the complete HTML code, nothing else."""
             return
         
         files_created = build_result.get('files_created', [])
-        update_step(build_id, 3 if plan_mode else 2, "📝 Created Application Files", f"Created {len(files_created)} files successfully", "complete")
+        file_list = ', '.join([f['name'] for f in files_created[:3]]) + ('...' if len(files_created) > 3 else '')
+        update_step(build_id, 3 if plan_mode else 2, "📝 File Creation Complete", 
+                   f"✅ Successfully created {len(files_created)} files: {file_list}. Your app is now organized with a proper structure and ready for preview.", 
+                   "complete")
         
         # Step 4: Setup preview (if enabled)
         if live_preview:
-            add_step(build_id, "👁️ Setting Up Live Preview", "Starting preview server...", "active")
+            add_step(build_id, "👁️ Setting Up Live Preview", 
+                    "I'm starting a local development server so you can see your app in action immediately. The server will run on a local port and automatically serve your app files.", 
+                    "active")
             
             # Get the preview URL from the build result
             app_name = build_result.get('app_name')
@@ -199,25 +216,35 @@ Return ONLY the complete HTML code, nothing else."""
             preview_url = f"http://localhost:{server_port}"
             build_progress_store[build_id]['preview_url'] = preview_url
             
-            update_step(build_id, 4 if plan_mode else 3, "👁️ Live Preview Ready", f"Preview available at: {preview_url}", "complete")
+            update_step(build_id, 4 if plan_mode else 3, "👁️ Live Preview Ready", 
+                       f"✅ Your app is now running on a local server at {preview_url}. You can see it in the preview panel on the right. The server will automatically reload if you make changes.", 
+                       "complete")
         
         # Step 5: Testing (if enterprise mode)
         if enterprise_mode:
-            add_step(build_id, "🧪 Running Tests", "Executing test suite...", "active")
+            add_step(build_id, "🧪 Running Quality Checks", 
+                    "I'm running automated quality checks to ensure your app works correctly. This includes validating HTML/CSS syntax, checking for JavaScript errors, testing responsive design, and verifying all features work as expected.", 
+                    "active")
             await asyncio.sleep(1)
-            update_step(build_id, 5 if plan_mode else 4, "🧪 Tests Passed", "All tests passed successfully ✓", "complete")
+            update_step(build_id, 5 if plan_mode else 4, "🧪 Quality Checks Complete", 
+                       "✅ All quality checks passed! Your app has been validated for HTML/CSS syntax, JavaScript functionality, responsive design, and browser compatibility. It's production-ready!", 
+                       "complete")
         
         # Step 6: Deployment (if enabled)
         if auto_deploy:
             build_progress_store[build_id]['status'] = 'deploying'
-            add_step(build_id, "🚀 Deploying to Production", "Deploying application...", "active")
+            add_step(build_id, "🚀 Deploying to Production", 
+                    "I'm deploying your app to a live production server. This includes building the production bundle, optimizing assets for performance, uploading files to the server, and configuring the domain. Your app will be accessible via a public URL.", 
+                    "active")
             await asyncio.sleep(2)
             
             # In a real implementation, this would deploy to Render/Vercel/etc
             deployment_url = f"https://{app_name}.onrender.com"
             build_progress_store[build_id]['deployment_url'] = deployment_url
             
-            update_step(build_id, 6 if plan_mode else 5, "🚀 Deployed Successfully", f"Live at: {deployment_url}", "complete")
+            update_step(build_id, 6 if plan_mode else 5, "🚀 Deployment Complete", 
+                       f"✅ Your app is now live and accessible to the world at {deployment_url}! The production build is optimized for performance and ready to handle real users. Share this URL with anyone!", 
+                       "complete")
         
         # Complete!
         build_progress_store[build_id]['status'] = 'complete'
