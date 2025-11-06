@@ -200,8 +200,8 @@ Return ONLY the complete HTML code, nothing else."""
                     print(f"❌ OpenAI import failed: {ie}. Library not installed.")
                 except Exception as openai_error:
                     print(f"❌ OpenAI failed: {openai_error}")
-            elif not generated_code:
-                          # If all AI providers failed, use template generator as fallback
+            
+            # If all AI providers failed, use template generator as fallback
             if not generated_code:
                 print("⚠️ All AI providers failed, using template generator as fallback")
                 from template_generator import generate_app_from_template
