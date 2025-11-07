@@ -677,17 +677,7 @@ def project_manager():
             status_code=500
         )
 
-@app.get("/health")
-def health():
-    groq_configured = bool(os.getenv("GROQ_API_KEY"))
-    api_key_configured = bool(os.getenv("SUPERAGENT_API_KEY"))
-    
-    return {
-        "status": "healthy",
-        "version": "2.0.0",
-        "groq_configured": groq_configured,
-        "api_key_configured": api_key_configured
-    }
+# Duplicate health endpoint removed - using the one at line 528
 
 # Memory & History Endpoints
 @app.get("/api/v1/memory/conversations")

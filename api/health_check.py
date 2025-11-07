@@ -32,8 +32,8 @@ class HealthCheck:
         api_keys = self.check_api_keys()
         
         # At least one AI provider is required
-        if not any([api_keys["gemini"], api_keys["anthropic"]]):
-            missing.append("At least one AI API key required (GEMINI_API_KEY or ANTHROPIC_API_KEY)")
+        if not any([api_keys["gemini"], api_keys["anthropic"], api_keys["openai"], api_keys["groq"]]):
+            missing.append("At least one AI API key required (GEMINI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, or GROQ_API_KEY)")
         
         return missing
     
@@ -57,6 +57,24 @@ class HealthCheck:
                 "env_var": "ANTHROPIC_API_KEY",
                 "url": "https://console.anthropic.com/",
                 "description": "Alternative AI provider. Requires paid account.",
+                "priority": "MEDIUM"
+            }
+        
+        if not api_keys["openai"]:
+            instructions["openai"] = {
+                "name": "OpenAI API Key",
+                "env_var": "OPENAI_API_KEY",
+                "url": "https://platform.openai.com/api-keys",
+                "description": "Alternative AI provider. Works with gpt-4.1-mini model.",
+                "priority": "MEDIUM"
+            }
+        
+        if not api_keys["groq"]:
+            instructions["groq"] = {
+                "name": "Groq API Key",
+                "env_var": "GROQ_API_KEY",
+                "url": "https://console.groq.com/keys",
+                "description": "Fast AI provider with free tier. Uses Llama models.",
                 "priority": "MEDIUM"
             }
         

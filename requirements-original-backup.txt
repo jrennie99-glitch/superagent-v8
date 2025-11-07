@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+groq
+openai
+pydantic
+google-generativeai
+asyncpg
+bleach
+psycopg2-binary
+bcrypt
+cryptography
+python-multipart
+requests
+redis==7.0.1
+docker==7.1.0
+slowapi==0.1.9
+playwright==1.55.0
