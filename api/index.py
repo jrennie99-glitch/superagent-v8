@@ -144,6 +144,11 @@ from api.agent_builder import router as agent_builder_router
 from api.realtime_build import router as realtime_build_router
 from api.plan_analyzer import router as plan_analyzer_router
 from api.file_upload import router as file_upload_router
+from api.upload_endpoints import upload_router
+from api.autonomous_build_endpoints import autonomous_build_router
+from api.live_dashboard import live_dashboard_router
+from api.grok_endpoints import grok_copilot_router
+from api.deploy_share_endpoints import deploy_share_router
 
 # Initialize Tier 1 feature modules
 hallucination_fixer = HallucinationFixer()
@@ -287,6 +292,11 @@ app.include_router(agent_builder_router, tags=["Agent Builder - Matches Replit"]
 app.include_router(plan_analyzer_router, tags=["Plan Analyzer - Replit-style Confirmation"])
 app.include_router(file_upload_router, tags=["File Upload - Images/Videos/Audio/Documents"])
 app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
+app.include_router(upload_router, tags=["V2.0 Multi-Modal Upload - SPECTACULAR"])
+app.include_router(autonomous_build_router, tags=["V2.0 Autonomous App Builder - SPECTACULAR"])
+app.include_router(live_dashboard_router, tags=["V2.0 Live Dashboard - Replit x Cursor x Bolt"])
+app.include_router(grok_copilot_router, tags=["V2.0 Grok Co-Pilot - Real-Time AI Assistance"])
+app.include_router(deploy_share_router, tags=["V2.0 Deploy & Share - One-Click Everything"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader

@@ -59,3 +59,4 @@ apscheduler
 # Optional: Messaging Integrations
 # slack-bolt
 # python-telegram-bot
+qrcode[pil]
