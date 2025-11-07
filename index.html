@@ -354,6 +354,122 @@ textarea:focus {
 .right-panel.hidden {
   display: none;
 }
+
+/* Build Confirmation Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #30363d;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #c9d1d9;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-body > div {
+  margin-bottom: 1.5rem;
+}
+
+.modal-body > div:last-child {
+  margin-bottom: 0;
+}
+
+.confirm-instruction p {
+  color: #8b5cf6;
+  font-size: 1.1rem;
+}
+
+.confirm-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.confirm-features li {
+  padding: 0.5rem 0;
+  color: #58a6ff;
+}
+
+.confirm-estimate {
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #30363d;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn.cancel {
+  background: #30363d;
+  color: #c9d1d9;
+}
+
+.modal-btn.cancel:hover {
+  background: #484f58;
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+}
+
+.modal-btn.confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
 </style>
 <link rel="stylesheet" href="/static/plan_confirmation.css">
 <link rel="stylesheet" href="/static/input_toolbar.css">
@@ -475,6 +591,32 @@ textarea:focus {
     </div>
   </div>
 
+  <!-- Build Confirmation Modal -->
+  <div id="buildConfirmModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🚀 Build Confirmation</h2>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-instruction">
+          <strong>You're about to build:</strong>
+          <p id="confirmInstruction" style="font-style: italic; margin-top: 0.5rem;"></p>
+        </div>
+        <div class="confirm-features">
+          <strong>This will include:</strong>
+          <ul id="confirmFeaturesList" style="margin-top: 0.5rem; padding-left: 1.5rem;"></ul>
+        </div>
+        <div class="confirm-estimate">
+          <strong>Estimated time:</strong> <span id="confirmEstimate">2-3 minutes</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel" onclick="cancelBuild()">Cancel</button>
+        <button class="modal-btn confirm" onclick="confirmBuild()">✨ Start Building →</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Show tutorial on first visit
     if (!localStorage.getItem('tutorial_seen')) {
@@ -495,6 +637,8 @@ textarea:focus {
     let currentBuildId = null;
     let progressInterval = null;
 
+    let eventSource = null; // Store EventSource for cleanup
+
     async function startBuild() {
       const userInput = document.getElementById('userInput').value.trim();
       if (!userInput) {
@@ -507,10 +651,14 @@ textarea:focus {
       const livePreview = document.getElementById('livePreview').checked;
       const autoDeploy = document.getElementById('autoDeploy').checked;
 
+      // Show confirmation dialog first
+      const confirmed = await showBuildConfirmation(userInput, planMode, enterpriseMode, autoDeploy);
+      if (!confirmed) return;
+
       // Disable build button
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
-      buildBtn.innerHTML = '<span class="spinner"></span> Building...';
+      buildBtn.innerHTML = '<span class="spinner"></span> Starting build...';
 
       // Show preview panel if enabled
       if (livePreview) {
@@ -522,7 +670,7 @@ textarea:focus {
       progressContent.innerHTML = '';
 
       // Update status
-      document.getElementById('buildStatus').innerHTML = '<span class="spinner"></span> Building...';
+      document.getElementById('buildStatus').innerHTML = '<span class="spinner"></span> Initializing...';
 
       try {
         // Start the build
@@ -543,14 +691,111 @@ textarea:focus {
         const data = await response.json();
         currentBuildId = data.build_id;
 
-        // Start polling for progress
-        pollProgress();
+        // Update button to show we're building
+        buildBtn.innerHTML = '<span class="spinner"></span> Building...';
+        document.getElementById('buildStatus').innerHTML = '<span class="spinner"></span> Building your app...';
+
+        // Start streaming progress (NEW!)
+        startStreamingProgress(currentBuildId);
 
       } catch (error) {
         console.error('Build error:', error);
         addProgressStep('error', 'Build Failed', error.message, '0s');
         buildBtn.disabled = false;
         buildBtn.innerHTML = '✨ Build My App';
+      }
+    }
+
+    function startStreamingProgress(buildId) {
+      // Close any existing stream
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      // Connect to SSE endpoint for real-time updates
+      eventSource = new EventSource(`/api/v1/build-stream/${buildId}`);
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'step') {
+          // New build step - show immediately!
+          addProgressStep(data.status, data.title, data.detail, '0s');
+        } else if (data.type === 'status') {
+          // Status update
+          if (data.preview_url) {
+            document.getElementById('previewUrl').textContent = data.preview_url;
+            document.getElementById('previewIframe').src = data.preview_url;
+          }
+        } else if (data.type === 'complete') {
+          // Build complete!
+          eventSource.close();
+          const buildBtn = document.getElementById('buildBtn');
+          
+          if (data.status === 'complete') {
+            document.getElementById('buildStatus').innerHTML = '✅ Build Complete!';
+            if (data.deployment_url) {
+              addProgressStep('complete', '🎉 Deployment Complete!', 
+                `Your app is live at: ${data.deployment_url}`, `${data.total_time}s`);
+            }
+          } else if (data.status === 'error') {
+            document.getElementById('buildStatus').innerHTML = '❌ Build Failed';
+            addProgressStep('error', 'Build Failed', data.error || 'Unknown error', '0s');
+          }
+          
+          buildBtn.disabled = false;
+          buildBtn.innerHTML = '✨ Build My App';
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('SSE error:', error);
+        eventSource.close();
+        // Fallback to polling if SSE fails
+        console.log('SSE failed, falling back to polling...');
+        pollProgress();
+      };
+    }
+
+    let buildConfirmResolve = null;
+
+    async function showBuildConfirmation(instruction, planMode, enterpriseMode, autoDeploy) {
+      return new Promise((resolve) => {
+        buildConfirmResolve = resolve;
+        
+        // Populate modal content
+        document.getElementById('confirmInstruction').textContent = `"${instruction}"`;
+        
+        const features = [];
+        if (planMode) features.push('📋 Strategic planning & architecture design');
+        features.push('🤖 AI-powered code generation');
+        features.push('📝 Complete file structure creation');
+        features.push('🎨 Modern, responsive UI design');
+        features.push('⚡ Full interactive functionality');
+        features.push('💾 Data persistence');
+        if (autoDeploy) features.push('🚀 Automatic deployment');
+        
+        const featuresList = document.getElementById('confirmFeaturesList');
+        featuresList.innerHTML = features.map(f => `<li>${f}</li>`).join('');
+        
+        // Show modal
+        document.getElementById('buildConfirmModal').style.display = 'flex';
+      });
+    }
+
+    function confirmBuild() {
+      document.getElementById('buildConfirmModal').style.display = 'none';
+      if (buildConfirmResolve) {
+        buildConfirmResolve(true);
+        buildConfirmResolve = null;
+      }
+    }
+
+    function cancelBuild() {
+      document.getElementById('buildConfirmModal').style.display = 'none';
+      if (buildConfirmResolve) {
+        buildConfirmResolve(false);
+        buildConfirmResolve = null;
       }
     }
 
