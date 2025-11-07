@@ -9,6 +9,12 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import json
 import re
+import traceback
+import logging
+from api.error_handler import error_handler, ErrorHandler
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class AppBuilder:
     def __init__(self):
@@ -105,6 +111,8 @@ class AppBuilder:
         4. Returns build status
         """
         try:
+            logger.info(f"Starting build_app: instruction={instruction[:100]}, language={language}")
+            logger.debug(f"Generated code length: {len(generated_code)} characters")
             # CRITICAL FIX: If generated code is HTML, force static_web type
             code_stripped = generated_code.strip()
             if code_stripped.startswith('<!DOCTYPE') or code_stripped.startswith('<html'):
@@ -159,10 +167,18 @@ class AppBuilder:
             }
             
         except Exception as e:
+            logger.error(f"Build failed with exception: {type(e).__name__}: {str(e)}")
+            logger.error(f"Stack trace: {traceback.format_exc()}")
+            error_details = ErrorHandler.log_error(e, "build_app", {
+                "instruction": instruction[:200],
+                "language": language,
+                "code_length": len(generated_code)
+            })
             return {
                 "success": False,
                 "error": str(e),
-                "message": f"❌ Build failed: {str(e)}"
+                "error_details": error_details,
+                "message": f"❌ Build failed: {error_details.get('user_message', str(e))}"
             }
     
     def _detect_app_type(self, instruction: str, language: str) -> str:
@@ -210,13 +226,15 @@ class AppBuilder:
     
     async def _build_static_website(self, app_dir: Path, code: str, instruction: str) -> Dict:
         """Build a static HTML website that can be previewed immediately"""
-        files_created = []
-        
-        # Extract HTML from generated code or create complete HTML
-        html_content = code
-        if not html_content.strip().startswith('<!DOCTYPE') and not html_content.strip().startswith('<html'):
-            # Wrap code in proper HTML structure
-            html_content = f"""<!DOCTYPE html>
+        try:
+            logger.info(f"Building static website in {app_dir}")
+            files_created = []
+            
+            # Extract HTML from generated code or create complete HTML
+            html_content = code
+            if not html_content.strip().startswith('<!DOCTYPE') and not html_content.strip().startswith('<html'):
+                # Wrap code in proper HTML structure
+                html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -254,18 +272,23 @@ class AppBuilder:
     </div>
 </body>
 </html>"""
+            
+            # Create index.html
+            index_file = app_dir / "index.html"
+            index_file.write_text(html_content)
+            files_created.append("index.html")
         
-        # Create index.html
-        index_file = app_dir / "index.html"
-        index_file.write_text(html_content)
-        files_created.append("index.html")
-        
-        return {
-            "files": files_created,
-            "packages": [],
-            "workflow": False,
-            "run_command": f"Open index.html in browser"
-        }
+            logger.info(f"Static website build complete: {len(files_created)} files created")
+            return {
+                "files": files_created,
+                "packages": [],
+                "workflow": False,
+                "run_command": f"Open index.html in browser"
+            }
+        except Exception as e:
+            logger.error(f"Error building static website: {e}")
+            logger.error(f"Stack trace: {traceback.format_exc()}")
+            raise
     
     async def _build_flask_app(self, app_dir: Path, code: str, instruction: str) -> Dict:
         """Build a complete Flask web application with real package installation"""
