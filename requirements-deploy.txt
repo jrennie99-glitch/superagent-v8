@@ -53,3 +53,6 @@ docker==7.1.0
 # Uncomment if you need Playwright browser testing:
 # playwright==1.55.0
 
+# QR Code generation
+qrcode[pil]
+

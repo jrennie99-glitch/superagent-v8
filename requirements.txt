@@ -59,4 +59,7 @@ apscheduler
 # Optional: Messaging Integrations
 # slack-bolt
 # python-telegram-bot
+
+# QR Code generation (required for deploy_share feature)
 qrcode[pil]
+pillow
