@@ -63,3 +63,5 @@ apscheduler
 # QR Code generation (required for deploy_share feature)
 qrcode[pil]
 pillow
+playwright
+pytest-playwright
