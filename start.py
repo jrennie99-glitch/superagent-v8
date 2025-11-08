@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Startup script for Railway deployment
+Startup script for Replit deployment
 Reads PORT from environment and starts uvicorn
 """
 import os
 import uvicorn
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 5000))
     print(f"🚀 Starting SuperAgent on port {port}")
     
     uvicorn.run(
