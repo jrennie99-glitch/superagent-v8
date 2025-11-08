@@ -309,19 +309,35 @@ class EnterpriseBuildSystem:
                 if wants_advanced:
                     # Step 1: Generate feature specification first
                     print("📋 Step 1: Creating comprehensive feature specification...")
-                    spec_prompt = f"""You are planning an ADVANCED, ENTERPRISE-LEVEL application.
+                    spec_prompt = f"""You are designing an ADVANCED, ENTERPRISE-LEVEL, PRODUCTION-READY application for a super-smart no-code platform.
 
 USER REQUEST: "{instruction}"
 
-Create a detailed technical specification listing ALL required features for this sophisticated app.
+CRITICAL REQUIREMENTS:
+1. ALL advertised features MUST be fully functional (no placeholders, no "coming soon")
+2. Code MUST be sophisticated and complete (not basic or minimal)
+3. Every feature MUST work correctly when user interacts with it
+4. Use proper algorithms and data structures (e.g., expression parsers, not just sequential calculators)
 
-For a CALCULATOR, include:
-- Scientific functions (sin, cos, tan, asin, acos, atan, log, ln, log10, sqrt, cbrt, exp)
-- Advanced operations (powers x^y, factorial n!, modulo %, abs, round, floor, ceil)
-- Expression evaluation with order of operations: "3×(5+2)÷7"
-- Memory functions: M+ (add to memory), M- (subtract), MR (recall), MC (clear)
-- Calculation history with scrollable list, copy results, clear history
-- Keyboard shortcuts: Enter=calculate, C=clear, Escape=clear, 0-9=digits, +−×÷=operators
+Create a comprehensive technical specification with mandatory features:
+
+For CALCULATORS:
+✓ COMPLETE expression parser using Shunting Yard or AST (handles: 2+3×4 = 14, not 20)
+✓ Scientific functions (sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, log, ln, log10, exp, sqrt, cbrt)
+✓ Advanced operations (x^y power, n! factorial, abs, floor, ceil, round, mod, GCD, LCM)
+✓ Multiple modes (Basic, Scientific, Unit Converter - ALL fully working)
+✓ Memory functions (M+, M-, MR, MC, MS) with visible indicator
+✓ Persistent calculation history (localStorage) with search, export to CSV, clear
+✓ Keyboard shortcuts (0-9, +−×÷, Enter, Escape, Backspace, arrow keys)
+✓ Constants (π, e, φ golden ratio) and variable storage
+✓ Angle units (degrees/radians) with conversion
+✓ Number formatting (scientific notation, decimal places)
+✓ Dark/Light theme toggle with smooth transitions
+✓ Responsive design (mobile, tablet, desktop)
+✓ Error handling (division by zero, invalid expressions, overflow)
+✓ Unit converter (length, temperature, weight, currency, area, volume, time, speed)
+✓ Graph plotting for functions (sin(x), x^2, etc.) with zoom and pan
+✓ Settings panel (decimal places, angle units, themes, sound)
 - Multiple modes with tabs: Basic, Scientific, Programmer (hex/bin/oct), Statistics
 - Angle units toggle: Degrees ↔ Radians for trig functions
 - Constants panel: π, e, φ (golden ratio), c (speed of light)
@@ -379,21 +395,42 @@ Create comprehensive CSS with:
 Generate ONLY the CSS code:"""
                         
                         elif file_plan["type"] == "js":
-                            prompt = f"""Generate the JavaScript logic for an ADVANCED {instruction}.
+                            prompt = f"""Generate PRODUCTION-READY JavaScript for an ADVANCED {instruction}.
 
-FEATURE SPECIFICATION:
+MANDATORY FEATURE SPECIFICATION - ALL MUST BE FULLY FUNCTIONAL:
 {feature_spec}
 
-Create complete JavaScript with:
-- ALL features from the specification implemented
-- Scientific calculations using Math library
-- Expression parsing and evaluation
-- Event listeners for all buttons and keyboard
-- localStorage for data persistence
-- Error handling and input validation
-- Clean, modular, well-commented code
+CRITICAL IMPLEMENTATION REQUIREMENTS:
 
-Generate ONLY the JavaScript code:"""
+1. EXPRESSION PARSER (MANDATORY for calculators):
+   - Implement Shunting Yard algorithm or expression AST
+   - Correctly handle operator precedence (2+3×4 = 14)
+   - Support parentheses for grouping
+   - Handle unary operators (negation, positive)
+
+2. ALL FEATURES MUST WORK:
+   - Every button must have a working click handler
+   - Every advertised function must be implemented
+   - No placeholder text or "coming soon" features
+   - All modes must be fully functional (no empty tabs)
+
+3. CODE QUALITY:
+   - Use proper state management
+   - Implement clean event handling
+   - Add comprehensive error handling
+   - Include input validation
+   - Use localStorage for persistence
+   - Add keyboard shortcut support
+   - Modular, well-organized code structure
+
+4. USER EXPERIENCE:
+   - Smooth animations and transitions
+   - Clear visual feedback for all actions
+   - Responsive design for all screen sizes
+   - Accessibility features (ARIA labels, keyboard navigation)
+   - Loading states and error messages
+
+Generate ONLY the complete, working JavaScript code with ALL features functional:"""
                         
                         else:
                             prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
@@ -990,6 +1027,73 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
                 "success": False,
                 "error": str(e),
                 "issues": []
+            }
+    
+    async def _verify_feature_coverage(self, files: List[Dict], required_features: List[str]) -> Dict:
+        """NEW: Verify that all required features are actually implemented in the code"""
+        try:
+            # Get all code content
+            all_code = ""
+            js_code = ""
+            for file in files:
+                all_code += file["code"] + "\n"
+                if file["type"] == "js":
+                    js_code = file["code"]
+            
+            missing_features = []
+            implemented_features = []
+            
+            # Check for feature implementation patterns
+            feature_patterns = {
+                "expression parser": ["shunting", "precedence", "operator stack", "parse"],
+                "scientific functions": ["Math.sin", "Math.cos", "Math.tan", "Math.log"],
+                "memory functions": ["memory", "M+", "M-", "MR", "MC"],
+                "history": ["history", "localStorage", "setItem", "getItem"],
+                "keyboard shortcuts": ["keydown", "keyboard", "addEventListener"],
+                "dark mode": ["theme", "dark", "light", "toggle"],
+                "unit converter": ["convert", "units", "temperature", "length"],
+                "graph": ["canvas", "plot", "graph", "chart"],
+                "error handling": ["try", "catch", "error", "validate"]
+            }
+            
+            for feature, patterns in feature_patterns.items():
+                found = any(pattern.lower() in all_code.lower() for pattern in patterns)
+                if found:
+                    implemented_features.append(feature)
+                else:
+                    # Check if this feature was mentioned in requirements
+                    if any(keyword in " ".join(required_features).lower() for keyword in [feature.split()[0]]):
+                        missing_features.append(feature)
+            
+            # Specific checks for critical features
+            critical_issues = []
+            
+            # Check for proper expression evaluation (not just sequential calculator)
+            if "calculator" in instruction.lower():
+                has_parser = any(keyword in js_code.lower() for keyword in ["shunting", "precedence", "parse expression", "ast", "token"])
+                if not has_parser:
+                    critical_issues.append("Missing proper expression parser - will calculate 2+3×4 as 20 instead of 14")
+            
+            # Check for empty event handlers or placeholder functions
+            if "function()" in js_code or "// TODO" in js_code or "coming soon" in js_code.lower():
+                critical_issues.append("Found placeholder code or incomplete functions")
+            
+            coverage_percent = (len(implemented_features) / max(len(feature_patterns), 1)) * 100
+            
+            return {
+                "stage": "feature_coverage",
+                "success": len(critical_issues) == 0,
+                "coverage_percent": coverage_percent,
+                "implemented_features": implemented_features,
+                "missing_features": missing_features,
+                "critical_issues": critical_issues,
+                "recommendation": "Pass" if coverage_percent >= 70 and len(critical_issues) == 0 else "Needs improvement"
+            }
+        except Exception as e:
+            return {
+                "stage": "feature_coverage",
+                "success": False,
+                "error": str(e)
             }
     
     async def _stage_code_verification(self, files: List[Dict], instruction: str) -> Dict:
