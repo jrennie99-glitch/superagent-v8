@@ -1,150 +1,213 @@
-<!-- styles.html -->
-<style>
-  /* Global Styles */
-  :root {
-    --primary-color: #3498db;
-    --secondary-color: #f1c40f;
-    --background-color: #f9f9f9;
-    --text-color: #333;
-    --glass-morphism-color: rgba(255, 255, 255, 0.2);
-    --shadow-color: rgba(0, 0, 0, 0.2);
-  }
+/* Global Styles */
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --calculator-bg: #ffffff;
+  --text-color: #1f2937;
+  --button-bg: #f3f4f6;
+  --button-hover: #e5e7eb;
+  --operator-bg: #6366f1;
+  --operator-hover: #4f46e5;
+  --equals-bg: #8b5cf6;
+  --equals-hover: #7c3aed;
+}
 
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    font-size: 16px;
-  }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--background);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
 
-  /* Calculator Container */
-  .calculator {
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: var(--glass-morphism-color);
-    border-radius: 10px;
-    box-shadow: 0 0 10px var(--shadow-color);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
+header {
+  margin-bottom: 20px;
+}
 
-  /* Display Screen */
-  .display {
-    grid-column: 1 / 5;
-    background-color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: right;
-  }
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
 
-  /* Buttons */
-  .button {
-    padding: 10px;
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+main {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.calculator {
+  background: var(--calculator-bg);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.display {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.display p {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text-color);
+  word-break: break-all;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.key {
+  background: var(--button-bg);
+  border: none;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.key:hover {
+  background: var(--button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.key:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#clear,
+#backspace {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+#clear:hover,
+#backspace:hover {
+  background: #fde68a;
+}
+
+#divide,
+#multiply,
+#subtract,
+#add {
+  background: var(--operator-bg);
+  color: white;
+}
+
+#divide:hover,
+#multiply:hover,
+#subtract:hover,
+#add:hover {
+  background: var(--operator-hover);
+}
+
+#equals {
+  background: var(--equals-bg);
+  color: white;
+  grid-column: span 2;
+}
+
+#equals:hover {
+  background: var(--equals-hover);
+}
+
+#zero {
+  grid-column: span 2;
+}
+
+.history {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.history h2 {
+  color: var(--text-color);
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+#history-list {
+  list-style: none;
+}
+
+#history-list li {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #f9fafb;
+  border-radius: 8px;
+  color: var(--text-color);
+  font-family: 'Courier New', monospace;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  main {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .calculator,
+  .history {
+    max-width: 100%;
+  }
+  
+  .display p {
+    font-size: 28px;
+  }
+  
+  .key {
+    padding: 16px;
     font-size: 18px;
   }
-
-  .button:hover {
-    background-color: var(--secondary-color);
-  }
-
-  .button:active {
-    transform: scale(0.9);
-  }
-
-  /* Operator Buttons */
-  .operator {
-    background-color: var(--secondary-color);
-  }
-
-  /* Number Buttons */
-  .number {
-    background-color: var(--primary-color);
-  }
-
-  /* Equal Button */
-  .equal {
-    grid-column: 1 / 5;
-    background-color: var(--primary-color);
-  }
-
-  /* Keyboard Shortcuts */
-  .keyboard-shortcut {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
-  }
-
-  /* Tooltip */
-  .tooltip {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-    color: #666;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 5px;
-    border-radius: 5px;
-    visibility: hidden;
-  }
-
-  .tooltip::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent transparent #fff;
-  }
-
-  /* Error Message */
-  .error-message {
-    color: #f00;
-    font-size: 14px;
-    margin-top: 10px;
-  }
-
-  /* Loading State */
-  .loading-state {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #666;
-  }
-
-  /* Responsive Design */
-  @media only screen and (max-width: 768px) {
-    .calculator {
-      max-width: 300px;
-    }
-  }
-
-  @media only screen and (max-width: 480px) {
-    .calculator {
-      max-width: 250px;
-    }
-  }
-</style>
+}
