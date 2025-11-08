@@ -244,8 +244,31 @@ class EnterpriseBuildSystem:
                     # Small delay to avoid rate limits
                     await asyncio.sleep(0.5)
             else:
-                # Single file (backwards compatible with existing system)
-                prompt = f"Generate complete, production-ready {language} code for: {instruction}\n\nProvide clean, well-documented code."
+                # Single file with intelligent understanding
+                prompt = f"""You are an expert developer building apps for a no-code platform. Users describe what they want in plain language - you must understand their intent and build exactly what they expect.
+
+USER REQUEST: "{instruction}"
+LANGUAGE: {language}
+
+CRITICAL INSTRUCTIONS FOR NO-CODE PLATFORM:
+1. **Understand Intent**: If they say "calculator", they want a VISUAL, INTERACTIVE calculator with buttons - not a command-line script
+2. **Web-First**: For HTML, create a beautiful, complete, self-contained web page with inline CSS and JavaScript
+3. **Production Ready**: Make it look professional, modern, and fully functional
+4. **User Expectations**: Think about what a non-technical user would expect when they ask for this
+5. **Complete Solution**: Everything should work immediately when opened - no setup, no installation, no technical knowledge required
+
+For HTML projects:
+- Create ONE complete HTML file with embedded CSS and JavaScript
+- Use modern, beautiful design with colors, animations, and great UX
+- Make it mobile-responsive and visually appealing
+- Include all functionality - no placeholders or "TODO" comments
+- Test-ready: should work immediately when opened in browser
+
+For Python projects (only if explicitly requested or clearly a backend/API/script):
+- Create clean, documented code with proper error handling
+- Include all necessary imports and dependencies
+
+GENERATE ONLY THE CODE. Make it amazing:"""
                 response = model.generate_content(prompt)
                 
                 generated_files.append({
@@ -575,22 +598,36 @@ class EnterpriseBuildSystem:
         return files
     
     def _create_file_prompt(self, instruction: str, language: str, file_plan: Dict, architecture: Dict) -> str:
-        """Create AI prompt for specific file"""
-        return f"""Generate production-ready {language} code for the {file_plan['type']} file in this project:
+        """Create AI prompt for specific file with intelligent understanding"""
+        return f"""You are an expert developer building apps for a no-code platform. Users describe what they want in plain language - understand their intent and build exactly what they expect.
 
-PROJECT: {instruction}
-FILE TYPE: {file_plan['type']}
-FILE NAME: {file_plan['name']}
-ARCHITECTURE: {architecture['type']}
+USER REQUEST: "{instruction}"
+PROJECT TYPE: {architecture['type']}
+LANGUAGE: {language}
 
-Generate ONLY the code for THIS specific file. Make it production-ready with:
-- Proper error handling
-- Type hints/annotations
-- Comprehensive comments
+THIS FILE:
+- Type: {file_plan['type']}
+- Name: {file_plan['name']}
+
+CRITICAL INSTRUCTIONS FOR NO-CODE PLATFORM:
+1. **Understand Intent**: If user asks for a "calculator", they want VISUAL, INTERACTIVE features - not command-line
+2. **User Expectations**: Think about what a non-technical person expects from their request
+3. **Complete & Working**: No placeholders, no TODOs, no "implement this later" - make it fully functional
+4. **Production Quality**: Professional, polished, ready to use immediately
+
+For HTML/Web files:
+- Beautiful, modern design with great UX
+- Inline CSS for styling (colorful, professional, mobile-responsive)
+- Full JavaScript functionality embedded
+- Works immediately when opened - no setup required
+
+For Python/Backend files:
+- Clean, well-documented code
+- Proper error handling and validation
 - Security best practices
-- Clean, maintainable code
+- Type hints and comprehensive comments
 
-Code only, no explanations:"""
+Generate ONLY the code for this file. Make it amazing:"""
     
     def _clean_code(self, code: str) -> str:
         """Remove markdown code fences"""
