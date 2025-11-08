@@ -1400,6 +1400,14 @@ body {
                   
                   addBuildLog(`✅ Build complete! Created ${data.file_count || 0} files.`, '✅');
                   
+                  // Update main preview iframe if previewable
+                  if (data.is_previewable && data.preview_url) {
+                    const mainIframe = document.getElementById('previewIframe');
+                    if (mainIframe) {
+                      mainIframe.src = data.preview_url;
+                    }
+                  }
+                  
                   // Show Build Results Panel with rich data
                   showBuildResults(data);
                   
@@ -1508,10 +1516,11 @@ body {
       const previewSection = document.getElementById('previewSection');
       
       if (data.is_previewable && data.preview_url) {
-        // Show iframe preview
+        // Show message that preview is in main section
         previewSection.innerHTML = `
-          <div class="preview-container">
-            <iframe src="${data.preview_url}" sandbox="allow-scripts allow-same-origin"></iframe>
+          <div style="padding: 1.5rem; text-align: center; opacity: 0.8;">
+            <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">👆 Preview shown above</div>
+            <div style="font-size: 0.9rem; opacity: 0.7;">Your app is running in the preview section at the top</div>
           </div>
         `;
       } else {
