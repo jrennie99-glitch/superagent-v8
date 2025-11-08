@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculator</h1>
+        </header>
+        <main>
+            <div class="calculator">
+                <div class="display">
+                    <input type="text" id="display" disabled>
+                </div>
+                <div class="keys">
+                    <button class="key" id="clear">C</button>
+                    <button class="key" id="backspace">&lt;</button>
+                    <button class="key" id="divide">÷</button>
+                    <button class="key" id="multiply">×</button>
+                    <button class="key" id="seven">7</button>
+                    <button class="key" id="eight">8</button>
+                    <button class="key" id="nine">9</button>
+                    <button class="key" id="subtract">−</button>
+                    <button class="key" id="four">4</button>
+                    <button class="key" id="five">5</button>
+                    <button class="key" id="six">6</button>
+                    <button class="key" id="add">+</button>
+                    <button class="key" id="one">1</button>
+                    <button class="key" id="two">2</button>
+                    <button class="key" id="three">3</button>
+                    <button class="key" id="equals">=</button>
+                    <button class="key" id="zero">0</button>
+                    <button class="key" id="decimal">.</button>
+                    <button class="key" id="sqrt">√</button>
+                    <button class="key" id="pi">π</button>
+                    <button class="key" id="square">²</button>
+                    <button class="key" id="cube">³</button>
+                </div>
+            </div>
+            <div class="settings">
+                <button class="setting" id="settings">Settings</button>
+                <button class="setting" id="undo">Undo</button>
+                <button class="setting" id="redo">Redo</button>
+                <button class="setting" id="export">Export</button>
+                <button class="setting" id="import">Import</button>
+            </div>
+            <div class="tooltips">
+                <span class="tooltip" id="tooltip-clear">Clear all</span>
+                <span class="tooltip" id="tooltip-backspace">Delete last character</span>
+                <span class="tooltip" id="tooltip-divide">Divide</span>
+                <span class="tooltip" id="tooltip-multiply">Multiply</span>
+                <span class="tooltip" id="tooltip-subtract">Subtract</span>
+                <span class="tooltip" id="tooltip-add">Add</span>
+                <span class="tooltip" id="tooltip-equals">Calculate</span>
+                <span class="tooltip" id="tooltip-sqrt">Square root</span>
+                <span class="tooltip" id="tooltip-pi">Pi</span>
+                <span class="tooltip" id="tooltip-square">Square</span>
+                <span class="tooltip" id="tooltip-cube">Cube</span>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2024 Calculator</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

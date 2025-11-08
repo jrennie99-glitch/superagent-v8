@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" id="settings-toggle">Settings</a></li>
+                <li><a href="#" id="help-toggle">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="calculator">
+            <div class="display">
+                <input type="text" id="display" disabled>
+            </div>
+            <div class="buttons">
+                <button id="clear" title="Clear (Ctrl+R)">⌫</button>
+                <button id="backspace" title="Backspace (Ctrl+Z)">⌦</button>
+                <button id="equals" title="Equals (Enter)">=</button>
+                <button id="plus" title="Plus (+)">+</button>
+                <button id="minus" title="Minus (-)">-</button>
+                <button id="multiply" title="Multiply (×)">×</button>
+                <button id="divide" title="Divide (÷)">÷</button>
+                <button id="sqrt" title="Square Root (√)">√</button>
+                <button id="pi" title="Pi (π)">π</button>
+                <button id="squared" title="Squared (²)">²</button>
+                <button id="cubed" title="Cubed (³)">³</button>
+                <button id="zero" title="Zero (0)">0</button>
+                <button id="one" title="One (1)">1</button>
+                <button id="two" title="Two (2)">2</button>
+                <button id="three" title="Three (3)">3</button>
+                <button id="four" title="Four (4)">4</button>
+                <button id="five" title="Five (5)">5</button>
+                <button id="six" title="Six (6)">6</button>
+                <button id="seven" title="Seven (7)">7</button>
+                <button id="eight" title="Eight (8)">8</button>
+                <button id="nine" title="Nine (9)">9</button>
+                <button id="decimal" title="Decimal (.)">.</button>
+            </div>
+        </section>
+        <section class="settings" id="settings">
+            <h2>Settings</h2>
+            <label>
+                <input type="checkbox" id="theme-toggle">
+                Dark Mode
+            </label>
+            <label>
+                <input type="checkbox" id="sound-toggle">
+                Sound Effects
+            </label>
+            <button id="save-settings">Save</button>
+        </section>
+        <section class="help" id="help">
+            <h2>Help</h2>
+            <p>Calculator keyboard shortcuts:</p>
+            <ul>
+                <li>Ctrl+R: Clear</li>
+                <li>Ctrl+Z: Backspace</li>
+                <li>Enter: Equals</li>
+            </ul>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
