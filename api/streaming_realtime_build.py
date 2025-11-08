@@ -17,6 +17,122 @@ from asyncio import Queue
 
 router = APIRouter(prefix="/api/v1", tags=["Streaming Build"])
 
+def _analyze_project_type(files_created: list, project_dir: str) -> dict:
+    """Analyze project type and determine if it's previewable"""
+    file_names = [f.get('name', '') for f in files_created]
+    
+    # Check for single HTML file (simple static site)
+    if len(files_created) == 1 and file_names[0].endswith('.html'):
+        return {
+            'type': 'static_html',
+            'is_previewable': True,
+            'preview_url': f'/api/v1/preview/{project_dir.split("/")[-1]}/{file_names[0]}',
+            'run_commands': [],
+            'deploy_instructions': [
+                '📦 Download the ZIP file',
+                '🌐 Upload to any static hosting (Netlify, Vercel, GitHub Pages)',
+                '✅ Or use Replit: Click "Publish" button to deploy instantly'
+            ]
+        }
+    
+    # Check for Flask app
+    if any('app.py' in name or 'main.py' in name for name in file_names):
+        if any('requirements.txt' in name for name in file_names):
+            return {
+                'type': 'flask',
+                'is_previewable': False,
+                'run_commands': [
+                    'cd ' + project_dir,
+                    'pip install -r requirements.txt',
+                    'python app.py'
+                ],
+                'deploy_instructions': [
+                    '📦 Download the ZIP file',
+                    '📁 Open the folder in Replit or your local environment',
+                    '▶️  Run: pip install -r requirements.txt',
+                    '▶️  Run: python app.py',
+                    '🚀 Deploy: Use Replit Publish or deploy to Railway/Render'
+                ]
+            }
+    
+    # Check for React/Node app
+    if any('package.json' in name for name in file_names):
+        return {
+            'type': 'nodejs',
+            'is_previewable': False,
+            'run_commands': [
+                'cd ' + project_dir,
+                'npm install',
+                'npm start'
+            ],
+            'deploy_instructions': [
+                '📦 Download the ZIP file',
+                '📁 Open the folder in Replit or your local environment',
+                '▶️  Run: npm install',
+                '▶️  Run: npm start',
+                '🚀 Deploy: Use Replit Publish, Vercel, or Netlify'
+            ]
+        }
+    
+    # Multi-file static site
+    has_html = any(name.endswith('.html') for name in file_names)
+    if has_html:
+        index_file = next((name for name in file_names if 'index.html' in name), file_names[0])
+        return {
+            'type': 'static_multifile',
+            'is_previewable': True,
+            'preview_url': f'/api/v1/preview/{project_dir.split("/")[-1]}/{index_file}',
+            'run_commands': [],
+            'deploy_instructions': [
+                '📦 Download the ZIP file',
+                '🌐 Upload to static hosting (Netlify, Vercel, GitHub Pages)',
+                '✅ Or use Replit: Click "Publish" button to deploy'
+            ]
+        }
+    
+    # Default fallback
+    return {
+        'type': 'unknown',
+        'is_previewable': False,
+        'run_commands': ['Check the generated files for run instructions'],
+        'deploy_instructions': [
+            '📦 Download the ZIP file',
+            '📁 Review the generated files',
+            '📖 Check README.md for specific run instructions'
+        ]
+    }
+
+def _build_file_tree(files_created: list) -> list:
+    """Build a structured file tree from created files"""
+    tree = []
+    for file_info in files_created:
+        name = file_info.get('name', '')
+        file_type = file_info.get('type', 'file')
+        size = len(file_info.get('content', ''))
+        
+        tree.append({
+            'name': name,
+            'type': file_type,
+            'size': size,
+            'icon': _get_file_icon(name)
+        })
+    
+    return tree
+
+def _get_file_icon(filename: str) -> str:
+    """Get emoji icon for file type"""
+    if filename.endswith('.html'): return '📄'
+    if filename.endswith('.css'): return '🎨'
+    if filename.endswith('.js'): return '⚡'
+    if filename.endswith('.py'): return '🐍'
+    if filename.endswith('.json'): return '📋'
+    if filename.endswith('.md'): return '📝'
+    if filename.endswith('.txt'): return '📄'
+    if 'Dockerfile' in filename: return '🐳'
+    if 'requirements' in filename: return '📦'
+    if 'package' in filename: return '📦'
+    return '📄'
+
 class StreamingBuildRequest(BaseModel):
     instruction: str
     plan_mode: bool = True
@@ -166,23 +282,31 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 files_created = result.get('files_created', [])
                 build_time = result.get('build_time', 0)
                 
-                # Get just filenames (not full code) for JSON response
-                file_list = [{'name': f.get('name', ''), 'type': f.get('type', '')} for f in files_created] if files_created else []
+                # Detect project type and build metadata
+                project_meta = _analyze_project_type(files_created, project_dir)
+                
+                # Build file tree structure
+                file_tree = _build_file_tree(files_created)
                 
                 yield f"data: {json.dumps({'type': 'log', 'message': f'✅ Enterprise build complete in {build_time}s!', 'icon': '✅'})}\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': f'📁 Created {len(files_created)} files in {project_dir}', 'icon': '📁'})}\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': '🎉 Production-ready application generated!', 'icon': '🎉'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': 5, 'status': 'complete'})}\n\n"
                 
-                # Send completion with download link (NOT full code)
+                # Send completion with rich metadata
                 project_name = project_dir.split('/')[-1] if project_dir else 'project'
                 completion_data = {
                     'type': 'complete', 
                     'project_dir': project_dir,
                     'project_name': project_name,
                     'file_count': len(files_created),
-                    'files': file_list,
-                    'download_url': f'/api/v1/download-project/{project_name}'
+                    'file_tree': file_tree,
+                    'download_url': f'/api/v1/download-project/{project_name}',
+                    'project_type': project_meta['type'],
+                    'is_previewable': project_meta['is_previewable'],
+                    'preview_url': project_meta.get('preview_url'),
+                    'run_commands': project_meta.get('run_commands', []),
+                    'deploy_instructions': project_meta.get('deploy_instructions', [])
                 }
                 yield f"data: {json.dumps(completion_data)}\n\n"
             else:
@@ -232,6 +356,47 @@ Return ONLY the complete HTML code."""
         except Exception as e:
             yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Error: {str(e)}', 'icon': '❌'})}\n\n"
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+@router.get("/preview/{project_name}/{file_path:path}")
+async def preview_static_file(project_name: str, file_path: str):
+    """Serve static files for preview (HTML/CSS/JS only)"""
+    from fastapi.responses import FileResponse, HTMLResponse
+    from fastapi import HTTPException
+    import os
+    
+    # Security: only allow preview of specific file types
+    allowed_extensions = ['.html', '.css', '.js', '.json', '.txt', '.md']
+    if not any(file_path.endswith(ext) for ext in allowed_extensions):
+        raise HTTPException(status_code=403, detail="File type not allowed for preview")
+    
+    # Security: prevent path traversal
+    if '..' in file_path or file_path.startswith('/'):
+        raise HTTPException(status_code=403, detail="Invalid file path")
+    
+    # Build safe path
+    project_dir = f"/home/runner/workspace/{project_name}"
+    full_path = os.path.join(project_dir, file_path)
+    
+    # Verify path is within project directory (security check)
+    if not os.path.abspath(full_path).startswith(os.path.abspath(project_dir)):
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if not os.path.exists(full_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Determine media type
+    if file_path.endswith('.html'):
+        media_type = 'text/html'
+    elif file_path.endswith('.css'):
+        media_type = 'text/css'
+    elif file_path.endswith('.js'):
+        media_type = 'application/javascript'
+    elif file_path.endswith('.json'):
+        media_type = 'application/json'
+    else:
+        media_type = 'text/plain'
+    
+    return FileResponse(full_path, media_type=media_type)
 
 @router.get("/download-project/{project_name}")
 async def download_project(project_name: str):

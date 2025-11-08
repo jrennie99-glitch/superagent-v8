@@ -663,6 +663,278 @@ body {
   color: white;
   box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
 }
+
+/* Build Results Panel */
+.build-results-panel {
+  display: none;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  animation: slideIn 0.5s ease-out;
+}
+
+.build-results-panel.show {
+  display: block;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-header {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.result-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.result-section.full-width {
+  grid-column: 1 / -1;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--electric-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* File Browser */
+.file-tree {
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.file-item {
+  padding: 0.5rem 0.8rem;
+  margin: 0.2rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border-left: 3px solid rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.file-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-left-color: var(--nebula-purple);
+  transform: translateX(3px);
+}
+
+.file-icon {
+  font-size: 1.1rem;
+}
+
+.file-name {
+  flex: 1;
+  color: #e5e7eb;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.deploy-btn {
+  background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-pink));
+  color: white;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.deploy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+/* Preview Section */
+.preview-container {
+  width: 100%;
+  height: 400px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preview-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.run-instructions {
+  padding: 1rem;
+  background: rgba(255, 200, 87, 0.05);
+  border-radius: 8px;
+  border-left: 4px solid var(--holographic-gold);
+}
+
+.run-command {
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin: 0.5rem 0;
+  color: #10b981;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.run-command:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateX(3px);
+}
+
+/* Deploy Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.modal-close {
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+.deploy-step {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  border-left: 3px solid var(--nebula-purple);
+  font-size: 0.95rem;
+}
 </style>
 </head>
 <body>
@@ -828,7 +1100,66 @@ body {
             </div>
           </div>
         </div>
+
+        <!-- Build Results Panel (shown after completion) -->
+        <div class="build-results-panel" id="buildResultsPanel">
+          <div class="results-header">
+            <span>🎉</span>
+            <span>Your App is Ready!</span>
+          </div>
+
+          <div class="results-grid">
+            <!-- Preview Section -->
+            <div class="result-section full-width">
+              <div class="section-title">
+                <span>👁️</span>
+                <span>Preview</span>
+              </div>
+              <div id="previewSection"></div>
+            </div>
+
+            <!-- Files Section -->
+            <div class="result-section">
+              <div class="section-title">
+                <span>📁</span>
+                <span>Generated Files</span>
+              </div>
+              <div class="file-tree" id="fileTree"></div>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="result-section">
+              <div class="section-title">
+                <span>⚡</span>
+                <span>Quick Actions</span>
+              </div>
+              <div class="action-buttons">
+                <button class="action-btn download-btn" id="downloadBtn" onclick="downloadProject()">
+                  <span>⬇️</span>
+                  <span>Download ZIP</span>
+                </button>
+              </div>
+              <div class="action-buttons">
+                <button class="action-btn deploy-btn" id="deployBtn" onclick="showDeployModal()">
+                  <span>🚀</span>
+                  <span>Deploy Guide</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Deploy Modal -->
+  <div class="modal" id="deployModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🚀 Deployment Guide</div>
+        <button class="modal-close" onclick="closeDeployModal()">✕</button>
+      </div>
+      <div id="deployInstructions"></div>
     </div>
   </div>
   
@@ -1067,19 +1398,10 @@ body {
                   document.getElementById('aiActivity').textContent = 'Complete ✅';
                   document.getElementById('progressValue').textContent = '100%';
                   
-                  // Show completion message with download link
-                  const projectName = data.project_name || 'project';
-                  const fileCount = data.file_count || 0;
-                  const downloadUrl = data.download_url || '';
+                  addBuildLog(`✅ Build complete! Created ${data.file_count || 0} files.`, '✅');
                   
-                  addBuildLog(`✅ Build complete! Created ${fileCount} files.`, '✅');
-                  addBuildLog(`📁 Project location: ${data.project_dir}`, '📁');
-                  
-                  if (downloadUrl) {
-                    addBuildLog(`⬇️ <a href="${downloadUrl}" download style="color: #8b5cf6; text-decoration: underline;">Download ${projectName}.zip</a>`, '⬇️');
-                  }
-                  
-                  addBuildLog('🚀 To deploy: Check the files in your workspace, then use the "Publish" button in Replit!', '🚀');
+                  // Show Build Results Panel with rich data
+                  showBuildResults(data);
                   
                   // Hide status bar after 5 seconds
                   setTimeout(() => {
@@ -1107,32 +1429,6 @@ body {
           document.getElementById('statusBar').style.display = 'none';
         }, 3000);
       }
-    }
-    
-    function startStreamingProgress(buildId) {
-      if (eventSource) eventSource.close();
-      
-      eventSource = new EventSource(`/api/v1/build-stream/${buildId}`);
-      
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        
-        if (data.type === 'step') {
-          updateStep(data.step_number, data.status);
-          document.getElementById('progressValue').textContent = 
-            Math.round((data.step_number / 5) * 100) + '%';
-        } else if (data.type === 'complete') {
-          eventSource.close();
-          document.getElementById('buildBtn').disabled = false;
-          document.getElementById('buildBtn').innerHTML = '✨ Build My App';
-          document.getElementById('aiActivity').textContent = 'Complete';
-          document.getElementById('progressValue').textContent = '100%';
-          
-          if (data.preview_url) {
-            document.getElementById('previewIframe').src = data.preview_url;
-          }
-        }
-      };
     }
     
     function updateStep(stepNumber, status, message = '') {
@@ -1181,6 +1477,130 @@ body {
     function showQR() {
       alert('QR Code feature coming soon!');
     }
+
+    // Build Results Panel Functions
+    let currentBuildData = null;
+
+    function showBuildResults(data) {
+      currentBuildData = data;
+      
+      // Show the panel with animation
+      const panel = document.getElementById('buildResultsPanel');
+      panel.classList.add('show');
+      
+      // Populate preview section
+      populatePreview(data);
+      
+      // Populate file tree
+      populateFileTree(data.file_tree || []);
+      
+      // Setup download button
+      const downloadBtn = document.getElementById('downloadBtn');
+      if (data.download_url) {
+        downloadBtn.onclick = () => window.location.href = data.download_url;
+      }
+      
+      // Scroll to results panel
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function populatePreview(data) {
+      const previewSection = document.getElementById('previewSection');
+      
+      if (data.is_previewable && data.preview_url) {
+        // Show iframe preview
+        previewSection.innerHTML = `
+          <div class="preview-container">
+            <iframe src="${data.preview_url}" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        `;
+      } else {
+        // Show run instructions
+        const commands = data.run_commands || [];
+        const commandsHTML = commands.map(cmd => 
+          `<div class="run-command" onclick="copyToClipboard('${cmd}')">${cmd}</div>`
+        ).join('');
+        
+        previewSection.innerHTML = `
+          <div class="run-instructions">
+            <div style="margin-bottom: 0.5rem; font-weight: 600; color: var(--holographic-gold);">
+              ⚡ To run this app:
+            </div>
+            ${commandsHTML || '<div style="opacity: 0.7;">Check the generated files for instructions.</div>'}
+            <div style="margin-top: 0.8rem; font-size: 0.85rem; opacity: 0.7;">
+              💡 Click any command to copy it
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function populateFileTree(fileTree) {
+      const fileTreeEl = document.getElementById('fileTree');
+      
+      if (!fileTree || fileTree.length === 0) {
+        fileTreeEl.innerHTML = '<div style="opacity: 0.6;">No files to display</div>';
+        return;
+      }
+      
+      const filesHTML = fileTree.map(file => {
+        const sizeKB = ((file.size || 0) / 1024).toFixed(1);
+        return `
+          <div class="file-item" title="${file.name}">
+            <span class="file-icon">${file.icon || '📄'}</span>
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${sizeKB}KB</span>
+          </div>
+        `;
+      }).join('');
+      
+      fileTreeEl.innerHTML = filesHTML;
+    }
+
+    function downloadProject() {
+      if (currentBuildData && currentBuildData.download_url) {
+        window.location.href = currentBuildData.download_url;
+      } else {
+        alert('Download not available yet. Please wait for the build to complete.');
+      }
+    }
+
+    function showDeployModal() {
+      if (!currentBuildData) return;
+      
+      const modal = document.getElementById('deployModal');
+      const instructionsEl = document.getElementById('deployInstructions');
+      
+      const instructions = currentBuildData.deploy_instructions || [];
+      const instructionsHTML = instructions.map((step, index) => 
+        `<div class="deploy-step">${step}</div>`
+      ).join('');
+      
+      instructionsEl.innerHTML = instructionsHTML || '<div>No deployment instructions available.</div>';
+      
+      modal.classList.add('show');
+    }
+
+    function closeDeployModal() {
+      const modal = document.getElementById('deployModal');
+      modal.classList.remove('show');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(`✅ Copied to clipboard:\n${text}`);
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('deployModal');
+      if (e.target === modal) {
+        closeDeployModal();
+      }
+    });
   </script>
 </body>
 </html>
