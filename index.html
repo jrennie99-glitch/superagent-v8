@@ -605,15 +605,25 @@ body {
   to { left: 100%; }
 }
 
-/* Detailed Build Log Panel */
-.build-log-panel {
+/* Dual-Panel Split Screen Container */
+.dual-panel-container {
   margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  height: 400px;
+}
+
+/* Build Log Panel (Left Side) */
+.build-log-panel {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   overflow: hidden;
   border-left: 3px solid var(--electric-cyan);
+  display: flex;
+  flex-direction: column;
 }
 
 .build-log-header {
@@ -633,11 +643,194 @@ body {
 
 .build-log-content {
   padding: 1rem;
-  max-height: 280px;
+  flex: 1;
   overflow-y: auto;
   font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
   font-size: 0.75rem;
   line-height: 1.6;
+}
+
+/* Chat Panel (Right Side) */
+.chat-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  border-right: 3px solid var(--nebula-purple);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 0.8rem 1.2rem;
+  background: rgba(139, 92, 246, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-title {
+  color: var(--nebula-purple);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chat-status {
+  font-size: 0.7rem;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.chat-status::before {
+  content: '●';
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.chat-welcome {
+  text-align: center;
+  padding: 2rem 1rem;
+  opacity: 0.6;
+}
+
+.welcome-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-text {
+  color: #c9d1d9;
+  font-size: 0.9rem;
+}
+
+.chat-message {
+  display: flex;
+  gap: 0.5rem;
+  animation: chatFadeIn 0.3s ease-out;
+}
+
+@keyframes chatFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.chat-message.user .chat-avatar {
+  background: linear-gradient(135deg, var(--nebula-purple), var(--electric-cyan));
+}
+
+.chat-message.ai .chat-avatar {
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.chat-message.user .chat-bubble {
+  background: linear-gradient(135deg, var(--nebula-purple), #7c3aed);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-message.ai .chat-bubble {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: #c9d1d9;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.streaming {
+  position: relative;
+}
+
+.chat-bubble.streaming::after {
+  content: '▊';
+  margin-left: 2px;
+  animation: blink 0.7s infinite;
+  color: var(--nebula-purple);
+}
+
+.chat-input-container {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #c9d1d9;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--nebula-purple);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.chat-send-btn {
+  padding: 0.7rem 1.2rem;
+  background: linear-gradient(135deg, var(--nebula-purple), var(--electric-cyan));
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-send-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.chat-send-btn:active {
+  transform: translateY(0);
 }
 
 .log-entry {
@@ -1121,12 +1314,43 @@ body {
           </div>
         </div>
         
-        <!-- Detailed Build Log -->
-        <div class="build-log-panel" id="buildLogPanel" style="display: none;">
-          <div class="build-log-header">
-            <div class="build-log-title">📝 Build Log</div>
+        <!-- Split-Screen: Build Logs + Interactive Chat -->
+        <div class="dual-panel-container" id="dualPanelContainer" style="display: none;">
+          
+          <!-- Left Panel: Build Logs -->
+          <div class="build-log-panel">
+            <div class="build-log-header">
+              <div class="build-log-title">📝 Build Log</div>
+            </div>
+            <div class="build-log-content" id="buildLogContent"></div>
           </div>
-          <div class="build-log-content" id="buildLogContent"></div>
+          
+          <!-- Right Panel: Interactive Chat -->
+          <div class="chat-panel">
+            <div class="chat-header">
+              <div class="chat-title">💬 Chat with AI</div>
+              <div class="chat-status" id="chatStatus">Online</div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-welcome">
+                <div class="welcome-icon">🤖</div>
+                <div class="welcome-text">Ask me anything while I build!</div>
+              </div>
+            </div>
+            <div class="chat-input-container">
+              <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Ask a question while building..."
+                onkeypress="if(event.key==='Enter') sendChatMessage()"
+              />
+              <button class="chat-send-btn" onclick="sendChatMessage()" title="Send Message">
+                ➤
+              </button>
+            </div>
+          </div>
+          
         </div>
       </div>
       
@@ -1431,12 +1655,12 @@ body {
     const streamingLogs = {}; // Track streaming messages by ID
     
     function addBuildLog(message, icon = '') {
-      const logPanel = document.getElementById('buildLogPanel');
+      const dualPanel = document.getElementById('dualPanelContainer');
       const logContent = document.getElementById('buildLogContent');
       
-      // Show panel if hidden
-      if (logPanel.style.display === 'none') {
-        logPanel.style.display = 'block';
+      // Show dual panel if hidden
+      if (dualPanel.style.display === 'none') {
+        dualPanel.style.display = 'grid';
       }
       
       const logEntry = document.createElement('div');
@@ -1456,11 +1680,11 @@ body {
     // NEW: Start or get a streaming log entry
     function getOrCreateStreamingLog(id, icon = '') {
       const logContent = document.getElementById('buildLogContent');
-      const logPanel = document.getElementById('buildLogPanel');
+      const dualPanel = document.getElementById('dualPanelContainer');
       
-      // Show panel if hidden
-      if (logPanel.style.display === 'none') {
-        logPanel.style.display = 'block';
+      // Show dual panel if hidden
+      if (dualPanel.style.display === 'none') {
+        dualPanel.style.display = 'grid';
       }
       
       // Return existing entry if already streaming
@@ -1535,8 +1759,8 @@ body {
       clearBuildLog();
       clearBuildSteps();  // Clear all step boxes at start
       
-      // Show build log panel
-      document.getElementById('buildLogPanel').style.display = 'block';
+      // Show dual panel (build logs + chat)
+      document.getElementById('dualPanelContainer').style.display = 'grid';
       
       // Show status bar and reset values
       document.getElementById('statusBar').style.display = 'flex';
@@ -2009,6 +2233,133 @@ body {
         closeDeployModal();
       }
     });
+
+    // ===== INTERACTIVE CHAT FUNCTIONALITY =====
+    
+    let chatStreamingBubble = null;
+    
+    function addChatMessage(message, type = 'user') {
+      const chatMessages = document.getElementById('chatMessages');
+      
+      // Remove welcome message if present
+      const welcome = chatMessages.querySelector('.chat-welcome');
+      if (welcome) {
+        welcome.remove();
+      }
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${type}`;
+      
+      const avatar = type === 'user' ? '👤' : '🤖';
+      
+      messageDiv.innerHTML = `
+        <div class="chat-avatar">${avatar}</div>
+        <div class="chat-bubble">${message}</div>
+      `;
+      
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      return messageDiv.querySelector('.chat-bubble');
+    }
+    
+    function startAIStreamingResponse() {
+      const chatMessages = document.getElementById('chatMessages');
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message ai';
+      
+      messageDiv.innerHTML = `
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-bubble streaming"></div>
+      `;
+      
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      chatStreamingBubble = messageDiv.querySelector('.chat-bubble');
+      return chatStreamingBubble;
+    }
+    
+    function appendToAIResponse(text) {
+      if (chatStreamingBubble) {
+        chatStreamingBubble.textContent += text;
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+    
+    function finishAIResponse() {
+      if (chatStreamingBubble) {
+        chatStreamingBubble.classList.remove('streaming');
+        chatStreamingBubble = null;
+      }
+    }
+    
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      // Add user message
+      addChatMessage(message, 'user');
+      input.value = '';
+      
+      // Start AI streaming response
+      startAIStreamingResponse();
+      
+      try {
+        const response = await fetch('/api/v1/chat-stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Chat request failed');
+        }
+        
+        // Read streaming response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+          
+          for (const line of lines) {
+            if (line.trim() === '' || !line.startsWith('data: ')) continue;
+            
+            try {
+              const jsonData = line.substring(6).trim();
+              if (!jsonData) continue;
+              
+              const data = JSON.parse(jsonData);
+              
+              if (data.type === 'text') {
+                appendToAIResponse(data.content);
+              } else if (data.type === 'complete') {
+                finishAIResponse();
+              } else if (data.type === 'error') {
+                finishAIResponse();
+                appendToAIResponse('Sorry, I encountered an error. Please try again.');
+              }
+            } catch (e) {
+              console.error('Chat parse error:', e);
+            }
+          }
+        }
+        
+      } catch (error) {
+        console.error('Chat error:', error);
+        finishAIResponse();
+        appendToAIResponse('Sorry, I had trouble connecting. Please try again.');
+      }
+    }
   </script>
 </body>
 </html>

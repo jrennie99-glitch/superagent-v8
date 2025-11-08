@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <style>
+        /* style.css */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #e74c3c;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            width: 350px;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .calculator:hover {
+            transform: scale(1.02);
+        }
+
+        .display {
+            padding: 20px;
+            text-align: right;
+            background-color: #ecf0f1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #history {
+            font-size: 1.2rem;
+            color: #777;
+            height: 20px; /* reserve space even when empty */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #history:empty {
+            height: 0;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
+        #currentInput {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+            word-wrap: break-word;
+            overflow: hidden;
+            min-height: 36px; /* prevent content jump on clear */
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        button {
+            background-color: #fff;
+            border: none;
+            font-size: 1.5rem;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            color: var(--text-color);
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:last-child {
+            border-right: none;
+        }
+
+        button:nth-child(4n) {
+            border-right: none;
+        }
+
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .operator {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .operator:hover {
+            background-color: darken(var(--primary-color), 10%);
+        }
+
+        .equal {
+            background-color: var(--secondary-color);
+            color: #fff;
+            grid-column: 3 / 5;
+        }
+
+        .equal:hover {
+            background-color: darken(var(--secondary-color), 10%);
+        }
+
+        .clear {
+            background-color: #fff;
+            color: var(--secondary-color);
+        }
+
+        .clear:hover {
+            background-color: rgba(var(--secondary-color-rgb), 0.1);
+        }
+
+        /* Accessibility */
+        button[aria-label] {
+            position: relative;
+        }
+
+        button[aria-label]::after {
+            content: attr(aria-label);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8em;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            pointer-events: none;
+        }
+
+        button:focus::after, button:hover::after {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .calculator {
+                width: 95%;
+            }
+
+            button {
+                padding: 15px;
+                font-size: 1.3rem;
+            }
+
+            #currentInput {
+                font-size: 2rem;
+            }
+        }
+
+        /*Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="display">
+            <div id="history"></div>
+            <div id="currentInput">0</div>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()" aria-label="Clear (Escape)">C</button>
+            <button onclick="backspace()" aria-label="Backspace (Backspace)">&#x232B;</button>
+            <button onclick="appendValue('%')" aria-label="Percent (%)">%</button>
+            <button class="operator" onclick="appendValue('÷')" aria-label="Divide (/)">÷</button>
+
+            <button onclick="appendValue('7')" aria-label="Seven (7)">7</button>
+            <button onclick="appendValue('8')" aria-label="Eight (8)">8</button>
+            <button onclick="appendValue('9')" aria-label="Nine (9)">9</button>
+            <button class="operator" onclick="appendValue('×')" aria-label="Multiply (*)">×</button>
+
+            <button onclick="appendValue('4')" aria-label="Four (4)">4</button>
+            <button onclick="appendValue('5')" aria-label="Five (5)">5</button>
+            <button onclick="appendValue('6')" aria-label="Six (6)">6</button>
+            <button class="operator" onclick="appendValue('−')" aria-label="Subtract (-)">−</button>
+
+            <button onclick="appendValue('1')" aria-label="One (1)">1</button>
+            <button onclick="appendValue('2')" aria-label="Two (2)">2</button>
+            <button onclick="appendValue('3')" aria-label="Three (3)">3</button>
+            <button class="operator" onclick="appendValue('+')" aria-label="Add (+)">+</button>
+
+            <button onclick="appendValue('0')" aria-label="Zero (0)">0</button>
+            <button onclick="appendValue('.')" aria-label="Decimal (.)">.</button>
+            <button onclick="toggleSign()" aria-label="Negate (+/-)">±</button>
+            <button class="equal" onclick="calculate()" aria-label="Equals (Enter)">=</button>
+        </div>
+    </div>
+
+    <script>
+        /* script.js */
+        let currentInput = document.getElementById('currentInput');
+        let historyDisplay = document.getElementById('history');
+        let calculationHistory = [];
+        let isNewCalculation = true;
+
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+
+            if (!isNaN(parseInt(key)) || key === '.') {
+                appendValue(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                // Replace * and / with proper symbols
+                const operator = (key === '*') ? '×' : (key === '/') ? '÷' : key;
+                appendValue(operator);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                backspace();
+            }
+        });
+
+        function appendValue(value) {
+            if (isNewCalculation && !isNaN(parseFloat(value))) {
+                currentInput.innerText = value;
+                isNewCalculation = false;
+            } else if (currentInput.innerText === '0' && value !== '.' && !isNaN(parseFloat(value))) {
+                currentInput.innerText = value; // Replace initial zero
+            } else {
+                let currentText = currentInput.innerText;
+
+                // Prevent multiple leading zeros if the current value is 0
+                if (currentText === '0' && value === '0') {
+                    return;
+                }
+                if (currentText.includes('.') && value === '.') {
+                  return;
+                }
+                currentInput.innerText += value;
+            }
+        }
+
+        function clearDisplay() {
+            currentInput.innerText = '0';
+            historyDisplay.innerText = '';
+            isNewCalculation = true;
+        }
+
+        function backspace() {
+            let currentText = currentInput.innerText;
+            if (currentText.length > 1) {
+                currentInput.innerText = currentText.slice(0, -1);
+            } else {
+                currentInput.innerText = '0';
+                isNewCalculation = true;
+            }
+        }
+
+        function toggleSign() {
+            let currentValue = parseFloat(currentInput.innerText);
+            if (!isNaN(currentValue)) {
+                currentInput.innerText = (-currentValue).toString();
+            }
+        }
+
+        function calculate() {
+            try {
+                let expression = currentInput.innerText;
+
+                // Replace unicode symbols with JavaScript equivalents for evaluation
+                expression = expression.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+
+                // Sanitize input to prevent code injection (very basic)
+                if (!isValidExpression(expression)) {
+                    currentInput.innerText = 'Error';
+                    historyDisplay.innerText = 'Invalid Expression';
+                    return;
+                }
+
+                // Evaluate the expression
+                let result = eval(expression);
+
+                if (isNaN(result) || !isFinite(result)) {
+                    currentInput.innerText = 'Error';
+                    historyDisplay.innerText = 'Calculation Error';
+                    return;
+                }
+
+                // Limit to a reasonable number of decimal places
+                result = parseFloat(result.toFixed(10));
+
+                // Update history
+                const calculationString = `${currentInput.innerText} = ${result}`;
+                calculationHistory.push(calculationString);
+                localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
+
+                historyDisplay.innerText = expression;
+                currentInput.innerText = result.toString();
+                isNewCalculation = true;
+
+            } catch (error) {
+                console.error("Calculation error:", error);
+                currentInput.innerText = 'Error';
+                historyDisplay.innerText = 'Error';
+            }
+        }
+
+        function isValidExpression(expression) {
+            // Very basic check to prevent most common injection attempts
+            // TODO: Implement a more robust validation
+            return /^[0-9+\-*/().% ]+$/.test(expression);
+        }
+
+        // Load history from localStorage on page load
+        window.onload = function() {
+            const storedHistory = localStorage.getItem('calculationHistory');
+            if (storedHistory) {
+                calculationHistory = JSON.parse(storedHistory);
+            }
+        };
+
+    </script>
+</body>
+</html>

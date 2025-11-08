@@ -1,0 +1,160 @@
+<!-- config.html - Configuration settings for the calculator -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator Configuration</title>
+
+  <!-- Basic Styling (Enhance in CSS file) -->
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .config-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .config-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="color"],
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 5px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Calculator Configuration</h1>
+
+  <div class="config-container">
+
+    <div class="config-group">
+      <label for="themeColor">Theme Color:</label>
+      <input type="color" id="themeColor" name="themeColor" value="#2980b9">
+    </div>
+
+    <div class="config-group">
+      <label for="displayPrecision">Display Precision:</label>
+      <select id="displayPrecision" name="displayPrecision">
+        <option value="2">2 Decimal Places</option>
+        <option value="4">4 Decimal Places</option>
+        <option value="6">6 Decimal Places</option>
+        <option value="8">8 Decimal Places</option>
+        <option value="10">10 Decimal Places</option>
+      </select>
+    </div>
+
+    <div class="config-group">
+      <label for="scientificNotationThreshold">Scientific Notation Threshold:</label>
+      <input type="number" id="scientificNotationThreshold" name="scientificNotationThreshold" value="1000000" min="1000" step="1000">
+    </div>
+
+    <div class="config-group">
+      <button onclick="saveConfig()">Save Configuration</button>
+    </div>
+
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" style="color: green; margin-top: 5px;"></div>
+  </div>
+
+  <script>
+    function saveConfig() {
+      const themeColor = document.getElementById('themeColor').value;
+      const displayPrecision = document.getElementById('displayPrecision').value;
+      const scientificNotationThreshold = document.getElementById('scientificNotationThreshold').value;
+      const errorMessageElement = document.getElementById('errorMessage');
+      const successMessageElement = document.getElementById('successMessage');
+
+
+      // Validation (Example - Adapt to your needs)
+      if (isNaN(scientificNotationThreshold) || scientificNotationThreshold <= 0) {
+          errorMessageElement.textContent = "Invalid Threshold: Please enter a positive number.";
+          successMessageElement.textContent = ""; // Clear success message
+          return;
+      } else {
+        errorMessageElement.textContent = ""; //Clear previous error
+      }
+      
+
+      try {
+        localStorage.setItem('calculatorThemeColor', themeColor);
+        localStorage.setItem('calculatorDisplayPrecision', displayPrecision);
+        localStorage.setItem('calculatorScientificNotationThreshold', scientificNotationThreshold);
+
+        successMessageElement.textContent = "Configuration saved successfully!";
+
+        // Optional: Redirect back to the calculator, or update CSS dynamically here if it is in the same window.
+        // window.location.href = "calculator.html"; // Replace with the actual calculator URL
+      } catch (error) {
+        errorMessageElement.textContent = "Error saving configuration: " + error.message;
+        successMessageElement.textContent = "";
+      }
+    }
+
+    // Optional: Load initial configuration when the page loads.  (Adapt to how your config is consumed)
+    window.onload = function() {
+        const savedThemeColor = localStorage.getItem('calculatorThemeColor');
+        const savedDisplayPrecision = localStorage.getItem('calculatorDisplayPrecision');
+        const savedScientificNotationThreshold = localStorage.getItem('calculatorScientificNotationThreshold');
+
+        if (savedThemeColor) {
+            document.getElementById('themeColor').value = savedThemeColor;
+        }
+        if (savedDisplayPrecision) {
+            document.getElementById('displayPrecision').value = savedDisplayPrecision;
+        }
+        if (savedScientificNotationThreshold) {
+          document.getElementById('scientificNotationThreshold').value = savedScientificNotationThreshold;
+        }
+    };
+  </script>
+
+</body>
+</html>

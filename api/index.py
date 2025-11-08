@@ -147,6 +147,7 @@ from api.streaming_build import router as streaming_build_router
 from api.streaming_realtime_build import router as streaming_realtime_build_router
 from api.plan_analyzer import router as plan_analyzer_router
 from api.file_upload import router as file_upload_router
+from api.chat_stream import router as chat_stream_router
 from api.upload_endpoints import upload_router
 from api.autonomous_build_endpoints import autonomous_build_router
 from api.live_dashboard import live_dashboard_router
@@ -294,6 +295,7 @@ app.include_router(browser_testing_router, tags=["Browser Testing - Matches Repl
 app.include_router(agent_builder_router, tags=["Agent Builder - Matches Replit"])
 app.include_router(plan_analyzer_router, tags=["Plan Analyzer - Replit-style Confirmation"])
 app.include_router(file_upload_router, tags=["File Upload - Images/Videos/Audio/Documents"])
+app.include_router(chat_stream_router, tags=["Interactive Chat - Chat During Builds"])
 app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
 app.include_router(streaming_build_router, tags=["V2.1 Streaming Build - INSTANT FEEDBACK"])
 app.include_router(streaming_realtime_build_router, tags=["V3.0 TRUE STREAMING - Like Manus/Replit/Cursor"])

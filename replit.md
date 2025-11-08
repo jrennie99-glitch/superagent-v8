@@ -10,16 +10,25 @@ SuperAgent is a complete Replit Agent clone designed to provide a fully autonomo
 Key capabilities include an admin-only Auto App Builder for generating complete applications from descriptions or code, and integration with Runway ML for AI video generation.
 
 ## Recent Changes
-### November 8, 2025 - Live Streaming Build Logs (Chat-Like Experience)
-- **Real-Time Streaming Logs:** Build logs now stream word-by-word like a live chat conversation
-  - Implemented `stream_log_message()` helper that yields text deltas with 15ms delays for smooth streaming
-  - Added `log-stream` event type with unique message IDs for incremental text updates
-  - Typing cursor animation (blinking purple cursor) appears during streaming, removed when complete
-  - All build messages now stream smoothly instead of appearing instantly
-  - Auto-scroll to bottom as new text appears for seamless UX
-  - Architect-approved implementation with no performance issues or security concerns
+### November 8, 2025 - Split-Screen Interactive Chat + Live Streaming Build Logs
+- **Split-Screen Dual-Panel System:** Build panel now splits into two interactive sections
+  - **Left Panel:** Build Logs streaming word-by-word like a live chat conversation
+  - **Right Panel:** Interactive Chat - users can ask questions and get AI help while builds run
+  - Dual-panel grid layout with responsive design and purple gradient styling
+  - Both panels operate simultaneously without interfering with each other
+- **Interactive Chat Feature:** Chat with AI assistant during builds
+  - Real-time streaming responses using Gemini 2.0 Flash with `stream=True` API
+  - Chat runs in threadpool (`asyncio.to_thread()`) to avoid blocking build process
+  - Message bubbles with avatars, blinking cursor during streaming, auto-scroll
+  - Purple gradient theme matching overall design
+  - Ask questions about code, features, deployment, etc. while app builds
+- **Live Streaming Build Logs:** Build logs stream with chat-like experience
+  - Implemented `stream_log_message()` helper yielding text deltas with 15ms delays
+  - Added `log-stream` event type with unique message IDs for incremental updates
+  - Typing cursor animation (blinking purple cursor) during streaming
+  - Auto-scroll to bottom as new text appears
   - Maintains backward compatibility with existing progress/error events
-  - Creates the exact same chat-like experience as Replit Agent's real-time build logs
+  - Architect-approved with no performance or security concerns
 
 ### November 8, 2025 - Labeled Controls & Video-to-App AI Analysis
 - **Labeled Button Controls:** All control buttons now have visible text labels for better UX
