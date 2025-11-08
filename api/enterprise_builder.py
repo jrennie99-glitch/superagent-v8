@@ -149,6 +149,7 @@ class EnterpriseBuildSystem:
                 
                 # Check if E2E runner itself failed (browser dependencies missing)
                 if error and "BrowserType.launch" in str(error):
+                    # GRACEFUL SKIP: Browser dependencies not available
                     print(f"\n⚠️  E2E Testing Unavailable:")
                     print(f"   Browser dependencies not available in this environment")
                     print(f"   ℹ️  App will be delivered but may have untested features")
@@ -156,9 +157,23 @@ class EnterpriseBuildSystem:
                     results["e2e_skipped"] = "Browser dependencies unavailable"
                     # Don't fail the build - just warn
                 
+                elif error:
+                    # BLOCK BUILD: E2E runner failed for other reasons (timeout, crash, server startup, etc.)
+                    print(f"\n❌ E2E RUNNER FAILED:")
+                    print(f"   {error}")
+                    print("\n🚫 BUILD BLOCKED: E2E testing failed to run properly!")
+                    print("   Cannot verify app quality without successful E2E tests.")
+                    
+                    results["success"] = False
+                    results["e2e_critical_issues"] = critical_issues if critical_issues else [f"E2E runner failed: {error}"]
+                    results["failure_reason"] = f"E2E testing failed: {error}"
+                    
+                    # Stop build process - can't deliver untested app
+                    raise Exception(f"E2E Quality Gate Failed: E2E runner error - {error}")
+                
                 # ENFORCE QUALITY GATE: Fail build if critical issues found in actual app testing
-                elif critical_issues and not error:
-                    # Only block if we actually tested the app and found issues
+                elif critical_issues:
+                    # E2E ran successfully but found broken features
                     print(f"\n❌ E2E VERIFICATION FAILED - {len(critical_issues)} CRITICAL ISSUES:")
                     for issue in critical_issues:
                         print(f"   • {issue}")
