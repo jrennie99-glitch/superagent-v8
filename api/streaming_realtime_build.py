@@ -29,10 +29,14 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
     yield f"data: {json.dumps({'type': 'log', 'message': '🚀 Starting build process...', 'icon': '🚀'})}\n\n"
     await asyncio.sleep(0.3)
     
-    yield f"data: {json.dumps({'type': 'log', 'message': f'📝 Your request: \"{instruction}\"', 'icon': '📝'})}\n\n"
+    request_msg = f'📝 Your request: "{instruction}"'
+    yield f"data: {json.dumps({'type': 'log', 'message': request_msg, 'icon': '📝'})}\n\n"
     await asyncio.sleep(0.3)
     
-    yield f"data: {json.dumps({'type': 'log', 'message': f'⚙️ Plan Mode: {\"ON\" if plan_mode else \"OFF\"}, Enterprise Mode: {\"ON\" if enterprise_mode else \"OFF\"}', 'icon': '⚙️'})}\n\n"
+    plan_status = "ON" if plan_mode else "OFF"
+    enterprise_status = "ON" if enterprise_mode else "OFF"
+    config_msg = f'⚙️ Plan Mode: {plan_status}, Enterprise Mode: {enterprise_status}'
+    yield f"data: {json.dumps({'type': 'log', 'message': config_msg, 'icon': '⚙️'})}\n\n"
     await asyncio.sleep(0.5)
     
     # Planning phase
