@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperAgent v8 - AI Development Platform</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0d1117;
+  color: #c9d1d9;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-badge {
+  background: #238636;
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+}
+
+/* Main Container */
+.container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Panel - Input */
+.left-panel {
+  width: 400px;
+  background: #161b22;
+  border-right: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.input-section h2 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+textarea {
+  width: 100%;
+  min-height: 150px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #c9d1d9;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #8b5cf6;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.option input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.option label {
+  font-size: 0.875rem;
+}
+
+.build-btn {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: #fff;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.build-btn:hover {
+  transform: translateY(-2px);
+}
+
+.build-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Middle Panel - Progress */
+.middle-panel {
+  flex: 1;
+  background: #0d1117;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.progress-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.progress-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #161b22;
+  border-radius: 0.5rem;
+  border-left: 3px solid #30363d;
+}
+
+.progress-step.active {
+  border-left-color: #8b5cf6;
+}
+
+.progress-step.complete {
+  border-left-color: #238636;
+}
+
+.progress-step.error {
+  border-left-color: #f85149;
+}
+
+.step-icon {
+  font-size: 1.25rem;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.step-detail {
+  font-size: 0.875rem;
+  color: #8b949e;
+}
+
+.step-time {
+  font-size: 0.75rem;
+  color: #6e7681;
+}
+
+/* Right Panel - Live Preview */
+.right-panel {
+  width: 50%;
+  background: #fff;
+  border-left: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  background: #f6f8fa;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #d0d7de;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-url {
+  font-size: 0.875rem;
+  color: #57606a;
+  background: #fff;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #d0d7de;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.preview-btn {
+  background: #fff;
+  border: 1px solid #d0d7de;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.preview-btn:hover {
+  background: #f6f8fa;
+}
+
+.preview-iframe {
+  flex: 1;
+  border: none;
+  background: #fff;
+}
+
+/* Tutorial Overlay */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.tutorial-overlay.active {
+  display: flex;
+}
+
+.tutorial-card {
+  background: #161b22;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 600px;
+  border: 1px solid #30363d;
+}
+
+.tutorial-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tutorial-card p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.tutorial-steps {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+
+.tutorial-steps li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #0d1117;
+  border-radius: 0.5rem;
+  border-left: 3px solid #8b5cf6;
+}
+
+.tutorial-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.tutorial-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tutorial-btn.primary {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: #fff;
+}
+
+.tutorial-btn.secondary {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #30363d;
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Hide preview initially */
+.right-panel.hidden {
+  display: none;
+}
+
+/* Build Confirmation Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #30363d;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #c9d1d9;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-body > div {
+  margin-bottom: 1.5rem;
+}
+
+.modal-body > div:last-child {
+  margin-bottom: 0;
+}
+
+.confirm-instruction p {
+  color: #8b5cf6;
+  font-size: 1.1rem;
+}
+
+.confirm-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.confirm-features li {
+  padding: 0.5rem 0;
+  color: #58a6ff;
+}
+
+.confirm-estimate {
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #30363d;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn.cancel {
+  background: #30363d;
+  color: #c9d1d9;
+}
+
+.modal-btn.cancel:hover {
+  background: #484f58;
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+}
+
+.modal-btn.confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+</style>
+<link rel="stylesheet" href="/static/plan_confirmation.css">
+<link rel="stylesheet" href="/static/input_toolbar.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🦸 SuperAgent v8</div>
+    <div class="stats">
+      <div class="stat">
+        <span>🎯</span>
+        <span class="stat-badge">99.5% Ready</span>
+      </div>
+      <div class="stat">
+        <span>🔒</span>
+        <span class="stat-badge">Secure</span>
+      </div>
+      <div class="stat">
+        <span>⚡</span>
+        <span class="stat-badge">180+ Features</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Left Panel - Input -->
+    <div class="left-panel">
+      <div class="input-section">
+        <h2>What would you like to build?</h2>
+        <textarea id="userInput" placeholder="Example: Create a todo list app with user authentication, dark mode, and local storage"></textarea>
+        
+        <!-- Input Toolbar -->
+        <div id="inputToolbar"></div>
+      </div>
+
+      <div class="options">
+        <div class="option">
+          <input type="checkbox" id="planMode" checked>
+          <label for="planMode">📋 Plan Mode (Show detailed plan first)</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="enterpriseMode" checked>
+          <label for="enterpriseMode">🚀 Enterprise Mode (99.5% production-ready)</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="livePreview" checked>
+          <label for="livePreview">👁️ Live Preview (Show app while building)</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="autoDeploy" checked>
+          <label for="autoDeploy">🌐 Auto Deploy (Deploy to live URL)</label>
+        </div>
+      </div>
+
+      <button class="build-btn" id="buildBtn" onclick="startBuild()">
+        ✨ Build My App
+      </button>
+
+      <div style="margin-top: 1rem; padding: 1rem; background: #161b22; border-radius: 0.5rem; font-size: 0.875rem;">
+        <strong>💡 Pro Tip:</strong> Be specific! The more details you provide, the better your app will be.
+      </div>
+    </div>
+
+    <!-- Middle Panel - Progress -->
+    <div class="middle-panel">
+      <div class="progress-header">
+        <h2>Build Progress</h2>
+        <div id="buildStatus">Ready to build</div>
+      </div>
+      <div class="progress-content" id="progressContent">
+        <div style="text-align: center; padding: 3rem; color: #8b949e;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+          <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">Ready to Build Amazing Apps</div>
+          <div style="font-size: 0.875rem;">Enter your idea and click "Build My App" to get started!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel - Live Preview -->
+    <div class="right-panel hidden" id="previewPanel">
+      <div class="preview-header">
+        <div class="preview-url" id="previewUrl">Building...</div>
+        <div class="preview-actions">
+          <button class="preview-btn" onclick="refreshPreview()">🔄 Refresh</button>
+          <button class="preview-btn" onclick="openInNewTab()">🔗 Open</button>
+        </div>
+      </div>
+      <iframe class="preview-iframe" id="previewIframe"></iframe>
+    </div>
+  </div>
+
+  <!-- Tutorial Overlay -->
+  <div class="tutorial-overlay" id="tutorialOverlay">
+    <div class="tutorial-card">
+      <h2>👋 Welcome to SuperAgent v8!</h2>
+      <p>Let me show you how to build production-ready apps in minutes:</p>
+      
+      <ul class="tutorial-steps">
+        <li><strong>Step 1:</strong> Describe what you want to build in the text area</li>
+        <li><strong>Step 2:</strong> Choose your options (Plan Mode, Enterprise Mode, etc.)</li>
+        <li><strong>Step 3:</strong> Click "Build My App" and watch the magic happen!</li>
+        <li><strong>Step 4:</strong> See real-time progress and live preview</li>
+        <li><strong>Step 5:</strong> Get your deployed app URL in minutes!</li>
+      </ul>
+
+      <p><strong>Example prompts:</strong></p>
+      <ul class="tutorial-steps">
+        <li>"Create a todo list app with dark mode"</li>
+        <li>"Build an e-commerce site for selling shoes"</li>
+        <li>"Make a blog with user authentication"</li>
+        <li>"Create a weather app with 5-day forecast"</li>
+      </ul>
+
+      <div class="tutorial-actions">
+        <button class="tutorial-btn secondary" onclick="closeTutorial()">Skip Tutorial</button>
+        <button class="tutorial-btn primary" onclick="startTutorialDemo()">Try Example</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Build Confirmation Modal -->
+  <div id="buildConfirmModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🚀 Build Confirmation</h2>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-instruction">
+          <strong>You're about to build:</strong>
+          <p id="confirmInstruction" style="font-style: italic; margin-top: 0.5rem;"></p>
+        </div>
+        <div class="confirm-features">
+          <strong>This will include:</strong>
+          <ul id="confirmFeaturesList" style="margin-top: 0.5rem; padding-left: 1.5rem;"></ul>
+        </div>
+        <div class="confirm-estimate">
+          <strong>Estimated time:</strong> <span id="confirmEstimate">2-3 minutes</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel" onclick="cancelBuild()">Cancel</button>
+        <button class="modal-btn confirm" onclick="confirmBuild()">✨ Start Building →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show tutorial on first visit
+    if (!localStorage.getItem('tutorial_seen')) {
+      document.getElementById('tutorialOverlay').classList.add('active');
+    }
+
+    function closeTutorial() {
+      document.getElementById('tutorialOverlay').classList.remove('active');
+      localStorage.setItem('tutorial_seen', 'true');
+    }
+
+    function startTutorialDemo() {
+      closeTutorial();
+      document.getElementById('userInput').value = 'Create a simple todo list app with add, delete, and mark as complete features';
+      document.getElementById('userInput').focus();
+    }
+
+    let currentBuildId = null;
+    let progressInterval = null;
+
+    let eventSource = null; // Store EventSource for cleanup
+
+    async function startBuild() {
+      const userInput = document.getElementById('userInput').value.trim();
+      if (!userInput) {
+        alert('Please describe what you want to build!');
+        return;
+      }
+
+      const planMode = document.getElementById('planMode').checked;
+      const enterpriseMode = document.getElementById('enterpriseMode').checked;
+      const livePreview = document.getElementById('livePreview').checked;
+      const autoDeploy = document.getElementById('autoDeploy').checked;
+
+      // Show confirmation dialog first
+      const confirmed = await showBuildConfirmation(userInput, planMode, enterpriseMode, autoDeploy);
+      if (!confirmed) return;
+
+      // Disable build button
+      const buildBtn = document.getElementById('buildBtn');
+      buildBtn.disabled = true;
+      buildBtn.innerHTML = '<span class="spinner"></span> Starting build...';
+
+      // Show preview panel if enabled
+      if (livePreview) {
+        document.getElementById('previewPanel').classList.remove('hidden');
+      }
+
+      // Clear previous progress
+      const progressContent = document.getElementById('progressContent');
+      progressContent.innerHTML = '';
+
+      // Update status
+      document.getElementById('buildStatus').innerHTML = '<span class="spinner"></span> Initializing...';
+
+      try {
+        // Start the build
+        const response = await fetch('/api/v1/build-realtime', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            instruction: userInput,
+            plan_mode: planMode,
+            enterprise_mode: enterpriseMode,
+            live_preview: livePreview,
+            auto_deploy: autoDeploy
+          })
+        });
+
+        const data = await response.json();
+        currentBuildId = data.build_id;
+
+        // Update button to show we're building
+        buildBtn.innerHTML = '<span class="spinner"></span> Building...';
+        document.getElementById('buildStatus').innerHTML = '<span class="spinner"></span> Building your app...';
+
+        // Start streaming progress (NEW!)
+        startStreamingProgress(currentBuildId);
+
+      } catch (error) {
+        console.error('Build error:', error);
+        addProgressStep('error', 'Build Failed', error.message, '0s');
+        buildBtn.disabled = false;
+        buildBtn.innerHTML = '✨ Build My App';
+      }
+    }
+
+    function startStreamingProgress(buildId) {
+      // Close any existing stream
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      // Connect to SSE endpoint for real-time updates
+      eventSource = new EventSource(`/api/v1/build-stream/${buildId}`);
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'step') {
+          // New build step - show immediately!
+          addProgressStep(data.status, data.title, data.detail, '0s');
+        } else if (data.type === 'status') {
+          // Status update
+          if (data.preview_url) {
+            document.getElementById('previewUrl').textContent = data.preview_url;
+            document.getElementById('previewIframe').src = data.preview_url;
+          }
+        } else if (data.type === 'complete') {
+          // Build complete!
+          eventSource.close();
+          const buildBtn = document.getElementById('buildBtn');
+          
+          if (data.status === 'complete') {
+            document.getElementById('buildStatus').innerHTML = '✅ Build Complete!';
+            if (data.deployment_url) {
+              addProgressStep('complete', '🎉 Deployment Complete!', 
+                `Your app is live at: ${data.deployment_url}`, `${data.total_time}s`);
+            }
+          } else if (data.status === 'error') {
+            document.getElementById('buildStatus').innerHTML = '❌ Build Failed';
+            addProgressStep('error', 'Build Failed', data.error || 'Unknown error', '0s');
+          }
+          
+          buildBtn.disabled = false;
+          buildBtn.innerHTML = '✨ Build My App';
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('SSE error:', error);
+        eventSource.close();
+        // Fallback to polling if SSE fails
+        console.log('SSE failed, falling back to polling...');
+        pollProgress();
+      };
+    }
+
+    let buildConfirmResolve = null;
+
+    async function showBuildConfirmation(instruction, planMode, enterpriseMode, autoDeploy) {
+      return new Promise((resolve) => {
+        buildConfirmResolve = resolve;
+        
+        // Populate modal content
+        document.getElementById('confirmInstruction').textContent = `"${instruction}"`;
+        
+        const features = [];
+        if (planMode) features.push('📋 Strategic planning & architecture design');
+        features.push('🤖 AI-powered code generation');
+        features.push('📝 Complete file structure creation');
+        features.push('🎨 Modern, responsive UI design');
+        features.push('⚡ Full interactive functionality');
+        features.push('💾 Data persistence');
+        if (autoDeploy) features.push('🚀 Automatic deployment');
+        
+        const featuresList = document.getElementById('confirmFeaturesList');
+        featuresList.innerHTML = features.map(f => `<li>${f}</li>`).join('');
+        
+        // Show modal
+        document.getElementById('buildConfirmModal').style.display = 'flex';
+      });
+    }
+
+    function confirmBuild() {
+      document.getElementById('buildConfirmModal').style.display = 'none';
+      if (buildConfirmResolve) {
+        buildConfirmResolve(true);
+        buildConfirmResolve = null;
+      }
+    }
+
+    function cancelBuild() {
+      document.getElementById('buildConfirmModal').style.display = 'none';
+      if (buildConfirmResolve) {
+        buildConfirmResolve(false);
+        buildConfirmResolve = null;
+      }
+    }
+
+    function pollProgress() {
+      if (!currentBuildId) return;
+
+      progressInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/v1/build-progress/${currentBuildId}`);
+          const data = await response.json();
+
+          // Update progress
+          if (data.steps) {
+            data.steps.forEach(step => {
+              addProgressStep(step.status, step.title, step.detail, step.time);
+            });
+          }
+
+          // Update preview if available
+          if (data.preview_url) {
+            document.getElementById('previewUrl').textContent = data.preview_url;
+            document.getElementById('previewIframe').src = data.preview_url;
+          }
+
+          // Check if complete
+          if (data.status === 'complete') {
+            clearInterval(progressInterval);
+            document.getElementById('buildStatus').innerHTML = '✅ Build Complete!';
+            document.getElementById('buildBtn').disabled = false;
+            document.getElementById('buildBtn').innerHTML = '✨ Build My App';
+
+            // Show deployment URL
+            if (data.deployment_url) {
+              addProgressStep('complete', '🎉 Deployment Complete!', 
+                `Your app is live at: ${data.deployment_url}`, data.total_time);
+            }
+          }
+
+          if (data.status === 'error') {
+            clearInterval(progressInterval);
+            document.getElementById('buildStatus').innerHTML = '❌ Build Failed';
+            document.getElementById('buildBtn').disabled = false;
+            document.getElementById('buildBtn').innerHTML = '✨ Build My App';
+          }
+
+        } catch (error) {
+          console.error('Progress poll error:', error);
+        }
+      }, 1000); // Poll every second
+    }
+
+    function addProgressStep(status, title, detail, time) {
+      const progressContent = document.getElementById('progressContent');
+      
+      // Check if step already exists
+      const existingStep = document.querySelector(`[data-step-title="${title}"]`);
+      if (existingStep) {
+        existingStep.className = `progress-step ${status}`;
+        existingStep.querySelector('.step-detail').textContent = detail;
+        existingStep.querySelector('.step-time').textContent = time;
+        return;
+      }
+
+      const stepDiv = document.createElement('div');
+      stepDiv.className = `progress-step ${status}`;
+      stepDiv.setAttribute('data-step-title', title);
+
+      const icon = status === 'complete' ? '✅' : 
+                   status === 'active' ? '⏳' : 
+                   status === 'error' ? '❌' : '⏸️';
+
+      stepDiv.innerHTML = `
+        <div class="step-icon">${icon}</div>
+        <div class="step-content">
+          <div class="step-title">${title}</div>
+          <div class="step-detail">${detail}</div>
+          <div class="step-time">${time}</div>
+        </div>
+      `;
+
+      progressContent.appendChild(stepDiv);
+      progressContent.scrollTop = progressContent.scrollHeight;
+    }
+
+    function refreshPreview() {
+      const iframe = document.getElementById('previewIframe');
+      iframe.src = iframe.src;
+    }
+
+    function openInNewTab() {
+      const url = document.getElementById('previewUrl').textContent;
+      if (url && url !== 'Building...') {
+        window.open(url, '_blank');
+      }
+    }
+
+    // Simulate progress for demo (remove this when backend is ready)
+    function simulateBuild() {
+      const steps = [
+        { status: 'active', title: '📋 Planning Architecture', detail: 'Analyzing requirements and creating app structure...', time: '0s' },
+        { status: 'complete', title: '📋 Planning Architecture', detail: 'Architecture plan created with 5 components', time: '2s' },
+        { status: 'active', title: '📝 Generating Code', detail: 'Creating index.html...', time: '2s' },
+        { status: 'complete', title: '📝 Generating Code', detail: 'Created index.html (245 lines)', time: '5s' },
+        { status: 'active', title: '🎨 Adding Styles', detail: 'Implementing CSS with dark mode...', time: '5s' },
+        { status: 'complete', title: '🎨 Adding Styles', detail: 'Added responsive styles with dark mode', time: '7s' },
+        { status: 'active', title: '⚡ Implementing Logic', detail: 'Adding JavaScript functionality...', time: '7s' },
+        { status: 'complete', title: '⚡ Implementing Logic', detail: 'Implemented add, delete, and complete features', time: '10s' },
+        { status: 'active', title: '🧪 Running Tests', detail: 'Testing functionality...', time: '10s' },
+        { status: 'complete', title: '🧪 Running Tests', detail: 'All 15 tests passed ✓', time: '12s' },
+        { status: 'active', title: '🚀 Deploying', detail: 'Deploying to production...', time: '12s' },
+        { status: 'complete', title: '🚀 Deploying', detail: 'Deployed successfully!', time: '15s' },
+        { status: 'complete', title: '🎉 Build Complete!', detail: 'Your app is ready at: https://todo-app-xyz.onrender.com', time: '15s' }
+      ];
+
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index < steps.length) {
+          const step = steps[index];
+          addProgressStep(step.status, step.title, step.detail, step.time);
+          index++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 1500);
+    }
+  </script>
+  <script src="/static/input_toolbar.js"></script>
+  <script src="/static/plan_confirmation.js"></script>
+</body>
+</html>
