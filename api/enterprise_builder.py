@@ -262,8 +262,148 @@ class EnterpriseBuildSystem:
                     'all features' in instruction_lower  # Specific phrase
                 )
                 
-                # Build context-appropriate prompt
-                prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating EXCEPTIONAL, PRODUCTION-READY applications for a premium no-code platform.
+                # TWO-STEP APPROACH for advanced requests
+                feature_checklist = None
+                if wants_advanced:
+                    # STEP 1: Get explicit feature checklist from AI
+                    print(f"\n🔍 [ADVANCED MODE] Generating feature checklist for: {instruction[:50]}...")
+                    checklist_prompt = f"""You are planning an ADVANCED, SOPHISTICATED application.
+
+USER REQUEST: "{instruction}"
+
+Generate a JSON checklist of REQUIRED FEATURES that must be included to make this truly advanced and enterprise-level.
+
+For a CALCULATOR, include features like:
+- Scientific functions (sin, cos, tan, log, ln, sqrt, powers, factorial)
+- Expression evaluation (parse "3×(5+2)÷7")
+- Memory functions (M+, M-, MR, MC)
+- Multiple modes (Basic, Scientific, Programmer, Statistics)
+- Calculation history
+- Keyboard shortcuts
+- Angle units (degrees/radians)
+- Constants (π, e, φ)
+
+For TODO LISTS:
+- Drag & drop reordering
+- Categories and priorities
+- Due dates and reminders
+- Search and filtering
+- Data export/import
+
+For DASHBOARDS:
+- Live charts (line, bar, pie)
+- Real-time data updates
+- Multiple widgets
+- Customizable layout
+- Data filtering and export
+
+Return ONLY valid JSON in this format:
+{{
+  "required_features": [
+    "feature 1 description",
+    "feature 2 description",
+    ...
+  ],
+  "validation_keywords": ["keyword1", "keyword2", ...]
+}}
+
+The validation_keywords should be code patterns to check for (e.g., "sin(", "cos(", "localStorage", ".drag", etc.)"""
+                    
+                    try:
+                        checklist_response = model.generate_content(checklist_prompt)
+                        feature_checklist_text = self._clean_code(checklist_response.text)
+                        print(f"✅ Feature checklist generated: {feature_checklist_text[:200]}...")
+                        
+                        # Parse JSON (handle markdown code fences)
+                        json_text = feature_checklist_text.strip()
+                        if json_text.startswith("```"):
+                            # Remove code fences
+                            lines = json_text.split("\n")
+                            json_text = "\n".join(lines[1:-1]) if len(lines) > 2 else json_text
+                        
+                        feature_checklist = json.loads(json_text)
+                        print(f"📋 Required features: {len(feature_checklist.get('required_features', []))} items")
+                    except Exception as e:
+                        print(f"⚠️ Failed to generate checklist: {e}")
+                        print(f"🔧 Using fallback checklist for advanced mode")
+                        
+                        # Fallback: Provide default advanced checklist based on app type
+                        app_type = "calculator" if any(word in instruction_lower for word in ["calc", "math"]) else "general"
+                        
+                        if app_type == "calculator":
+                            feature_checklist = {
+                                "required_features": [
+                                    "Scientific functions (sin, cos, tan, log, ln, sqrt)",
+                                    "Advanced operations (powers, factorial, modulo)",
+                                    "Expression evaluation and parsing",
+                                    "Memory functions (M+, M-, MR, MC)",
+                                    "Calculation history with scrollable list",
+                                    "Keyboard shortcuts support",
+                                    "Multiple modes (Basic, Scientific)",
+                                    "Proper math symbols (÷ × − + √ π)"
+                                ],
+                                "validation_keywords": ["sin(", "cos(", "tan(", "log(", "Math.sqrt", "history", "memory"]
+                            }
+                        else:
+                            feature_checklist = {
+                                "required_features": [
+                                    "Rich feature set with 8+ capabilities",
+                                    "Professional design with gradients",
+                                    "Smooth animations and transitions",
+                                    "Mobile-responsive layout",
+                                    "Keyboard shortcuts",
+                                    "Data persistence with localStorage",
+                                    "Error handling and validation"
+                                ],
+                                "validation_keywords": ["localStorage", "addEventListener", "transition", "@media"]
+                            }
+                        print(f"📋 Fallback checklist: {len(feature_checklist['required_features'])} features")
+                
+                # Build context-appropriate prompt (STEP 2)
+                features_list = ""  # Initialize
+                if feature_checklist:
+                    # Advanced mode with explicit checklist
+                    features_list = "\n".join([f"✅ {f}" for f in feature_checklist["required_features"]])
+                    prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating an ADVANCED, ENTERPRISE-LEVEL application.
+
+USER REQUEST: "{instruction}"
+LANGUAGE: {language}
+
+═══════════════════════════════════════════════════════════════════
+⚡ MANDATORY FEATURE CHECKLIST - YOU MUST INCLUDE ALL OF THESE:
+═══════════════════════════════════════════════════════════════════
+
+{features_list}
+
+These features are NON-NEGOTIABLE for this advanced request. Include every single one.
+
+═══════════════════════════════════════════════════════════════════
+🎨 DESIGN REQUIREMENTS:
+═══════════════════════════════════════════════════════════════════
+
+1. Premium gradient backgrounds with glass-morphism effects
+2. Smooth 60fps animations (CSS transitions/keyframes)
+3. Professional color palette with proper symbols (÷ × − + √ π ² ³)
+4. Mobile-responsive design (320px+, 768px+, 1024px+)
+5. localStorage persistence for data
+6. Keyboard shortcuts for all actions
+7. Error handling and loading states
+
+═══════════════════════════════════════════════════════════════════
+📝 OUTPUT FORMAT:
+═══════════════════════════════════════════════════════════════════
+
+Generate ONE complete self-contained HTML file with:
+- All CSS in <style> tag
+- All JavaScript in <script> tag
+- EVERY feature from the checklist above implemented
+- Professional design with animations
+- Mobile-responsive layout
+
+Generate ONLY the code (no explanations). Make it EXCEPTIONAL:"""
+                else:
+                    # Standard mode or fallback
+                    prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating EXCEPTIONAL, PRODUCTION-READY applications for a premium no-code platform.
 
 USER REQUEST: "{instruction}"
 LANGUAGE: {language}
@@ -440,12 +580,70 @@ NEVER DO:
 ═══════════════════════════════════════════════════════════════════
 
 Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanced else "EXCELLENT"}:"""
+                
+                # Generate code
                 response = model.generate_content(prompt)
+                generated_code = self._clean_code(response.text)
+                
+                # STEP 3: Validate advanced features (if applicable)
+                if feature_checklist and wants_advanced:
+                    validation_keywords = feature_checklist.get("validation_keywords", [])
+                    max_retries = 2
+                    retry_count = 0
+                    missing_features = []
+                    
+                    while retry_count < max_retries:
+                        missing_features = []
+                        
+                        print(f"\n🔍 Validation attempt {retry_count + 1}/{max_retries}: Checking {len(validation_keywords)} required features...")
+                        for keyword in validation_keywords:
+                            if keyword.lower() not in generated_code.lower():
+                                missing_features.append(keyword)
+                        
+                        # Check if all features are present
+                        if not missing_features:
+                            print(f"✅ All {len(validation_keywords)} features validated successfully!")
+                            break
+                        
+                        # If critical features are missing and we have retries left
+                        if retry_count < max_retries - 1:
+                            print(f"⚠️ Missing {len(missing_features)} features: {', '.join(missing_features[:5])}")
+                            print(f"🔄 Retry {retry_count + 1}/{max_retries - 1}: Re-generating with stronger emphasis...")
+                            
+                            retry_prompt = f"""The previous code was INCOMPLETE. It's missing CRITICAL FEATURES that were explicitly required.
+
+USER REQUEST: "{instruction}"
+
+YOU FORGOT TO INCLUDE THESE FEATURES:
+{chr(10).join([f"❌ MISSING: {feat}" for feat in missing_features])}
+
+COMPLETE FEATURE CHECKLIST (EVERY ONE IS MANDATORY):
+{features_list}
+
+This is attempt {retry_count + 2}. You MUST include EVERY feature from the checklist.
+Do NOT skip any features. Generate a COMPLETE implementation.
+Use proper symbols (÷ × − + √ π), beautiful gradients, smooth animations.
+
+Generate ONLY the complete HTML code with ALL features (no explanations):"""
+                            
+                            retry_response = model.generate_content(retry_prompt)
+                            generated_code = self._clean_code(retry_response.text)
+                            retry_count += 1
+                        else:
+                            # Max retries reached - this is a validation failure
+                            break
+                    
+                    # CRITICAL: If features are still missing after all retries, fail the build
+                    if missing_features:
+                        error_msg = f"❌ VALIDATION FAILED: Advanced features still missing after {max_retries} attempts: {', '.join(missing_features[:10])}"
+                        print(error_msg)
+                        print("💡 TIP: Try simpler instructions or request specific features explicitly")
+                        raise Exception(error_msg)
                 
                 generated_files.append({
                     "name": "main",
                     "type": "primary",
-                    "code": self._clean_code(response.text),
+                    "code": generated_code,
                     "language": language
                 })
             
