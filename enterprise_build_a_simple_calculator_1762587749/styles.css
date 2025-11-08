@@ -1,0 +1,150 @@
+<!-- styles.html -->
+<style>
+  /* Global Styles */
+  :root {
+    --primary-color: #3498db;
+    --secondary-color: #f1c40f;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+    --glass-morphism-color: rgba(255, 255, 255, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.2);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* Calculator Container */
+  .calculator {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: var(--glass-morphism-color);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--shadow-color);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* Display Screen */
+  .display {
+    grid-column: 1 / 5;
+    background-color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: right;
+  }
+
+  /* Buttons */
+  .button {
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .button:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .button:active {
+    transform: scale(0.9);
+  }
+
+  /* Operator Buttons */
+  .operator {
+    background-color: var(--secondary-color);
+  }
+
+  /* Number Buttons */
+  .number {
+    background-color: var(--primary-color);
+  }
+
+  /* Equal Button */
+  .equal {
+    grid-column: 1 / 5;
+    background-color: var(--primary-color);
+  }
+
+  /* Keyboard Shortcuts */
+  .keyboard-shortcut {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #666;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 5px;
+    visibility: hidden;
+  }
+
+  .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #fff;
+  }
+
+  /* Error Message */
+  .error-message {
+    color: #f00;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  /* Loading State */
+  .loading-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #666;
+  }
+
+  /* Responsive Design */
+  @media only screen and (max-width: 768px) {
+    .calculator {
+      max-width: 300px;
+    }
+  }
+
+  @media only screen and (max-width: 480px) {
+    .calculator {
+      max-width: 250px;
+    }
+  }
+</style>

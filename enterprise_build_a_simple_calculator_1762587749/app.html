@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="menu-button" aria-label="Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <ul id="sidebar" class="hidden">
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">History</a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="calculator">
+            <input type="text" id="display" disabled>
+            <div class="keys">
+                <button id="clear-button">C</button>
+                <button id="delete-button">DEL</button>
+                <button id="equals-button">=</button>
+                <button id="divide-button">÷</button>
+                <button id="seven-button">7</button>
+                <button id="eight-button">8</button>
+                <button id="nine-button">9</button>
+                <button id="multiply-button">×</button>
+                <button id="four-button">4</button>
+                <button id="five-button">5</button>
+                <button id="six-button">6</button>
+                <button id="subtract-button">−</button>
+                <button id="one-button">1</button>
+                <button id="two-button">2</button>
+                <button id="three-button">3</button>
+                <button id="add-button">+</button>
+                <button id="zero-button">0</button>
+                <button id="decimal-button">.</button>
+                <button id="sqrt-button">√</button>
+                <button id="pi-button">π</button>
+                <button id="square-button">²</button>
+                <button id="cube-button">³</button>
+            </div>
+        </section>
+    </main>
+    <script src="script.js" defer></script>
+</body>
+</html>
