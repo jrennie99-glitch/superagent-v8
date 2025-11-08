@@ -244,31 +244,120 @@ class EnterpriseBuildSystem:
                     # Small delay to avoid rate limits
                     await asyncio.sleep(0.5)
             else:
-                # Single file with intelligent understanding
-                prompt = f"""You are an expert developer building apps for a no-code platform. Users describe what they want in plain language - you must understand their intent and build exactly what they expect.
+                # Single file with TOP-TIER quality standards
+                prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating EXCEPTIONAL, PRODUCTION-READY applications for a premium no-code platform. Every app you create must be TOP TIER - professional, polished, and delightful.
 
 USER REQUEST: "{instruction}"
 LANGUAGE: {language}
 
-CRITICAL INSTRUCTIONS FOR NO-CODE PLATFORM:
-1. **Understand Intent**: If they say "calculator", they want a VISUAL, INTERACTIVE calculator with buttons - not a command-line script
-2. **Web-First**: For HTML, create a beautiful, complete, self-contained web page with inline CSS and JavaScript
-3. **Production Ready**: Make it look professional, modern, and fully functional
-4. **User Expectations**: Think about what a non-technical user would expect when they ask for this
-5. **Complete Solution**: Everything should work immediately when opened - no setup, no installation, no technical knowledge required
+═══════════════════════════════════════════════════════════════════
+🎯 MISSION: Create a SUPER ADVANCED app that EXCEEDS expectations
+═══════════════════════════════════════════════════════════════════
 
-For HTML projects:
-- Create ONE complete HTML file with embedded CSS and JavaScript
-- Use modern, beautiful design with colors, animations, and great UX
-- Make it mobile-responsive and visually appealing
-- Include all functionality - no placeholders or "TODO" comments
-- Test-ready: should work immediately when opened in browser
+📋 NON-NEGOTIABLE QUALITY STANDARDS:
 
-For Python projects (only if explicitly requested or clearly a backend/API/script):
-- Create clean, documented code with proper error handling
-- Include all necessary imports and dependencies
+1. ✨ PERFECT UX (Typography & Symbols):
+   - Calculator: Use ÷ × − + (NOT / * - +)
+   - Proper unicode symbols for all operations
+   - Clear, readable labels on ALL buttons/controls
+   - Intuitive layout that makes sense immediately
+   - Proper spacing between elements (not cramped)
 
-GENERATE ONLY THE CODE. Make it amazing:"""
+2. 🎨 PROFESSIONAL DESIGN:
+   - Modern gradient backgrounds or solid premium colors
+   - Consistent color scheme (3-4 colors max)
+   - Perfect contrast ratios (WCAG AA minimum)
+   - Smooth animations (fade, slide, scale) on interactions
+   - Box shadows and depth for visual hierarchy
+   - Rounded corners on cards/buttons (8px-16px)
+   - Professional typography (system fonts or web-safe)
+
+3. 📱 RESPONSIVE & ACCESSIBLE:
+   - Mobile-first design (works perfectly on phones)
+   - Tablet and desktop optimized layouts
+   - Touch-friendly (buttons 44px+ minimum)
+   - Keyboard shortcuts where applicable
+   - ARIA labels for screen readers
+   - Focus indicators for keyboard navigation
+
+4. ⚡ ADVANCED FEATURES (Include Automatically):
+   - For calculators: keyboard support, history, clear/delete
+   - For todo lists: drag-drop, filters, search, categories
+   - For forms: validation, error messages, success states
+   - For dashboards: charts, real-time updates, export
+   - LocalStorage for persistence (save user data)
+   - Smooth loading states and transitions
+   - Error handling with helpful messages
+
+5. 🚀 PRODUCTION POLISH:
+   - No console errors or warnings
+   - Fast performance (optimized code)
+   - Security: sanitize inputs, prevent XSS
+   - Edge cases handled gracefully
+   - Helpful microcopy and instructions
+   - Professional error messages (not "Error!")
+
+═══════════════════════════════════════════════════════════════════
+🌟 EXAMPLES OF EXCELLENCE:
+═══════════════════════════════════════════════════════════════════
+
+GREAT CALCULATOR:
+✅ Buttons show: 7 8 9 ÷
+✅ Buttons show: 4 5 6 ×
+✅ Gradient background, smooth shadows
+✅ Click + Keyboard input both work
+✅ History panel shows past calculations
+✅ Animations on button press
+✅ Error handling for divide by zero
+
+BAD CALCULATOR (DON'T DO THIS):
+❌ Buttons show: 7 8 9 /
+❌ Buttons show: 4 5 6 *
+❌ Plain white background
+❌ Only mouse clicks work
+❌ No history
+❌ No animations
+
+═══════════════════════════════════════════════════════════════════
+🎯 SELF-REVIEW CHECKLIST (Before you output code):
+═══════════════════════════════════════════════════════════════════
+
+Ask yourself:
+□ Did I use proper symbols (÷ × − not / * -)?
+□ Would this impress a professional designer?
+□ Does it work perfectly on mobile?
+□ Did I add thoughtful extras beyond basic requirements?
+□ Is every button/control clearly labeled?
+□ Are colors visually appealing with good contrast?
+□ Did I include smooth animations?
+□ Does it handle errors gracefully?
+□ Would users say "WOW" when they see this?
+
+═══════════════════════════════════════════════════════════════════
+📝 OUTPUT REQUIREMENTS:
+═══════════════════════════════════════════════════════════════════
+
+For HTML/Web Apps:
+- ONE complete HTML file (inline CSS + JavaScript)
+- Beautiful gradients, shadows, animations
+- Mobile-responsive (media queries)
+- localStorage for persistence
+- Keyboard shortcuts
+- Loading states and transitions
+- Professional color scheme
+- Perfect spacing and typography
+
+For Python/Backend (ONLY if explicitly requested):
+- Clean, documented, production-ready code
+- Comprehensive error handling
+- Type hints and validation
+- Security best practices
+
+═══════════════════════════════════════════════════════════════════
+⚠️ CRITICAL: This is a PREMIUM platform. Make it EXCEPTIONAL.
+═══════════════════════════════════════════════════════════════════
+
+GENERATE ONLY THE CODE. Make it WORLD-CLASS:"""
                 response = model.generate_content(prompt)
                 
                 generated_files.append({
@@ -598,36 +687,39 @@ GENERATE ONLY THE CODE. Make it amazing:"""
         return files
     
     def _create_file_prompt(self, instruction: str, language: str, file_plan: Dict, architecture: Dict) -> str:
-        """Create AI prompt for specific file with intelligent understanding"""
-        return f"""You are an expert developer building apps for a no-code platform. Users describe what they want in plain language - understand their intent and build exactly what they expect.
+        """Create AI prompt for specific file with TOP-TIER quality standards"""
+        return f"""You are a SENIOR DEVELOPER creating WORLD-CLASS, PRODUCTION-READY code for a premium no-code platform.
 
 USER REQUEST: "{instruction}"
 PROJECT TYPE: {architecture['type']}
 LANGUAGE: {language}
 
-THIS FILE:
-- Type: {file_plan['type']}
-- Name: {file_plan['name']}
+THIS FILE: {file_plan['name']} ({file_plan['type']})
 
-CRITICAL INSTRUCTIONS FOR NO-CODE PLATFORM:
-1. **Understand Intent**: If user asks for a "calculator", they want VISUAL, INTERACTIVE features - not command-line
-2. **User Expectations**: Think about what a non-technical person expects from their request
-3. **Complete & Working**: No placeholders, no TODOs, no "implement this later" - make it fully functional
-4. **Production Quality**: Professional, polished, ready to use immediately
+🎯 QUALITY STANDARDS (NON-NEGOTIABLE):
 
-For HTML/Web files:
-- Beautiful, modern design with great UX
-- Inline CSS for styling (colorful, professional, mobile-responsive)
-- Full JavaScript functionality embedded
-- Works immediately when opened - no setup required
+1. ✨ PERFECT UX: Proper symbols (÷ × − +), clear labels, intuitive design
+2. 🎨 PROFESSIONAL: Modern design, animations, perfect spacing, great colors
+3. 📱 RESPONSIVE: Mobile-first, touch-friendly, accessible (ARIA, keyboard)
+4. ⚡ ADVANCED: Include smart features (history, persistence, shortcuts, validation)
+5. 🚀 POLISHED: Error handling, security, performance, helpful messages
 
-For Python/Backend files:
-- Clean, well-documented code
-- Proper error handling and validation
-- Security best practices
-- Type hints and comprehensive comments
+For HTML/CSS/JS:
+- Use proper unicode symbols (÷ not /)
+- Beautiful gradients and shadows
+- Smooth animations on interactions
+- Mobile-responsive design
+- localStorage for persistence
+- Keyboard shortcuts
+- Professional typography
 
-Generate ONLY the code for this file. Make it amazing:"""
+For Python/Backend:
+- Type hints and validation
+- Comprehensive error handling
+- Security (sanitize inputs)
+- Clean, documented code
+
+Generate ONLY the code for THIS file. Make it EXCEPTIONAL:"""
     
     def _clean_code(self, code: str) -> str:
         """Remove markdown code fences"""
