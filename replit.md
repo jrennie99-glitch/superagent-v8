@@ -10,6 +10,21 @@ SuperAgent is a complete Replit Agent clone designed to provide a fully autonomo
 Key capabilities include an admin-only Auto App Builder for generating complete applications from descriptions or code, and integration with Runway ML for AI video generation.
 
 ## Recent Changes
+### November 8, 2025 - Labeled Controls & Video-to-App AI Analysis
+- **Labeled Button Controls:** All control buttons now have visible text labels for better UX
+  - Preview controls: "Refresh", "Open", "Mobile" labels below buttons with purple glow effects
+  - Input controls: "File", "Video", "Voice" labels below each button
+  - Improved accessibility with ARIA labels for screen readers
+  - Hover animations enhance the purple gradient theme
+- **Video-to-App Feature:** NEW 🎬 Video upload button enables AI to recreate apps from videos
+  - Upload video files (MP4, WebM, MOV - max 100MB) or record screen/camera
+  - Gemini 2.0 Flash analyzes video content: UI layout, interactions, components, user flow
+  - AI generates app based on what it sees in the video plus user instructions
+  - Secure implementation: UUID-based filenames prevent path traversal attacks
+  - Full modal interface: upload/record options, live preview, instructions textarea
+  - Backend endpoint `/api/v1/upload-video` with size limits and validation
+- **Security Enhancements:** Video upload uses UUID filenames to prevent malicious path traversal
+
 ### November 8, 2025 - TOP-TIER AI Intelligence & World-Class App Generation
 - **Migration Completed:** Successfully migrated the entire SuperAgent platform from Vercel to Replit
 - **Port Configuration:** Updated `start.py` to bind to port 5000 (Replit requirement) instead of 8000
