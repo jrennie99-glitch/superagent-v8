@@ -1207,6 +1207,78 @@ body {
       <div id="deployInstructions"></div>
     </div>
   </div>
+
+  <!-- Video Upload Modal -->
+  <div class="modal" id="videoModal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title">🎬 Video to App</div>
+        <button class="modal-close" onclick="closeVideoModal()">✕</button>
+      </div>
+      <div style="padding: 25px;">
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 25px; line-height: 1.6;">
+          Upload a video or record your screen to let AI analyze it and recreate what you see. Perfect for showing UI designs, app demos, or explaining what you want to build!
+        </p>
+        
+        <!-- Upload Option -->
+        <div class="video-option" style="margin-bottom: 20px;">
+          <button class="action-btn" onclick="document.getElementById('videoFileInput').click()" style="width: 100%; padding: 20px; font-size: 1.1rem;">
+            <span>📤</span>
+            <span>Upload Video File</span>
+          </button>
+          <input type="file" id="videoFileInput" style="display: none;" accept="video/*" onchange="handleVideoFileUpload(event)">
+          <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 10px; text-align: center;">
+            Supports MP4, WebM, MOV (max 100MB)
+          </p>
+        </div>
+        
+        <!-- Record Option -->
+        <div class="video-option">
+          <button class="action-btn" onclick="startVideoRecording()" id="recordBtn" style="width: 100%; padding: 20px; font-size: 1.1rem;">
+            <span>🎥</span>
+            <span>Record Screen/Camera</span>
+          </button>
+          <button class="action-btn" onclick="stopVideoRecording()" id="stopRecordBtn" style="width: 100%; padding: 20px; font-size: 1.1rem; display: none; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+            <span>⏹️</span>
+            <span>Stop Recording</span>
+          </button>
+          <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 10px; text-align: center;">
+            Record your screen, app, or yourself explaining
+          </p>
+        </div>
+        
+        <!-- Preview Area -->
+        <div id="videoPreviewArea" style="display: none; margin-top: 25px;">
+          <p style="color: var(--nebula-purple); font-weight: 600; margin-bottom: 15px;">Preview:</p>
+          <video id="videoPreview" controls style="width: 100%; border-radius: 12px; background: #000; max-height: 300px;"></video>
+          
+          <!-- Analysis Prompt -->
+          <div style="margin-top: 20px;">
+            <label style="color: rgba(255,255,255,0.9); font-weight: 600; display: block; margin-bottom: 10px;">
+              What should the AI build from this video?
+            </label>
+            <textarea id="videoInstructions" 
+              placeholder="Describe what you want... (e.g., 'recreate this calculator app' or 'build what I'm showing in the video')"
+              style="width: 100%; min-height: 100px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(139, 92, 246, 0.3); color: white; font-family: inherit; resize: vertical;"
+            ></textarea>
+          </div>
+          
+          <!-- Submit Button -->
+          <button class="action-btn" onclick="processVideoAndBuild()" style="width: 100%; margin-top: 20px; padding: 20px; font-size: 1.1rem; background: linear-gradient(135deg, var(--nebula-purple) 0%, var(--cosmic-blue) 100%);">
+            <span>🚀</span>
+            <span>Analyze & Build</span>
+          </button>
+        </div>
+        
+        <!-- Processing Status -->
+        <div id="videoProcessing" style="display: none; margin-top: 25px; text-align: center;">
+          <div class="progress-ring" style="margin: 0 auto 15px;"></div>
+          <p style="color: var(--nebula-purple); font-weight: 600;">Analyzing video...</p>
+          <p id="videoProcessingStatus" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 10px;">Extracting frames and content...</p>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <script>
     // Generate particles
@@ -1529,6 +1601,171 @@ body {
     
     function showQR() {
       alert('QR Code feature coming soon!');
+    }
+
+    // Video Upload Functions
+    let videoBlob = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+
+    function openVideoUpload() {
+      document.getElementById('videoModal').style.display = 'flex';
+      // Reset state
+      videoBlob = null;
+      document.getElementById('videoPreviewArea').style.display = 'none';
+      document.getElementById('videoProcessing').style.display = 'none';
+      document.getElementById('videoPreview').src = '';
+      document.getElementById('videoInstructions').value = '';
+    }
+
+    function closeVideoModal() {
+      document.getElementById('videoModal').style.display = 'none';
+      // Stop any ongoing recording
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+      document.getElementById('recordBtn').style.display = 'block';
+      document.getElementById('stopRecordBtn').style.display = 'none';
+    }
+
+    function handleVideoFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // Check file size (max 100MB)
+      const maxSize = 100 * 1024 * 1024; // 100MB
+      if (file.size > maxSize) {
+        alert('Video file is too large. Please upload a file smaller than 100MB.');
+        return;
+      }
+      
+      // Check file type
+      if (!file.type.startsWith('video/')) {
+        alert('Please upload a valid video file.');
+        return;
+      }
+      
+      // Store the blob
+      videoBlob = file;
+      
+      // Show preview
+      const videoPreview = document.getElementById('videoPreview');
+      videoPreview.src = URL.createObjectURL(file);
+      document.getElementById('videoPreviewArea').style.display = 'block';
+      
+      addBuildLog(`🎬 Uploaded video: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`, '🎬');
+    }
+
+    async function startVideoRecording() {
+      try {
+        // Request screen + audio or camera
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { mediaSource: 'screen' },
+          audio: true
+        });
+        
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm;codecs=vp9'
+        });
+        
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+        
+        mediaRecorder.onstop = () => {
+          videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+          
+          // Show preview
+          const videoPreview = document.getElementById('videoPreview');
+          videoPreview.src = URL.createObjectURL(videoBlob);
+          document.getElementById('videoPreviewArea').style.display = 'block';
+          
+          // Stop all tracks
+          stream.getTracks().forEach(track => track.stop());
+          
+          // Reset buttons
+          document.getElementById('recordBtn').style.display = 'block';
+          document.getElementById('stopRecordBtn').style.display = 'none';
+          
+          addBuildLog(`🎬 Recorded video (${(videoBlob.size / 1024 / 1024).toFixed(1)} MB)`, '🎬');
+        };
+        
+        mediaRecorder.start();
+        
+        // Update UI
+        document.getElementById('recordBtn').style.display = 'none';
+        document.getElementById('stopRecordBtn').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Recording error:', error);
+        alert('Could not start recording. Please ensure you grant screen recording permissions.');
+      }
+    }
+
+    function stopVideoRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+    }
+
+    async function processVideoAndBuild() {
+      if (!videoBlob) {
+        alert('Please upload or record a video first.');
+        return;
+      }
+      
+      const instructions = document.getElementById('videoInstructions').value.trim();
+      if (!instructions) {
+        alert('Please describe what you want the AI to build from this video.');
+        return;
+      }
+      
+      // Show processing UI
+      document.getElementById('videoPreviewArea').style.display = 'none';
+      document.getElementById('videoProcessing').style.display = 'block';
+      
+      try {
+        // Upload video file
+        const formData = new FormData();
+        formData.append('video', videoBlob, 'recorded-video.webm');
+        formData.append('instructions', instructions);
+        
+        document.getElementById('videoProcessingStatus').textContent = 'Uploading video...';
+        
+        const uploadResponse = await fetch('/api/v1/upload-video', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload video');
+        }
+        
+        const uploadData = await uploadResponse.json();
+        
+        document.getElementById('videoProcessingStatus').textContent = 'Analyzing video content...';
+        
+        // Close modal
+        closeVideoModal();
+        
+        // Trigger build with video context
+        const userInput = document.getElementById('userInput');
+        const enhancedPrompt = `${instructions}\n\n[Video Analysis: ${uploadData.analysis || 'Video uploaded for AI analysis'}]`;
+        userInput.value = enhancedPrompt;
+        
+        // Start the build
+        addBuildLog('🎬 Building app from video analysis...', '🎬');
+        startBuild();
+        
+      } catch (error) {
+        console.error('Video processing error:', error);
+        alert('Failed to process video: ' + error.message);
+        document.getElementById('videoProcessing').style.display = 'none';
+        document.getElementById('videoPreviewArea').style.display = 'block';
+      }
     }
 
     // Build Results Panel Functions
