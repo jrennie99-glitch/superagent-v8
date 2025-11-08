@@ -1478,6 +1478,62 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
     
     def _create_file_prompt(self, instruction: str, language: str, file_plan: Dict, architecture: Dict) -> str:
         """Create AI prompt for specific file with enterprise-grade quality standards"""
+        
+        # Special handling for script/JavaScript files
+        if file_plan['type'] in ['script', 'js']:
+            return f"""You are a SENIOR JAVASCRIPT DEVELOPER creating ENTERPRISE-GRADE, PRODUCTION-READY JavaScript code.
+
+USER REQUEST: "{instruction}"
+PROJECT TYPE: {architecture['type']}
+FILE: {file_plan['name']}.js (JavaScript file)
+
+⚠️ CRITICAL: Generate PURE JAVASCRIPT CODE ONLY - No HTML, No CSS, just JavaScript!
+
+REQUIREMENTS:
+- 300+ lines of sophisticated JavaScript code
+- All buttons must have event listeners
+- Proper state management with variables
+- Error handling with try/catch blocks
+- localStorage for data persistence
+- Keyboard event listeners
+- Helper functions for complex operations
+- Clean, modular code structure
+
+For CALCULATORS:
+- Expression parser for operator precedence (2+3×4 = 14)
+- All math operations with proper functions
+- Memory functions (M+, M-, MR, MC, MS)
+- Keyboard shortcuts (0-9, +−×÷, Enter, Escape, Backspace)
+- Calculator history with localStorage
+- Settings (theme toggle, decimal places)
+
+EXAMPLE STRUCTURE:
+```javascript
+// State variables
+let currentValue = '0';
+let memory = 0;
+let history = [];
+
+// DOM element references
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('button');
+
+// Event listeners
+buttons.forEach(button => {{
+  button.addEventListener('click', handleButtonClick);
+}});
+
+document.addEventListener('keydown', handleKeyPress);
+
+// Functions
+function handleButtonClick(e) {{ /* implementation */ }}
+function calculate(expression) {{ /* implementation */ }}
+function saveToHistory(calc) {{ /* implementation */ }}
+```
+
+Generate ONLY pure JavaScript code (no HTML/CSS tags):"""
+        
+        # Default prompt for other file types
         return f"""You are a SENIOR DEVELOPER creating ENTERPRISE-GRADE, PRODUCTION-READY code for a premium platform. This file is part of a sophisticated, feature-rich application.
 
 USER REQUEST: "{instruction}"

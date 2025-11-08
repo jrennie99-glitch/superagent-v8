@@ -1,0 +1,55 @@
+<!-- styles.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="menu" aria-label="Menu">
+                <li><a href="#" aria-label="Settings">Settings</a></li>
+                <li><a href="#" aria-label="Help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="calculator">
+            <div id="display" aria-label="Calculator display"></div>
+            <div id="keyboard">
+                <button id="clear" aria-label="Clear">C</button>
+                <button id="backspace" aria-label="Backspace">⌫</button>
+                <button id="divide" aria-label="Divide">÷</button>
+                <button id="multiply" aria-label="Multiply">×</button>
+                <button id="seven" aria-label="Number 7">7</button>
+                <button id="eight" aria-label="Number 8">8</button>
+                <button id="nine" aria-label="Number 9">9</button>
+                <button id="subtract" aria-label="Subtract">−</button>
+                <button id="four" aria-label="Number 4">4</button>
+                <button id="five" aria-label="Number 5">5</button>
+                <button id="six" aria-label="Number 6">6</button>
+                <button id="add" aria-label="Add">+</button>
+                <button id="one" aria-label="Number 1">1</button>
+                <button id="two" aria-label="Number 2">2</button>
+                <button id="three" aria-label="Number 3">3</button>
+                <button id="equals" aria-label="Equals">=</button>
+                <button id="zero" aria-label="Number 0">0</button>
+                <button id="decimal" aria-label="Decimal point">.</button>
+                <button id="square-root" aria-label="Square root">√</button>
+                <button id="pi" aria-label="Pi">π</button>
+                <button id="square" aria-label="Square">²</button>
+                <button id="cube" aria-label="Cube">³</button>
+            </div>
+        </section>
+    </main>
+    <script src="script.js" defer></script>
+</body>
+</html>
