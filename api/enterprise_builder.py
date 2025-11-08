@@ -1603,12 +1603,41 @@ For Backend (Python/Node):
 Generate ONLY the code for THIS file (no explanations). Make it WORLD-CLASS:"""
     
     def _clean_code(self, code: str) -> str:
-        """Remove markdown code fences"""
+        """Remove markdown code fences and explanatory prose"""
         if not code:
             return ""
         import re
+        
+        # Remove opening markdown code fences (e.g., ```python, ```javascript, etc.)
         code = re.sub(r'^```[\w]*\n', '', code)
+        
+        # Strip explanatory prose after code (common AI behavior)
+        # Look for markdown headers like **Explanation:**, **Usage:**, **Notes:**
+        # Remove everything after these markers
+        prose_markers = [
+            r'\n\*\*Explanation:\*\*',
+            r'\n\*\*Usage:\*\*',
+            r'\n\*\*Notes:\*\*',
+            r'\n\*\*Note:\*\*',
+            r'\n## Explanation',
+            r'\n## Usage',
+            r'\n## Notes',
+            r'\nExplanation:',
+            r'\nUsage:',
+            r'\nNotes:'
+        ]
+        
+        for marker in prose_markers:
+            match = re.search(marker, code, re.IGNORECASE)
+            if match:
+                code = code[:match.start()]
+                break
+        
+        # Remove closing code fences (standalone ``` on a line or at end)
+        # This must be done AFTER prose removal since prose often comes after ```
+        code = re.sub(r'\n```(?:\n|$)', '', code)
         code = re.sub(r'\n```$', '', code)
+        
         return code.strip()
     
     def _get_file_extension(self, language: str, file_type: str) -> str:

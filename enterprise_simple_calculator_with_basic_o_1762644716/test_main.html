@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1>Advanced Calculator</h1>
+        </div>
+        <div class="calculator-body">
+            <div class="display">
+                <input type="text" id="display" disabled>
+            </div>
+            <div class="keyboard">
+                <button class="button" id="clear">C</button>
+                <button class="button" id="backspace">&lt;</button>
+                <button class="button" id="divide">&divide;</button>
+                <button class="button" id="multiply">&times;</button>
+                <button class="button" id="seven">7</button>
+                <button class="button" id="eight">8</button>
+                <button class="button" id="nine">9</button>
+                <button class="button" id="subtract">&minus;</button>
+                <button class="button" id="four">4</button>
+                <button class="button" id="five">5</button>
+                <button class="button" id="six">6</button>
+                <button class="button" id="add">+</button>
+                <button class="button" id="one">1</button>
+                <button class="button" id="two">2</button>
+                <button class="button" id="three">3</button>
+                <button class="button" id="equals">=</button>
+                <button class="button" id="zero">0</button>
+                <button class="button" id="decimal">.</button>
+                <button class="button" id="sqrt">&sqrt;</button>
+                <button class="button" id="pi">&pi;</button>
+                <button class="button" id="square">&sup2;</button>
+                <button class="button" id="cube">&sup3;</button>
+            </div>
+            <div class="settings">
+                <button class="button" id="settings">Settings</button>
+                <button class="button" id="undo">Undo</button>
+                <button class="button" id="redo">Redo</button>
+                <button class="button" id="export">Export</button>
+                <button class="button" id="import">Import</button>
+            </div>
+        </div>
+        <div class="tooltip">
+            <span id="tooltip-text"></span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

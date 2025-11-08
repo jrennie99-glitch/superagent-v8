@@ -86,3 +86,21 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
    - Falls back to static code analysis when browser automation unavailable
    - Full E2E functionality available when deployed to Railway, Render, Fly.io
    - User receives clear warnings but builds continue when deps unavailable
+
+5. **JavaScript File Generation Fix (CRITICAL)**:
+   - Fixed webapp builds missing script.js files entirely - calculators/apps were non-functional without JavaScript
+   - Modified `_plan_file_structure()` to include `{"name": "script", "type": "script"}` in webapp file list
+   - Enhanced `_create_file_prompt()` with JavaScript-specific prompt for "script" and "js" file types
+   - AI now explicitly instructed to generate pure JavaScript code (300+ lines) with no HTML/CSS tags
+   - Prompt demands: event listeners, state management, localStorage, keyboard shortcuts, error handling
+   - **Enhanced `_clean_code()` to strip explanatory prose and code fences** (identified by architect):
+     - Removes markdown prose markers (**Explanation:**, **Usage:**, **Notes:** etc.)
+     - Removes closing code fences (```) that appear after prose
+     - Three-step process: remove opening fences → strip prose → remove closing fences
+     - Verified: 208-line broken file → 190-line clean JavaScript with zero markers
+   - Calculator apps now generate with proper:
+     - 200+ lines of sophisticated JavaScript (not HTML embedded in .js files)
+     - Expression parsers, math operations, memory functions
+     - Full keyboard support and localStorage persistence
+     - Event listeners on all buttons and proper DOM manipulation
+   - All HTML files properly link to script.js with `<script src="script.js" defer></script>`
