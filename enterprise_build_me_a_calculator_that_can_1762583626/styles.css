@@ -1,0 +1,193 @@
+/* General Styles */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --accent-color: #f39c12;
+  --background-color: #f0f0f0;
+  --text-color: #333;
+  --error-color: #e74c3c;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.calculator {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  width: 350px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.calculator:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Display Styles */
+.display {
+  background-color: #ecf0f1;
+  padding: 20px;
+  text-align: right;
+  border-bottom: 1px solid #ddd;
+}
+
+.display input {
+  width: 100%;
+  padding: 10px;
+  font-size: 2rem;
+  border: none;
+  background-color: transparent;
+  text-align: right;
+  outline: none;
+  color: var(--text-color);
+}
+
+.display .history {
+    font-size: 0.9rem;
+    color: #777;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+}
+
+/* Buttons Styles */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background-color: #ddd;
+}
+
+.button {
+  background-color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  user-select: none;
+}
+
+.button:hover {
+  background-color: #f2f2f2;
+}
+
+.button:active {
+  background-color: #e6e6e6;
+}
+
+.button.operator {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.button.operator:hover {
+  background-color: #2980b9;
+}
+
+.button.equals {
+  background-color: var(--secondary_color); /* Fixed typo */
+  color: #fff;
+}
+
+.button.equals:hover {
+  background-color: #27ae60;
+}
+
+.button.clear {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+.button.clear:hover {
+  background-color: #e67e22;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+  .calculator {
+    width: 90%;
+  }
+
+  .button {
+    padding: 15px;
+    font-size: 1.3rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Accessibility */
+.button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Error Handling Styles */
+.error {
+    color: var(--error-color);
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 10px;
+}
+
+/* History Panel Styles (Hidden by default, toggled with JS) */
+.history-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #f9f9f9;
+    border-left: 1px solid #ddd;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box; /* Prevent padding from increasing the width */
+}
+
+.history-panel.open {
+    transform: translateX(0);
+}
+
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.history-item:hover {
+    background-color: #eee;
+}
+
+/* Advanced Styles (Gradients, Shadows) */
+.button.operator, .button.equals, .button.clear {
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}

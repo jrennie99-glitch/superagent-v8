@@ -221,8 +221,9 @@ class EnterpriseBuildSystem:
         """Stage 3: Generate code for all files"""
         try:
             import google.generativeai as genai
+            from api.custom_key_manager import get_custom_gemini_key
             
-            gemini_key = os.getenv("GEMINI_API_KEY")
+            gemini_key = get_custom_gemini_key()
             genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel('gemini-2.0-flash')
             
@@ -244,120 +245,201 @@ class EnterpriseBuildSystem:
                     # Small delay to avoid rate limits
                     await asyncio.sleep(0.5)
             else:
-                # Single file with TOP-TIER quality standards
-                prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating EXCEPTIONAL, PRODUCTION-READY applications for a premium no-code platform. Every app you create must be TOP TIER - professional, polished, and delightful.
+                # Detect if user wants advanced/sophisticated app (precise detection)
+                instruction_lower = instruction.lower()
+                wants_advanced = (
+                    'advanced' in instruction_lower or
+                    'sophisticated' in instruction_lower or
+                    'enterprise' in instruction_lower or
+                    'professional' in instruction_lower or
+                    'full-featured' in instruction_lower or
+                    'comprehensive' in instruction_lower or
+                    'powerful' in instruction_lower or
+                    'feature-rich' in instruction_lower or
+                    'complete solution' in instruction_lower or
+                    'any math' in instruction_lower or  # Specific phrase
+                    'any calculation' in instruction_lower or
+                    'all features' in instruction_lower  # Specific phrase
+                )
+                
+                # Build context-appropriate prompt
+                prompt = f"""You are a SENIOR FULL-STACK DEVELOPER creating EXCEPTIONAL, PRODUCTION-READY applications for a premium no-code platform.
 
 USER REQUEST: "{instruction}"
 LANGUAGE: {language}
 
 ═══════════════════════════════════════════════════════════════════
-🎯 MISSION: Create a SUPER ADVANCED app that EXCEEDS expectations
+🎯 QUALITY MISSION: Build apps that exceed expectations
 ═══════════════════════════════════════════════════════════════════
 
-📋 NON-NEGOTIABLE QUALITY STANDARDS:
-
-1. ✨ PERFECT UX (Typography & Symbols):
-   - Calculator: Use ÷ × − + (NOT / * - +)
-   - Proper unicode symbols for all operations
-   - Clear, readable labels on ALL buttons/controls
-   - Intuitive layout that makes sense immediately
-   - Proper spacing between elements (not cramped)
-
-2. 🎨 PROFESSIONAL DESIGN:
-   - Modern gradient backgrounds or solid premium colors
-   - Consistent color scheme (3-4 colors max)
-   - Perfect contrast ratios (WCAG AA minimum)
-   - Smooth animations (fade, slide, scale) on interactions
-   - Box shadows and depth for visual hierarchy
-   - Rounded corners on cards/buttons (8px-16px)
-   - Professional typography (system fonts or web-safe)
-
-3. 📱 RESPONSIVE & ACCESSIBLE:
-   - Mobile-first design (works perfectly on phones)
-   - Tablet and desktop optimized layouts
-   - Touch-friendly (buttons 44px+ minimum)
-   - Keyboard shortcuts where applicable
-   - ARIA labels for screen readers
-   - Focus indicators for keyboard navigation
-
-4. ⚡ ADVANCED FEATURES (Include Automatically):
-   - For calculators: keyboard support, history, clear/delete
-   - For todo lists: drag-drop, filters, search, categories
-   - For forms: validation, error messages, success states
-   - For dashboards: charts, real-time updates, export
-   - LocalStorage for persistence (save user data)
-   - Smooth loading states and transitions
-   - Error handling with helpful messages
-
-5. 🚀 PRODUCTION POLISH:
-   - No console errors or warnings
-   - Fast performance (optimized code)
-   - Security: sanitize inputs, prevent XSS
-   - Edge cases handled gracefully
-   - Helpful microcopy and instructions
-   - Professional error messages (not "Error!")
+{"" if not wants_advanced else '''
+⚡ USER WANTS ADVANCED/SOPHISTICATED: Include rich feature set!
+The user explicitly asked for an advanced, sophisticated, or comprehensive app.
+This means they want MORE than basic functionality - add power user features.
+'''}
 
 ═══════════════════════════════════════════════════════════════════
-🌟 EXAMPLES OF EXCELLENCE:
+📋 FEATURE GUIDELINES BY APP TYPE:
 ═══════════════════════════════════════════════════════════════════
 
-GREAT CALCULATOR:
-✅ Buttons show: 7 8 9 ÷
-✅ Buttons show: 4 5 6 ×
-✅ Gradient background, smooth shadows
-✅ Click + Keyboard input both work
-✅ History panel shows past calculations
-✅ Animations on button press
-✅ Error handling for divide by zero
+🧮 CALCULATOR - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
+{"INCLUDE MANY OF THESE:" if wants_advanced else "CONSIDER INCLUDING:"}
+✅ Scientific Functions: sin, cos, tan, log, ln, sqrt, x², x³, xʸ, 1/x, n!, π, e
+✅ Expression Evaluation: Parse & calculate full expressions like "3×(5+2)÷7"
+✅ Keyboard Support: Full keyboard input + shortcuts (Enter=calculate, C=clear, Esc=clear)
+✅ Calculation History: Scrollable list of past calculations with copy button
+✅ Memory Functions: M+, M-, MR, MC (memory add, subtract, recall, clear)
+✅ Multiple Modes: Basic, Scientific, Programmer (hex/bin/oct), Statistics tabs
+✅ Angle Units: Degrees/Radians toggle for trig functions
+✅ Constants: π, e, φ (golden ratio), speed of light, etc.
+✅ Advanced Operations: percentage, modulo, absolute value, rounding
+✅ Copy/Paste: Click result to copy, paste expressions
+✅ Error Handling: Division by zero, domain errors, overflow
+✅ Responsive Layout: Works perfectly on mobile with collapsible panels
 
-BAD CALCULATOR (DON'T DO THIS):
-❌ Buttons show: 7 8 9 /
-❌ Buttons show: 4 5 6 *
-❌ Plain white background
-❌ Only mouse clicks work
-❌ No history
-❌ No animations
+DESIGN:
+- Dark theme with vibrant accent colors (blues, purples, greens)
+- Gradient backgrounds, glass-morphism effects
+- Smooth animations on button press, mode switching
+- Clear visual hierarchy (display > scientific > basic > history)
+
+📝 TODO LIST - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
+{"INCLUDE MANY:" if wants_advanced else "CONSIDER:"}
+- Add/edit/delete tasks with smooth animations
+- Mark complete with checkbox
+- {"Filter by status, categories, priority" if wants_advanced else "Simple filtering"}
+- {"Drag & drop to reorder, search, due dates" if wants_advanced else "Basic list functionality"}
+- {"Keyboard shortcuts, export data, dark mode" if wants_advanced else "Clean UI"}
+- localStorage persistence
+
+📊 DASHBOARD - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
+{"INCLUDE MANY:" if wants_advanced else "CONSIDER:"}
+- Display key metrics with cards
+- {"Live charts (line, bar, pie), real-time updates" if wants_advanced else "Basic data visualization"}
+- {"Multiple widgets, customizable layout" if wants_advanced else "Simple grid layout"}
+- {"Filtering, search, export data" if wants_advanced else "Display data clearly"}
+- {"Responsive grid, theme toggle" if wants_advanced else "Mobile-responsive"}
+- Clean, professional design
+
+🎮 GAME - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
+{"INCLUDE MANY:" if wants_advanced else "CONSIDER:"}
+- Core gameplay mechanics
+- Score tracking
+- {"Multiple levels, difficulty settings" if wants_advanced else "Single level gameplay"}
+- {"Lives/health, power-ups, leaderboard" if wants_advanced else "Basic scoring"}
+- {"Pause/resume, instructions modal" if wants_advanced else "Simple controls"}
+- Smooth animations, responsive controls
+
+🌦️ WEATHER APP - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
+{"INCLUDE MANY:" if wants_advanced else "CONSIDER:"}
+- Current weather display
+- {"7-day forecast, hourly breakdown" if wants_advanced else "Basic forecast"}
+- {"Multiple saved locations, search" if wants_advanced else "Single location"}
+- {"Weather maps, alerts, detailed metrics" if wants_advanced else "Essential data"}
+- {"Unit toggle, dynamic backgrounds" if wants_advanced else "Clean display"}
+- Beautiful weather icons
 
 ═══════════════════════════════════════════════════════════════════
-🎯 SELF-REVIEW CHECKLIST (Before you output code):
+🎨 DESIGN REQUIREMENTS (NON-NEGOTIABLE):
 ═══════════════════════════════════════════════════════════════════
 
-Ask yourself:
-□ Did I use proper symbols (÷ × − not / * -)?
-□ Would this impress a professional designer?
-□ Does it work perfectly on mobile?
-□ Did I add thoughtful extras beyond basic requirements?
-□ Is every button/control clearly labeled?
-□ Are colors visually appealing with good contrast?
-□ Did I include smooth animations?
-□ Does it handle errors gracefully?
-□ Would users say "WOW" when they see this?
+1. ✨ VISUAL EXCELLENCE:
+   - Premium gradient backgrounds (multi-color, subtle)
+   - Glass-morphism or neumorphism effects
+   - Smooth 60fps animations (CSS transitions/keyframes)
+   - Professional color palette (max 4 colors + neutrals)
+   - Box shadows for depth (4-6 levels of elevation)
+   - Icons for all actions (use Unicode or emoji icons)
+
+2. 📐 PERFECT TYPOGRAPHY & SYMBOLS:
+   - Use proper math symbols: ÷ × − + √ π ² ³ ≈ ≠ ≤ ≥
+   - Font hierarchy: 48px display, 24px headings, 16px body
+   - Line height 1.5-1.6 for readability
+   - Font weights: 700 bold, 600 semibold, 400 regular
+
+3. 📱 RESPONSIVE DESIGN:
+   - Mobile-first (320px+), tablet (768px+), desktop (1024px+)
+   - Touch targets 44px minimum
+   - Collapsible sidebars on mobile
+   - Hamburger menu for navigation
+   - Grid layouts with CSS Grid/Flexbox
+
+4. ⚡ PERFORMANCE & UX:
+   - Instant feedback (<100ms response)
+   - Loading skeletons for async operations
+   - Smooth transitions (300ms ease-in-out)
+   - Debounced search (300ms delay)
+   - Optimistic UI updates
+   - Error states with retry buttons
+
+5. 🔧 POWER USER FEATURES:
+   - Keyboard shortcuts for all actions
+   - localStorage persistence (auto-save)
+   - Undo/Redo functionality
+   - Export/Import data
+   - Settings/preferences panel
+   - Tooltips on hover
 
 ═══════════════════════════════════════════════════════════════════
-📝 OUTPUT REQUIREMENTS:
+🌟 QUALITY CHECKLIST:
+═══════════════════════════════════════════════════════════════════
+
+{"For ADVANCED requests, ask yourself:" if wants_advanced else "Ask yourself:"}
+□ {"Does this have 8+ rich features?" if wants_advanced else "Does this fulfill the request well?"}
+□ Is the design modern and visually appealing?
+□ Does it use proper symbols (÷ × − not / * -)?
+□ Are there smooth animations on interactions?
+□ Does it work well on mobile?
+□ {"Did I include keyboard shortcuts and power-user features?" if wants_advanced else "Did I include helpful UX touches?"}
+□ Is there localStorage persistence where appropriate?
+□ {"Would users say WOW?" if wants_advanced else "Would users find this useful and pleasant?"}
+
+═══════════════════════════════════════════════════════════════════
+📝 OUTPUT FORMAT:
 ═══════════════════════════════════════════════════════════════════
 
 For HTML/Web Apps:
-- ONE complete HTML file (inline CSS + JavaScript)
-- Beautiful gradients, shadows, animations
-- Mobile-responsive (media queries)
-- localStorage for persistence
-- Keyboard shortcuts
-- Loading states and transitions
-- Professional color scheme
-- Perfect spacing and typography
+- ONE complete, self-contained HTML file
+- All CSS in <style> tag (well-structured and comprehensive)
+- All JavaScript in <script> tag (clean, functional code)
+- Mobile-responsive with media queries
+- Beautiful design (gradients, shadows, animations)
+- localStorage for data persistence
+- Keyboard support where applicable
+- Error handling
+- Clear comments for complex logic
 
-For Python/Backend (ONLY if explicitly requested):
-- Clean, documented, production-ready code
-- Comprehensive error handling
-- Type hints and validation
-- Security best practices
+For Python (ONLY if explicitly backend/API requested):
+- Type hints on all functions
+- Comprehensive docstrings
+- Error handling with try/except
+- Input validation and sanitization
+- Modular, clean architecture
 
 ═══════════════════════════════════════════════════════════════════
-⚠️ CRITICAL: This is a PREMIUM platform. Make it EXCEPTIONAL.
+⚠️ IMPORTANT GUIDELINES:
 ═══════════════════════════════════════════════════════════════════
 
-GENERATE ONLY THE CODE. Make it WORLD-CLASS:"""
+ALWAYS DO:
+✅ Use proper symbols: ÷ × − + √ π (not / * -)
+✅ Add smooth animations and transitions
+✅ Make it mobile-responsive
+✅ Include error handling
+✅ Use modern, professional design (gradients, shadows)
+✅ Add keyboard support for better UX
+✅ {"Include rich feature set when user wants 'advanced'" if wants_advanced else "Focus on core functionality"}
+
+NEVER DO:
+❌ Use plain text operators like / * - for math
+❌ Skip mobile responsiveness
+❌ Use plain white backgrounds without styling
+❌ Skip error handling
+
+═══════════════════════════════════════════════════════════════════
+🚀 NOW BUILD {"A SOPHISTICATED, FEATURE-RICH" if wants_advanced else "A POLISHED, PROFESSIONAL"} APP:
+═══════════════════════════════════════════════════════════════════
+
+Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanced else "EXCELLENT"}:"""
                 response = model.generate_content(prompt)
                 
                 generated_files.append({
@@ -687,39 +769,74 @@ GENERATE ONLY THE CODE. Make it WORLD-CLASS:"""
         return files
     
     def _create_file_prompt(self, instruction: str, language: str, file_plan: Dict, architecture: Dict) -> str:
-        """Create AI prompt for specific file with TOP-TIER quality standards"""
-        return f"""You are a SENIOR DEVELOPER creating WORLD-CLASS, PRODUCTION-READY code for a premium no-code platform.
+        """Create AI prompt for specific file with enterprise-grade quality standards"""
+        return f"""You are a SENIOR DEVELOPER creating ENTERPRISE-GRADE, PRODUCTION-READY code for a premium platform. This file is part of a sophisticated, feature-rich application.
 
 USER REQUEST: "{instruction}"
 PROJECT TYPE: {architecture['type']}
 LANGUAGE: {language}
+FILE: {file_plan['name']} ({file_plan['type']})
 
-THIS FILE: {file_plan['name']} ({file_plan['type']})
+═══════════════════════════════════════════════════════════════════
+🎯 ENTERPRISE QUALITY REQUIREMENTS:
+═══════════════════════════════════════════════════════════════════
 
-🎯 QUALITY STANDARDS (NON-NEGOTIABLE):
+When users say "advanced" or "sophisticated":
+- Extensive feature set (10+ features minimum)
+- Professional-grade functionality
+- Enterprise-level capabilities
+- Power user features
 
-1. ✨ PERFECT UX: Proper symbols (÷ × − +), clear labels, intuitive design
-2. 🎨 PROFESSIONAL: Modern design, animations, perfect spacing, great colors
-3. 📱 RESPONSIVE: Mobile-first, touch-friendly, accessible (ARIA, keyboard)
-4. ⚡ ADVANCED: Include smart features (history, persistence, shortcuts, validation)
-5. 🚀 POLISHED: Error handling, security, performance, helpful messages
+🎨 DESIGN STANDARDS:
+✅ Premium gradients, glass-morphism, shadows
+✅ Smooth 60fps animations
+✅ Professional color palette
+✅ Proper symbols: ÷ × − + √ π ² ³
+✅ Perfect typography hierarchy
 
-For HTML/CSS/JS:
-- Use proper unicode symbols (÷ not /)
-- Beautiful gradients and shadows
-- Smooth animations on interactions
-- Mobile-responsive design
-- localStorage for persistence
-- Keyboard shortcuts
-- Professional typography
+📱 RESPONSIVE STANDARDS:
+✅ Mobile-first (320px+), tablet (768px+), desktop (1024px+)
+✅ Touch targets 44px minimum
+✅ Collapsible sidebars on mobile
+✅ Grid layouts with CSS Grid/Flexbox
 
-For Python/Backend:
-- Type hints and validation
-- Comprehensive error handling
-- Security (sanitize inputs)
-- Clean, documented code
+⚡ FEATURE STANDARDS:
+✅ Keyboard shortcuts for all actions
+✅ localStorage persistence
+✅ Undo/Redo functionality
+✅ Export/Import data
+✅ Settings/preferences
+✅ Tooltips and help text
+✅ Error handling everywhere
+✅ Loading states
+✅ Instant feedback (<100ms)
 
-Generate ONLY the code for THIS file. Make it EXCEPTIONAL:"""
+🔒 CODE QUALITY STANDARDS:
+For Frontend (HTML/CSS/JS):
+- Extensive CSS (200+ lines for styled components)
+- Advanced JavaScript (300+ lines for rich features)
+- Mobile-responsive media queries
+- localStorage for data persistence
+- Full keyboard support
+- Professional animations
+- Error boundaries
+
+For Backend (Python/Node):
+- Type hints/types on all functions
+- Comprehensive docstrings/comments
+- Error handling with try/catch
+- Input validation and sanitization
+- Modular, clean architecture
+- Security best practices
+
+═══════════════════════════════════════════════════════════════════
+⚠️ CRITICAL: Make this file EXCEPTIONAL
+═══════════════════════════════════════════════════════════════════
+
+❌ DO NOT: Basic features, plain styling, skip error handling
+✅ DO: Rich features, beautiful design, robust code
+
+Generate ONLY the code for THIS file (no explanations). Make it WORLD-CLASS:"""
     
     def _clean_code(self, code: str) -> str:
         """Remove markdown code fences"""

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="description" content="A sophisticated calculator with advanced mathematical functions and a user-friendly interface.">
+
+    <!-- Accessibility Meta Tags -->
+    <meta name="accessibility" content="WCAG 2.1 AA">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourdomain.com/calculator">
+
+</head>
+
+<body>
+
+    <div class="calculator-container">
+        <header>
+            <h1>Advanced Calculator</h1>
+        </header>
+
+        <div id="calculator" class="calculator">
+
+            <div class="display">
+                <div id="history" class="history"></div>
+                <input type="text" id="result" class="result" value="0" disabled aria-label="Calculator Result" />
+            </div>
+
+            <div class="buttons">
+                <button class="button clear" data-key="Escape" aria-label="Clear">AC</button>
+                <button class="button backspace" data-key="Backspace" aria-label="Backspace"><i class="fas fa-arrow-left"></i></button>
+                <button class="button operation" data-value="÷" data-key="/">÷</button>
+                <button class="button operation" data-value="×" data-key="*">×</button>
+
+                <button class="button number" data-value="7" data-key="7">7</button>
+                <button class="button number" data-value="8" data-key="8">8</button>
+                <button class="button number" data-value="9" data-key="9">9</button>
+                <button class="button operation" data-value="−" data-key="-">−</button>
+
+                <button class="button number" data-value="4" data-key="4">4</button>
+                <button class="button number" data-value="5" data-key="5">5</button>
+                <button class="button number" data-value="6" data-key="6">6</button>
+                <button class="button operation" data-value="+" data-key="+">+</button>
+
+                <button class="button number" data-value="1" data-key="1">1</button>
+                <button class="button number" data-value="2" data-key="2">2</button>
+                <button class="button number" data-value="3" data-key="3">3</button>
+                <button class="button equals" data-key="Enter">=</button>
+
+                <button class="button number zero" data-value="0" data-key="0">0</button>
+                <button class="button decimal" data-value="." data-key=".">.</button>
+                <button class="button pi" data-value="π" aria-label="Pi">π</button>
+                <button class="button parenthesis open" data-value="(">(</button>
+                <button class="button parenthesis close" data-value=")">)</button>
+                <button class="button power" data-value="^" aria-label="Power">^</button>
+                <button class="button sqrt" data-value="√" aria-label="Square Root">√</button>
+                <button class="button log" data-value="log" aria-label="Logarithm">log</button>
+                <button class="button sin" data-value="sin" aria-label="Sine">sin</button>
+                <button class="button cos" data-value="cos" aria-label="Cosine">cos</button>
+                <button class="button tan" data-value="tan" aria-label="Tangent">tan</button>
+
+
+            </div>
+        </div>
+
+        <div id="history-panel" class="history-panel">
+            <h2>Calculation History</h2>
+            <ul id="history-list"></ul>
+            <button id="clear-history" class="clear-history-btn">Clear History</button>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Advanced Calculator. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
