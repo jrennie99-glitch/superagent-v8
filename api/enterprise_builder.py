@@ -428,7 +428,7 @@ Return ONLY a numbered list of features (no code):
 """
                     
                     spec_response_text = self._generate_content(model, provider, spec_prompt)
-                    feature_spec = self._clean_code(spec_response_text)
+                    feature_spec = self._clean_code(spec_response_text or "")
                     print(f"✅ Specification complete: {len(feature_spec.split(chr(10)))} features planned")
                     
                     # Step 2: Generate initial code for each file
@@ -1471,6 +1471,8 @@ Generate ONLY the code for THIS file (no explanations). Make it WORLD-CLASS:"""
     
     def _clean_code(self, code: str) -> str:
         """Remove markdown code fences"""
+        if not code:
+            return ""
         import re
         code = re.sub(r'^```[\w]*\n', '', code)
         code = re.sub(r'\n```$', '', code)
