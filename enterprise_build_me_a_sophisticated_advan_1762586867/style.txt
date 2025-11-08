@@ -1,0 +1,343 @@
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
+  background: linear-gradient(135deg, #5c0061, #2c3e50);
+  background-attachment: fixed;
+}
+
+/* Premium Gradient Backgrounds */
+.premium-background {
+  background: linear-gradient(135deg, #5c0061, #2c3e50);
+}
+
+.purple-gradient {
+  background: linear-gradient(135deg, #7a288a, #4c0027);
+}
+
+.blue-gradient {
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+}
+
+.indigo-gradient {
+  background: linear-gradient(135deg, #3b3f54, #1a1d23);
+}
+
+/* Glass-Morphism Effects */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth Animations and Transitions */
+.smooth-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Professional Color Palette and Typography */
+.primary-color {
+  color: #5c0061;
+}
+
+.secondary-color {
+  color: #2c3e50;
+}
+
+.accent-color {
+  color: #4CAF50;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-italic {
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 320px) {
+  /* Mobile-First Styles */
+  .container {
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Tablet Styles */
+  .container {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop Styles */
+  .container {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 60px;
+  }
+}
+
+/* Grid/Flexbox Layouts */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hover Effects and Active States */
+.button {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #4c0027;
+}
+
+.button:active {
+  background: #3b3f54;
+}
+
+/* Dark Theme Optimized */
+.dark-theme {
+  background: #1a1d23;
+  color: #fff;
+}
+
+/* Calculator Styles */
+.calculator {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.calculator-screen {
+  background: #1a1d23;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.calculator-button {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.calculator-button:hover {
+  background: #4c0027;
+}
+
+.calculator-button:active {
+  background: #3b3f54;
+}
+
+/* TODO List Styles */
+.todo-list {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.todo-item {
+  background: #1a1d23;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.todo-item:hover {
+  background: #3b3f54;
+}
+
+.todo-item:active {
+  background: #4c0027;
+}
+
+/* Dashboard Styles */
+.dashboard {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-widget {
+  background: #1a1d23;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.dashboard-widget:hover {
+  background: #3b3f54;
+}
+
+.dashboard-widget:active {
+  background: #4c0027;
+}
+
+/* Tab Styles */
+.tab {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: #4c0027;
+}
+
+.tab:active {
+  background: #3b3f54;
+}
+
+/* Angle Unit Toggle Styles */
+.angle-unit-toggle {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.angle-unit-toggle:hover {
+  background: #4c0027;
+}
+
+.angle-unit-toggle:active {
+  background: #3b3f54;
+}
+
+/* Constants Panel Styles */
+.constants-panel {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.constants-item {
+  background: #1a1d23;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.constants-item:hover {
+  background: #3b3f54;
+}
+
+.constants-item:active {
+  background: #4c0027;
+}
+
+/* Memory Functions Styles */
+.memory-functions {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.memory-function {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.memory-function:hover {
+  background: #4c0027;
+}
+
+.memory-function:active {
+  background: #3b3f54;
+}
+
+/* Calculation History Styles */
+.calculation-history {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.calculation-item {
+  background: #1a1d23;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.calculation-item:hover {
+  background: #3b3f54;
+}
+
+.calculation-item:active {
+  background: #4c0027;
+}
+
+/* Keyboard Shortcuts Styles */
+.keyboard-shortcuts {
+  background: #2c3e50;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.keyboard-shortcut {
+  background: #5c0061;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.keyboard-shortcut:hover {
+  background: #4c0027;
+}
+
+.keyboard-shortcut:active {
+  background: #3b3f54;
+}

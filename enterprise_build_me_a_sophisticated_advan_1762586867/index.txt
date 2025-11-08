@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="description" content="Advanced calculator with scientific functions, memory, and TODO list management">
+    <meta name="keywords" content="calculator, scientific, todo list, dashboard">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#basic" class="tab-link active">Basic</a></li>
+                <li><a href="#scientific" class="tab-link">Scientific</a></li>
+                <li><a href="#programmer" class="tab-link">Programmer</a></li>
+                <li><a href="#statistics" class="tab-link">Statistics</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="basic" class="tab-content active">
+            <div class="calculator">
+                <input type="text" id="display" class="display" placeholder="0">
+                <div class="button-grid">
+                    <button class="button" id="clear">C</button>
+                    <button class="button" id="backspace">&lt;</button>
+                    <button class="button" id="divide">&divide;</button>
+                    <button class="button" id="multiply">&times;</button>
+                    <button class="button" id="seven">7</button>
+                    <button class="button" id="eight">8</button>
+                    <button class="button" id="nine">9</button>
+                    <button class="button" id="subtract">-</button>
+                    <button class="button" id="four">4</button>
+                    <button class="button" id="five">5</button>
+                    <button class="button" id="six">6</button>
+                    <button class="button" id="add">+</button>
+                    <button class="button" id="one">1</button>
+                    <button class="button" id="two">2</button>
+                    <button class="button" id="three">3</button>
+                    <button class="button" id="equals">=</button>
+                    <button class="button" id="zero">0</button>
+                    <button class="button" id="decimal">.</button>
+                    <button class="button" id="enter">Enter</button>
+                </div>
+            </div>
+            <div class="memory-panel">
+                <button class="button" id="memory-add">M+</button>
+                <button class="button" id="memory-subtract">M-</button>
+                <button class="button" id="memory-recall">MR</button>
+                <button class="button" id="memory-clear">MC</button>
+            </div>
+        </section>
+        <section id="scientific" class="tab-content">
+            <div class="calculator">
+                <input type="text" id="scientific-display" class="display" placeholder="0">
+                <div class="button-grid">
+                    <button class="button" id="sin">sin</button>
+                    <button class="button" id="cos">cos</button>
+                    <button class="button" id="tan">tan</button>
+                    <button class="button" id="asin">asin</button>
+                    <button class="button" id="acos">acos</button>
+                    <button class="button" id="atan">atan</button>
+                    <button class="button" id="log">log</button>
+                    <button class="button" id="ln">ln</button>
+                    <button class="button" id="log10">log10</button>
+                    <button class="button" id="sqrt">sqrt</button>
+                    <button class="button" id="cbrt">cbrt</button>
+                    <button class="button" id="exp">exp</button>
+                    <button class="button" id="degrees-radians-toggle">Degrees/Radians</button>
+                </div>
+            </div>
+        </section>
+        <section id="programmer" class="tab-content">
+            <div class="calculator">
+                <input type="text" id="programmer-display" class="display" placeholder="0">
+                <div class="button-grid">
+                    <button class="button" id="hex">Hex</button>
+                    <button class="button" id="bin">Bin</button>
+                    <button class="button" id="oct">Oct</button>
+                    <button class="button" id="and">&</button>
+                    <button class="button" id="or"|>||</button>
+                    <button class="button" id="not">~</button>
+                    <button class="button" id="shift-left">&lt;&lt;</button>
+                    <button class="button" id="shift-right">&gt;&gt;</button>
+                </div>
+            </div>
+        </section>
+        <section id="statistics" class="tab-content">
+            <div class="calculator">
+                <input type="text" id="statistics-display" class="display" placeholder="0">
+                <div class="button-grid">
+                    <button class="button" id="mean">Mean</button>
+                    <button class="button" id="median">Median</button>
+                    <button class="button" id="mode">Mode</button>
+                    <button class="button" id="std-dev">Std Dev</button>
+                    <button class="button" id="variance">Variance</button>
+                </div>
+            </div>
+        </section>
+        <section id="todo-list">
+            <h2>TODO List</h2>
+            <ul id="todo-list-items" class="todo-list">
+                <!-- TODO list items will be generated here -->
+            </ul>
+            <input type="text" id="todo-input" class="todo-input" placeholder="Enter new task">
+            <button class="button" id="add-todo">Add</button>
+            <button class="button" id="clear-todo">Clear</button>
+            <select id="todo-priority" class="todo-priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <input type="date" id="todo-due-date" class="todo-due-date" placeholder="Due Date">
+            <button class="button" id="search-todo">Search</button>
+            <button class="button" id="export-todo">Export</button>
+        </section>
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="dashboard-widgets" class="dashboard-widgets">
+                <!-- Dashboard widgets will be generated here -->
+            </div>
+            <select id="dashboard-filter" class="dashboard-filter">
+                <option value="all">All</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="this-week">This Week</option>
+                <option value="last-week">Last Week</option>
+            </select>
+            <button class="button" id="add-widget">Add Widget</button>
+        </section>
+        <section id="settings">
+            <h2>Settings</h2>
+            <label for="dark-theme-toggle">Dark Theme:</label>
+            <input type="checkbox" id="dark-theme-toggle" class="dark-theme-toggle">
+            <label for="language-select">Language:</label>
+            <select id="language-select" class="language-select">
+                <option value="en">English</option>
+                <option value="fr">French</option>
+                <option value="es">Spanish</option>
+            </select>
+            <button class="button" id="save-settings">Save</button>
+        </section>
+        <section id="user-auth">
+            <h2>User Authentication</h2>
+            <input type="text" id="username" class="username" placeholder="Username">
+            <input type="password" id="password" class="password" placeholder="Password">
+            <button class="button" id="login">Login</button>
+            <button class="button" id="register">Register</button>
+        </section>
+        <section id="error-handling">
+            <h2>Error Handling</h2>
+            <p id="error-message" class="error-message"></p>
+            <button class="button" id="clear-error">Clear</button>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
