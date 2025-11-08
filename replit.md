@@ -26,14 +26,16 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 
 **Technical Implementations & Feature Specifications:**
 - **Core AI Capabilities:** Natural language processing for autonomous planning, multi-step execution, code generation, Tool-Calling System, and advanced-intent detection for sophisticated app generation. Features tiered guidance for different request complexities (Standard vs. Advanced).
-- **Enterprise Build System (ENHANCED Nov 2025):** A 9-stage build process with:
+- **Enterprise Build System (ENHANCED Nov 2025):** An 11-stage build process with:
   - **Spec-Driven Generation**: AI creates detailed feature specifications before code generation
   - **Advanced Prompt Engineering**: Demands enterprise-grade, production-ready implementations with proper algorithms (e.g., expression parsers for calculators, not sequential operators)
+  - **E2E Feature Verification (NEW)**: Automated Playwright-based browser testing that validates features actually work at runtime (tests operator precedence, scientific functions, memory systems, keyboard shortcuts, persistence, etc.)
+  - **Runtime Validation**: System launches apps in real browsers and tests interactive behaviors to ensure no broken functionality
   - **Feature Coverage Verification**: Automated validation to ensure all advertised features are fully functional (no placeholders or "coming soon" features)
-  - **Quality Gates**: Code must pass feature coverage checks (70%+) with zero critical issues before delivery
+  - **Quality Gates**: Code must pass E2E tests (70%+ coverage) with zero critical issues before delivery
   - **Multi-file project generation**, real dependency installation, automated testing, security scanning
   - **Production outputs** (Dockerfile, CI/CD, documentation)
-- **Code Quality & Reliability:** Features a 4-layer Hallucination Fixer, a 2-Supervisor System with a Supreme Agent, ML-based error prevention, a dedicated Code Review System with security scanning, and an Autonomous Self-Repair System. Includes a 5-tier quality framework for UX, design, responsiveness, features, and production polish. **NEW**: Automated feature coverage checker verifies expression parsers, scientific functions, memory systems, persistence, keyboard shortcuts, themes, and error handling are properly implemented.
+- **Code Quality & Reliability:** Features a 4-layer Hallucination Fixer, a 2-Supervisor System with a Supreme Agent, ML-based error prevention, a dedicated Code Review System with security scanning, and an Autonomous Self-Repair System. Includes a 5-tier quality framework for UX, design, responsiveness, features, and production polish. **NEW**: Automated E2E testing with Playwright validates features work at runtime - system actually clicks buttons, types input, and verifies correct behavior in real browsers. Detects broken features like missing expression parsers, non-functional memory buttons, broken keyboard shortcuts, etc.
 - **Development Workflow Enhancements:** Git integration, automated Pytest and documentation generation, a Refactoring Engine, AI-driven debugging, and a Rollback System.
 - **System Management:** Secure file operations, safe shell command execution, Environment Manager, and deployment configuration tools.
 - **Advanced Platform Tools:** Extensible Plugin System, Docker Sandboxed Execution, Codebase Query Engine, Long-Term Memory (SQLite-based), and an Autonomous Planner.

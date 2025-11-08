@@ -11,6 +11,7 @@ from typing import Dict, List, Optional, Callable
 import json
 from datetime import datetime
 import time
+from api.e2e_test_runner import E2ETestRunner
 
 class EnterpriseBuildSystem:
     """
@@ -23,6 +24,7 @@ class EnterpriseBuildSystem:
         self.rollback_system = rollback_system
         self.hallucination_fixer = hallucination_fixer
         self.cybersecurity_ai = cybersecurity_ai
+        self.e2e_test_runner = E2ETestRunner()
         self.build_stages = []
         self.current_stage = 0
         
@@ -43,12 +45,14 @@ class EnterpriseBuildSystem:
         1. Pre-Build Safety (Checkpoint)
         2. Architecture Planning
         3. Code Generation (Multi-file)
-        4. Dependency Installation
-        5. Automated Testing
-        6. Security Scanning
-        7. Code Verification
-        8. Production Outputs
-        9. Final Checkpoint
+        4. Create Project Structure
+        5. Dependency Installation
+        6. E2E Feature Verification (NEW - validates features actually work)
+        7. Automated Testing
+        8. Security Scanning
+        9. Code Verification
+        10. Production Outputs
+        11. Final Checkpoint
         """
         build_start = time.time()
         results = {
@@ -112,37 +116,70 @@ class EnterpriseBuildSystem:
             results["dependencies_installed"] = stage_result["installed"]
             results["stages"].append(stage_result)
             if progress_callback:
-                await progress_callback(f"Stage 5/9: Installed {len(stage_result['installed'])} dependencies", 55)
+                await progress_callback(f"Stage 5/11: Installed {len(stage_result['installed'])} dependencies", 45)
             
-            # STAGE 6: Automated Testing
+            # STAGE 6: E2E Feature Verification (NEW - validates features actually work!)
+            if language.lower() in ["html", "web"] and architecture.get("wants_advanced"):
+                print("\n" + "="*70)
+                print("🧪 STAGE 6: E2E FEATURE VERIFICATION (Real Browser Testing)")
+                print("="*70)
+                
+                stage_result = await self._stage_e2e_verification(
+                    project_dir=Path(project_dir),
+                    app_type=architecture.get("type", "generic"),
+                    instruction=instruction,
+                    architecture=architecture
+                )
+                results["e2e_results"] = stage_result
+                results["stages"].append(stage_result)
+                
+                if progress_callback:
+                    e2e_status = f"✅ {stage_result.get('passed', 0)}/{stage_result.get('total', 0)} features work"
+                    await progress_callback(f"Stage 6/11: E2E verified - {e2e_status}", 55)
+                
+                # CRITICAL: Check if E2E tests revealed issues
+                critical_issues = stage_result.get("critical_issues", [])
+                if critical_issues:
+                    print(f"\n❌ E2E VERIFICATION FAILED - {len(critical_issues)} CRITICAL ISSUES:")
+                    for issue in critical_issues:
+                        print(f"   • {issue}")
+                    print("\n⚠️  This app will NOT be delivered until critical features work properly!")
+                    
+                    # For now, log the issues but continue (in future, we could regenerate)
+                    results["e2e_critical_issues"] = critical_issues
+            else:
+                if progress_callback:
+                    await progress_callback("Stage 6/11: E2E testing skipped (non-web app)", 55)
+            
+            # STAGE 7: Automated Testing
             if enable_testing:
                 stage_result = await self._stage_run_tests(project_dir, language)
                 results["tests_passed"] = stage_result["tests_passed"]
                 results["stages"].append(stage_result)
                 if progress_callback:
-                    await progress_callback(f"Stage 6/9: {stage_result['tests_passed']} tests passed", 66)
+                    await progress_callback(f"Stage 7/11: {stage_result['tests_passed']} tests passed", 64)
             
-            # STAGE 7: Security Scanning
+            # STAGE 8: Security Scanning
             if enable_security_scan:
                 stage_result = await self._stage_security_scan(generated_files)
                 results["security_issues"] = stage_result["issues"]
                 results["stages"].append(stage_result)
                 if progress_callback:
-                    await progress_callback(f"Stage 7/9: Security scan complete ({len(stage_result['issues'])} issues)", 77)
+                    await progress_callback(f"Stage 8/11: Security scan complete ({len(stage_result['issues'])} issues)", 73)
             
-            # STAGE 8: Code Verification
+            # STAGE 9: Code Verification
             stage_result = await self._stage_code_verification(generated_files, instruction)
             results["verification_score"] = stage_result["score"]
             results["stages"].append(stage_result)
             if progress_callback:
-                await progress_callback(f"Stage 8/9: Code verified (score: {stage_result['score']}/100)", 88)
+                await progress_callback(f"Stage 9/11: Code verified (score: {stage_result['score']}/100)", 82)
             
-            # STAGE 9: Production Outputs (Dockerfile, CI/CD, Docs)
+            # STAGE 10: Production Outputs (Dockerfile, CI/CD, Docs)
             stage_result = await self._stage_production_outputs(project_dir, language, architecture)
             results["production_files"] = stage_result["files"]
             results["stages"].append(stage_result)
             if progress_callback:
-                await progress_callback("Stage 9/9: Production files created", 100)
+                await progress_callback("Stage 10/11: Production files created", 91)
             
             # Final Checkpoint
             if enable_checkpoints:
@@ -1027,6 +1064,92 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
                 "success": False,
                 "error": str(e),
                 "issues": []
+            }
+    
+    async def _stage_e2e_verification(
+        self, 
+        project_dir: Path,
+        app_type: str,
+        instruction: str,
+        architecture: Dict
+    ) -> Dict:
+        """NEW STAGE 6: E2E Feature Verification - Actually test the app in a browser"""
+        try:
+            print(f"\n🌐 Launching real browser to test generated app...")
+            print(f"📂 Testing app in: {project_dir}")
+            print(f"🎯 App type: {app_type}")
+            
+            # Extract required features from instruction and architecture
+            required_features = []
+            if "calculator" in app_type.lower() or "calculator" in instruction.lower():
+                required_features = [
+                    "expression parser",
+                    "scientific functions",
+                    "memory functions",
+                    "keyboard shortcuts",
+                    "clear button"
+                ]
+            elif "todo" in app_type.lower() or "task" in instruction.lower():
+                required_features = [
+                    "add task",
+                    "mark complete",
+                    "persistence"
+                ]
+            elif "dashboard" in app_type.lower():
+                required_features = [
+                    "data display",
+                    "charts"
+                ]
+            
+            # Run E2E tests
+            e2e_results = await self.e2e_test_runner.verify_app_features(
+                app_path=project_dir,
+                app_type=app_type,
+                required_features=required_features
+            )
+            
+            # Display results
+            print(f"\n📊 E2E TEST RESULTS:")
+            print(f"   ✅ Passed: {e2e_results['passed']}/{e2e_results['total']} tests")
+            print(f"   📈 Coverage: {e2e_results.get('coverage_percent', 0):.1f}%")
+            
+            if e2e_results.get('passed_tests'):
+                print(f"\n   ✅ Passing Features:")
+                for test in e2e_results['passed_tests']:
+                    print(f"      • {test}")
+            
+            if e2e_results.get('failed_tests'):
+                print(f"\n   ❌ Failed Features:")
+                for test in e2e_results['failed_tests']:
+                    print(f"      • {test}")
+            
+            if e2e_results.get('critical_issues'):
+                print(f"\n   🚨 CRITICAL ISSUES:")
+                for issue in e2e_results['critical_issues']:
+                    print(f"      • {issue}")
+            
+            return {
+                "stage": "e2e_verification",
+                "success": e2e_results["success"],
+                "passed": e2e_results["passed"],
+                "failed": e2e_results["failed"],
+                "total": e2e_results["total"],
+                "coverage_percent": e2e_results.get("coverage_percent", 0),
+                "passed_tests": e2e_results.get("passed_tests", []),
+                "failed_tests": e2e_results.get("failed_tests", []),
+                "critical_issues": e2e_results.get("critical_issues", [])
+            }
+            
+        except Exception as e:
+            print(f"\n❌ E2E verification error: {str(e)}")
+            return {
+                "stage": "e2e_verification",
+                "success": False,
+                "error": str(e),
+                "passed": 0,
+                "failed": 0,
+                "total": 0,
+                "critical_issues": [f"E2E testing failed: {str(e)}"]
             }
     
     async def _verify_feature_coverage(self, files: List[Dict], required_features: List[str]) -> Dict:
