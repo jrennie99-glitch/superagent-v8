@@ -1466,6 +1466,7 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
             files.append({"name": "app", "type": "entry"})
             files.append({"name": "index", "type": "frontend"})
             files.append({"name": "styles", "type": "styles"})
+            files.append({"name": "script", "type": "script"})  # ADD JAVASCRIPT FILE!
         else:
             files.append({"name": "main", "type": "entry"})
         
