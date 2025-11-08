@@ -787,27 +787,28 @@ body {
   color: var(--nebula-purple);
 }
 
-/* Unique AI Status Indicator */
-.ai-status-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 1rem;
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  border-radius: 12px;
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.status-icon {
-  position: relative;
-  width: 24px;
-  height: 24px;
+/* Status Message Styling - inline in chat bubbles */
+.chat-message.status-message .chat-bubble {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
+}
+
+.status-icon-inline {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.status-text-inline {
+  font-weight: 500;
+  background: linear-gradient(135deg, #9333ea, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Unique animated icon - rotating hexagon grid */
@@ -2315,15 +2316,12 @@ body {
     // ===== INTERACTIVE CHAT FUNCTIONALITY =====
     
     let chatStreamingBubble = null;
-    let currentStatusIndicator = null;
+    let activeStatusBubbles = []; // Track all status bubbles to remove them together
     
     function showAIStatus(status) {
       const chatMessages = document.getElementById('chatMessages');
       
-      // Remove existing status indicator if present
-      if (currentStatusIndicator) {
-        currentStatusIndicator.remove();
-      }
+      // DON'T remove existing status - let them stack!
       
       // Map status to display text
       const statusTexts = {
@@ -2334,37 +2332,41 @@ body {
       
       const statusText = statusTexts[status] || '⚡ Processing...';
       
-      // Create status indicator with unique animated icon
-      const statusDiv = document.createElement('div');
-      statusDiv.className = 'ai-status-indicator';
-      statusDiv.innerHTML = `
-        <div class="status-icon">
-          <div class="status-icon-grid">
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
+      // Create status as an AI chat message bubble with animated icon
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message ai status-message';
+      
+      messageDiv.innerHTML = `
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-bubble">
+          <div class="status-icon-inline">
+            <div class="status-icon-grid">
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+              <div class="status-dot"></div>
+            </div>
           </div>
+          <span class="status-text-inline">${statusText}</span>
         </div>
-        <div class="status-text">${statusText}</div>
       `;
       
-      chatMessages.appendChild(statusDiv);
+      chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
       
-      currentStatusIndicator = statusDiv;
+      // Add to list of active status bubbles
+      activeStatusBubbles.push(messageDiv);
     }
     
     function removeAIStatus() {
-      if (currentStatusIndicator) {
-        currentStatusIndicator.remove();
-        currentStatusIndicator = null;
-      }
+      // Remove ALL status bubbles when response starts
+      activeStatusBubbles.forEach(bubble => bubble.remove());
+      activeStatusBubbles = [];
     }
     
     function addChatMessage(message, type = 'user') {
