@@ -137,6 +137,7 @@ from api.enhanced_autonomy import router as enhanced_autonomy_router
 from api.enhanced_memory import router as enhanced_memory_router
 from api.specialized_agents import router as specialized_agents_router
 from api.enhanced_monitoring import router as enhanced_monitoring_router
+from api.video_processor import router as video_processor_router
 
 # Import Replit Agent 3 competitive features
 from api.browser_testing import router as browser_testing_router
@@ -301,6 +302,7 @@ app.include_router(autonomous_build_router, tags=["V2.0 Autonomous App Builder -
 app.include_router(live_dashboard_router, tags=["V2.0 Live Dashboard - Replit x Cursor x Bolt"])
 app.include_router(grok_copilot_router, tags=["V2.0 Grok Co-Pilot - Real-Time AI Assistance"])
 app.include_router(deploy_share_router, tags=["V2.0 Deploy & Share - One-Click Everything"])
+app.include_router(video_processor_router, tags=["Video to App - AI Video Analysis"])
 
 # API Key Security - REQUIRED for dangerous operations
 from fastapi.security import APIKeyHeader
