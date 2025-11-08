@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <header class="calculator-header">
+            <h1 class="calculator-title">Calculator App</h1>
+            <button class="settings-button" id="settings-button">Settings</button>
+        </header>
+        <main class="calculator-main">
+            <div class="display-container">
+                <input type="text" id="display" class="display" disabled>
+                <button class="clear-button" id="clear-button">C</button>
+            </div>
+            <div class="button-container">
+                <button class="number-button" id="zero-button">0</button>
+                <button class="number-button" id="one-button">1</button>
+                <button class="number-button" id="two-button">2</button>
+                <button class="number-button" id="three-button">3</button>
+                <button class="number-button" id="four-button">4</button>
+                <button class="number-button" id="five-button">5</button>
+                <button class="number-button" id="six-button">6</button>
+                <button class="number-button" id="seven-button">7</button>
+                <button class="number-button" id="eight-button">8</button>
+                <button class="number-button" id="nine-button">9</button>
+                <button class="operator-button" id="add-button">+</button>
+                <button class="operator-button" id="subtract-button">−</button>
+                <button class="operator-button" id="multiply-button">×</button>
+                <button class="operator-button" id="divide-button">÷</button>
+                <button class="operator-button" id="sqrt-button">√</button>
+                <button class="operator-button" id="power-button">²</button>
+                <button class="operator-button" id="cube-button">³</button>
+                <button class="operator-button" id="pi-button">π</button>
+                <button class="equals-button" id="equals-button">=</button>
+                <button class="undo-button" id="undo-button">Undo</button>
+                <button class="redo-button" id="redo-button">Redo</button>
+            </div>
+        </main>
+        <footer class="calculator-footer">
+            <p class="copyright-text">Copyright 2024 Calculator App</p>
+        </footer>
+    </div>
+    <div class="settings-modal" id="settings-modal">
+        <h2 class="settings-title">Settings</h2>
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+        <label for="font-size-select">Font Size:</label>
+        <select id="font-size-select">
+            <option value="12">12px</option>
+            <option value="14">14px</option>
+            <option value="16">16px</option>
+        </select>
+        <button class="save-settings-button" id="save-settings-button">Save</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

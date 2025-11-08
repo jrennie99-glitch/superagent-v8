@@ -1,0 +1,64 @@
+<!-- config.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="display">
+            <input type="text" id="display" disabled>
+        </div>
+        <div class="buttons">
+            <button id="clear" class="button">C</button>
+            <button id="backspace" class="button">&lt;</button>
+            <button id="divide" class="button">÷</button>
+            <button id="multiply" class="button">×</button>
+            <button id="seven" class="button">7</button>
+            <button id="eight" class="button">8</button>
+            <button id="nine" class="button">9</button>
+            <button id="subtract" class="button">−</button>
+            <button id="four" class="button">4</button>
+            <button id="five" class="button">5</button>
+            <button id="six" class="button">6</button>
+            <button id="add" class="button">+</button>
+            <button id="one" class="button">1</button>
+            <button id="two" class="button">2</button>
+            <button id="three" class="button">3</button>
+            <button id="equals" class="button">=</button>
+            <button id="zero" class="button">0</button>
+            <button id="decimal" class="button">.</button>
+            <button id="sqrt" class="button">√</button>
+            <button id="pi" class="button">π</button>
+            <button id="square" class="button">²</button>
+            <button id="cube" class="button">³</button>
+        </div>
+        <div class="settings">
+            <button id="settings-button" class="button">Settings</button>
+            <div id="settings-menu" class="settings-menu">
+                <label for="theme">Theme:</label>
+                <select id="theme" name="theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+                <label for="precision">Precision:</label>
+                <select id="precision" name="precision">
+                    <option value="2">2 decimal places</option>
+                    <option value="4">4 decimal places</option>
+                    <option value="6">6 decimal places</option>
+                </select>
+            </div>
+        </div>
+        <div class="history">
+            <button id="history-button" class="button">History</button>
+            <div id="history-menu" class="history-menu">
+                <ul id="history-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
