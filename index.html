@@ -661,6 +661,23 @@ body {
   margin-right: 0.3rem;
 }
 
+.log-message {
+  display: inline;
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 0.7s infinite;
+  color: var(--nebula-purple);
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
 .build-log-content::-webkit-scrollbar {
   width: 5px;
 }
@@ -1411,6 +1428,8 @@ body {
     }
     
     // Build logging functions
+    const streamingLogs = {}; // Track streaming messages by ID
+    
     function addBuildLog(message, icon = '') {
       const logPanel = document.getElementById('buildLogPanel');
       const logContent = document.getElementById('buildLogContent');
@@ -1429,12 +1448,81 @@ body {
       logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span><span class="log-icon">${icon}</span>${message}`;
       
       logContent.appendChild(logEntry);
+      
+      // Smooth scroll to bottom
       logContent.scrollTop = logContent.scrollHeight;
+    }
+    
+    // NEW: Start or get a streaming log entry
+    function getOrCreateStreamingLog(id, icon = '') {
+      const logContent = document.getElementById('buildLogContent');
+      const logPanel = document.getElementById('buildLogPanel');
+      
+      // Show panel if hidden
+      if (logPanel.style.display === 'none') {
+        logPanel.style.display = 'block';
+      }
+      
+      // Return existing entry if already streaming
+      if (streamingLogs[id]) {
+        return streamingLogs[id];
+      }
+      
+      // Create new streaming entry
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry streaming';
+      logEntry.setAttribute('data-stream-id', id);
+      
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString();
+      
+      const iconSpan = icon ? `<span class="log-icon">${icon}</span>` : '';
+      logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span>${iconSpan}<span class="log-message"></span><span class="typing-cursor">▊</span>`;
+      
+      logContent.appendChild(logEntry);
+      
+      // Store reference
+      streamingLogs[id] = {
+        element: logEntry,
+        messageSpan: logEntry.querySelector('.log-message'),
+        text: ''
+      };
+      
+      return streamingLogs[id];
+    }
+    
+    // NEW: Append text delta to streaming log (smooth, character-by-character)
+    function appendToStreamingLog(id, delta, icon = '') {
+      const stream = getOrCreateStreamingLog(id, icon);
+      
+      // Append the new text
+      stream.text += delta;
+      stream.messageSpan.textContent = stream.text;
+      
+      // Smooth scroll to bottom
+      const logContent = document.getElementById('buildLogContent');
+      logContent.scrollTop = logContent.scrollHeight;
+    }
+    
+    // NEW: Complete a streaming log (remove cursor)
+    function completeStreamingLog(id) {
+      if (streamingLogs[id]) {
+        const cursor = streamingLogs[id].element.querySelector('.typing-cursor');
+        if (cursor) {
+          cursor.remove();
+        }
+        streamingLogs[id].element.classList.remove('streaming');
+        streamingLogs[id].element.classList.add('completed');
+      }
     }
     
     function clearBuildLog() {
       const logContent = document.getElementById('buildLogContent');
       logContent.innerHTML = '';
+      // Clear streaming logs registry
+      for (let key in streamingLogs) {
+        delete streamingLogs[key];
+      }
     }
     
     async function startBuild() {
@@ -1505,7 +1593,15 @@ body {
                 const data = JSON.parse(jsonData);
                 
                 // Handle different message types
-                if (data.type === 'log') {
+                if (data.type === 'log-stream') {
+                  // NEW: Streaming log - append text deltas smoothly
+                  appendToStreamingLog(data.id, data.delta || data.text || '', data.icon || '');
+                  
+                  // Mark as complete when done
+                  if (data.complete) {
+                    completeStreamingLog(data.id);
+                  }
+                } else if (data.type === 'log') {
                   addBuildLog(data.message, data.icon || '');
                   // Update the current step box with this message
                   if (currentStep > 0 && currentStep <= 5) {
