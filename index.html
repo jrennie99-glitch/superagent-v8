@@ -635,6 +635,34 @@ body {
 .build-log-content::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.7);
 }
+
+/* Mode Buttons */
+.mode-button {
+  padding: 10px 20px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+  color: #c9d1d9;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  max-width: 150px;
+}
+
+.mode-button:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.mode-button.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  border-color: #8b5cf6;
+  color: white;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
 </style>
 </head>
 <body>
@@ -669,6 +697,33 @@ body {
               placeholder="Describe your vision..."
               rows="3"
             ></textarea>
+          </div>
+        </div>
+        
+        <!-- Input Controls (File Upload & Microphone) -->
+        <div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0;">
+          <button class="control-button" onclick="document.getElementById('fileUpload').click()" title="Upload File">
+            📎
+          </button>
+          <input type="file" id="fileUpload" style="display: none;" accept="image/*,.pdf,.txt,.js,.py,.html,.css" onchange="handleFileUpload(event)">
+          <button class="control-button" onclick="toggleVoiceInput()" title="Voice Input" id="voiceBtn">
+            🎤
+          </button>
+        </div>
+        
+        <!-- Build Mode Selector -->
+        <div style="margin: 20px 0;">
+          <div style="text-align: center; margin-bottom: 10px; color: #8b5cf6; font-size: 0.9rem; font-weight: 600;">Build Mode</div>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="mode-button active" id="buildMode" onclick="setMode('build')" title="Make, test, iterate">
+              🔨 Build
+            </button>
+            <button class="mode-button" id="planMode" onclick="setMode('plan')" title="Ask questions, plan your work">
+              📋 Plan
+            </button>
+            <button class="mode-button" id="editMode" onclick="setMode('edit')" title="Modify a specific element">
+              ✏️ Edit
+            </button>
           </div>
         </div>
         
@@ -792,6 +847,99 @@ body {
     
     let currentBuildId = null;
     let eventSource = null;
+    let currentMode = 'build';  // build, plan, or edit
+    let recognition = null;
+    let isListening = false;
+    
+    // Mode switching
+    function setMode(mode) {
+      currentMode = mode;
+      // Update button states
+      document.querySelectorAll('.mode-button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(mode + 'Mode').classList.add('active');
+      
+      // Update UI based on mode
+      const userInput = document.getElementById('userInput');
+      const buildBtn = document.getElementById('buildBtn');
+      
+      if (mode === 'build') {
+        userInput.placeholder = 'Describe your vision...';
+        buildBtn.innerHTML = '✨ Build My App';
+      } else if (mode === 'plan') {
+        userInput.placeholder = 'Ask a question or describe what you want to plan...';
+        buildBtn.innerHTML = '📋 Create Plan';
+      } else if (mode === 'edit') {
+        userInput.placeholder = 'Describe what you want to edit...';
+        buildBtn.innerHTML = '✏️ Apply Edit';
+      }
+    }
+    
+    // File upload handler
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      addBuildLog(`📎 Uploaded file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, '📎');
+      
+      // Read file content if it's text-based
+      if (file.type.startsWith('text/') || file.name.match(/\.(txt|js|py|html|css|json)$/)) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          const userInput = document.getElementById('userInput');
+          userInput.value += `\n\n[Uploaded ${file.name}]:\n${content.substring(0, 500)}${content.length > 500 ? '...' : ''}`;
+        };
+        reader.readAsText(file);
+      } else if (file.type.startsWith('image/')) {
+        addBuildLog('Image uploaded - will be processed during build', '🖼️');
+      }
+    }
+    
+    // Voice input handler
+    function toggleVoiceInput() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Voice input is not supported in your browser. Please use Chrome or Edge.');
+        return;
+      }
+      
+      if (!recognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          const userInput = document.getElementById('userInput');
+          userInput.value += (userInput.value ? ' ' : '') + transcript;
+          isListening = false;
+          document.getElementById('voiceBtn').textContent = '🎤';
+        };
+        
+        recognition.onerror = function(event) {
+          console.error('Speech recognition error:', event.error);
+          isListening = false;
+          document.getElementById('voiceBtn').textContent = '🎤';
+        };
+        
+        recognition.onend = function() {
+          isListening = false;
+          document.getElementById('voiceBtn').textContent = '🎤';
+        };
+      }
+      
+      if (isListening) {
+        recognition.stop();
+        isListening = false;
+        document.getElementById('voiceBtn').textContent = '🎤';
+      } else {
+        recognition.start();
+        isListening = true;
+        document.getElementById('voiceBtn').textContent = '🔴';
+        addBuildLog('🎤 Listening...', '🎤');
+      }
+    }
     
     // Build logging functions
     function addBuildLog(message, icon = '') {
