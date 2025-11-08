@@ -6,7 +6,7 @@ Streams AI responses token-by-token in real-time with Enterprise Build System
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Union
 import asyncio
 import uuid
 import json
@@ -114,7 +114,7 @@ def _analyze_project_type(files_created: list, project_dir: str) -> dict:
         ]
     }
 
-def _build_file_tree(files_created: list, project_dir: str = None) -> list:
+def _build_file_tree(files_created: list, project_dir: Optional[str] = None) -> list:
     """Build a structured file tree from created files - reads actual file sizes from disk"""
     import os
     tree = []
@@ -165,42 +165,61 @@ class StreamingBuildRequest(BaseModel):
     live_preview: bool = True
     auto_deploy: bool = False
 
+async def stream_log_message(message: str, icon: str = ''):
+    """Stream a log message smoothly like a chat conversation"""
+    log_id = str(uuid.uuid4())
+    
+    # Split message into words for smooth streaming
+    words = message.split(' ')
+    
+    for i, word in enumerate(words):
+        # Add space before word (except first word)
+        text = (' ' + word) if i > 0 else word
+        
+        yield f"data: {json.dumps({'type': 'log-stream', 'id': log_id, 'delta': text, 'icon': icon if i == 0 else ''})}\n\n"
+        await asyncio.sleep(0.015)  # Small delay for smooth streaming effect
+    
+    # Mark as complete (removes typing cursor)
+    yield f"data: {json.dumps({'type': 'log-stream', 'id': log_id, 'complete': True})}\n\n"
+    await asyncio.sleep(0.05)
+
 async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mode: bool):
     """Stream build progress in real-time using Enterprise Build System"""
     
-    # Send initial message
-    yield f"data: {json.dumps({'type': 'log', 'message': '🚀 Starting SuperAgent build process...', 'icon': '🚀'})}\n\n"
-    await asyncio.sleep(0.2)
+    # Send initial message with streaming
+    async for chunk in stream_log_message('🚀 Starting SuperAgent build process...', '🚀'):
+        yield chunk
     
     request_msg = f'📝 Your request: "{instruction}"'
-    yield f"data: {json.dumps({'type': 'log', 'message': request_msg, 'icon': '📝'})}\n\n"
-    await asyncio.sleep(0.2)
+    async for chunk in stream_log_message(request_msg, '📝'):
+        yield chunk
     
     plan_status = "ON" if plan_mode else "OFF"
     enterprise_status = "ON" if enterprise_mode else "OFF"
     config_msg = f'⚙️ Plan Mode: {plan_status}, Enterprise Mode: {enterprise_status}'
-    yield f"data: {json.dumps({'type': 'log', 'message': config_msg, 'icon': '⚙️'})}\n\n"
-    await asyncio.sleep(0.3)
+    async for chunk in stream_log_message(config_msg, '⚙️'):
+        yield chunk
     
     # Get Gemini API key
     gemini_key = os.getenv("GEMINI_API_KEY")
     if not gemini_key:
-        yield f"data: {json.dumps({'type': 'log', 'message': '❌ Error: GEMINI_API_KEY not found', 'icon': '❌'})}\n\n"
+        async for chunk in stream_log_message('❌ Error: GEMINI_API_KEY not found', '❌'):
+            yield chunk
         yield f"data: {json.dumps({'type': 'error', 'message': 'API key not configured. Please add GEMINI_API_KEY to your secrets.'})}\n\n"
         return
     
     # Configure Gemini
     genai.configure(api_key=gemini_key)
     
-    yield f"data: {json.dumps({'type': 'log', 'message': '🤖 Connecting to Gemini AI...', 'icon': '🤖'})}\n\n"
-    await asyncio.sleep(0.3)
-    yield f"data: {json.dumps({'type': 'log', 'message': '✅ Connected to Gemini 2.0 Flash!', 'icon': '✅'})}\n\n"
-    await asyncio.sleep(0.2)
+    async for chunk in stream_log_message('🤖 Connecting to Gemini AI...', '🤖'):
+        yield chunk
+    async for chunk in stream_log_message('✅ Connected to Gemini 2.0 Flash!', '✅'):
+        yield chunk
     
     # Use Enterprise Build System if enabled
     if enterprise_mode:
-        yield f"data: {json.dumps({'type': 'log', 'message': '🏭 Initiating Enterprise Build System (9-stage production pipeline)...', 'icon': '🏭'})}\n\n"
-        await asyncio.sleep(0.3)
+        async for chunk in stream_log_message('🏭 Initiating Enterprise Build System (9-stage production pipeline)...', '🏭'):
+            yield chunk
         
         try:
             # Import Enterprise Build System components
@@ -247,11 +266,11 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
             else:
                 language = 'html'  # Changed from 'python' to 'html'
             
-            yield f"data: {json.dumps({'type': 'log', 'message': f'📊 Detected language: {language.upper()}', 'icon': '📊'})}\n\n"
-            await asyncio.sleep(0.2)
+            async for chunk in stream_log_message(f'📊 Detected language: {language.upper()}', '📊'):
+                yield chunk
             
-            yield f"data: {json.dumps({'type': 'log', 'message': '🚀 Starting enterprise build (this may take 2-5 minutes)...', 'icon': '🚀'})}\n\n"
-            await asyncio.sleep(0.3)
+            async for chunk in stream_log_message('🚀 Starting enterprise build (this may take 2-5 minutes)...', '🚀'):
+                yield chunk
             
             # Create async queue for real-time progress updates
             progress_queue = Queue()
@@ -328,9 +347,12 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 # Build file tree structure with actual file sizes
                 file_tree = _build_file_tree(files_created, project_dir)
                 
-                yield f"data: {json.dumps({'type': 'log', 'message': f'✅ Enterprise build complete in {build_time}s!', 'icon': '✅'})}\n\n"
-                yield f"data: {json.dumps({'type': 'log', 'message': f'📁 Created {len(files_created)} files in {project_dir}', 'icon': '📁'})}\n\n"
-                yield f"data: {json.dumps({'type': 'log', 'message': '🎉 Production-ready application generated!', 'icon': '🎉'})}\n\n"
+                async for chunk in stream_log_message(f'✅ Enterprise build complete in {build_time}s!', '✅'):
+                    yield chunk
+                async for chunk in stream_log_message(f'📁 Created {len(files_created)} files in {project_dir}', '📁'):
+                    yield chunk
+                async for chunk in stream_log_message('🎉 Production-ready application generated!', '🎉'):
+                    yield chunk
                 yield f"data: {json.dumps({'type': 'step', 'step': 5, 'status': 'complete'})}\n\n"
                 
                 # Send completion with rich metadata
@@ -351,15 +373,18 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 yield f"data: {json.dumps(completion_data)}\n\n"
             else:
                 error = result.get('error', 'Unknown error')
-                yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Build failed: {error}', 'icon': '❌'})}\n\n"
+                async for chunk in stream_log_message(f'❌ Build failed: {error}', '❌'):
+                    yield chunk
                 yield f"data: {json.dumps({'type': 'error', 'message': error})}\n\n"
                 
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Error: {str(e)}', 'icon': '❌'})}\n\n"
+            async for chunk in stream_log_message(f'❌ Error: {str(e)}', '❌'):
+                yield chunk
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
     else:
         # Simple mode - just use Gemini to generate a single HTML file
-        yield f"data: {json.dumps({'type': 'log', 'message': '💭 Generating application with Gemini...', 'icon': '💭'})}\n\n"
+        async for chunk in stream_log_message('💭 Generating application with Gemini...', '💭'):
+            yield chunk
         yield f"data: {json.dumps({'type': 'step', 'step': 1, 'status': 'active'})}\n\n"
         
         try:
@@ -387,14 +412,17 @@ Return ONLY the complete HTML code."""
             with open(filepath, 'w') as f:
                 f.write(generated_code)
             
-            yield f"data: {json.dumps({'type': 'log', 'message': f'✅ Generated {len(generated_code)} characters', 'icon': '✅'})}\n\n"
+            async for chunk in stream_log_message(f'✅ Generated {len(generated_code)} characters', '✅'):
+                yield chunk
             yield f"data: {json.dumps({'type': 'step', 'step': 1, 'status': 'complete'})}\n\n"
-            yield f"data: {json.dumps({'type': 'log', 'message': f'💾 Saved as {filename}', 'icon': '💾'})}\n\n"
+            async for chunk in stream_log_message(f'💾 Saved as {filename}', '💾'):
+                yield chunk
             yield f"data: {json.dumps({'type': 'preview', 'url': f'/preview/{filename}'})}\n\n"
             yield f"data: {json.dumps({'type': 'complete', 'filename': filename})}\n\n"
             
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Error: {str(e)}', 'icon': '❌'})}\n\n"
+            async for chunk in stream_log_message(f'❌ Error: {str(e)}', '❌'):
+                yield chunk
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
 @router.get("/preview/{project_name}/{file_path:path}")
