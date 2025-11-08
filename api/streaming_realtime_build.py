@@ -65,13 +65,14 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
             # Import Enterprise Build System components
             from api.enterprise_builder import EnterpriseBuildSystem
             from api.app_builder import AppBuilder
-            from api.rollback_system import rollback_system
+            from api.rollback_system import RollbackSystem
             from api.hallucination_fixer import HallucinationFixer
             from api.cybersecurity_ai import cybersecurity_agent
             
             # Initialize components
             basic_builder = AppBuilder()
             hallucination_fixer = HallucinationFixer()
+            rollback_system = RollbackSystem()
             enterprise_system = EnterpriseBuildSystem(
                 basic_builder,
                 rollback_system,
