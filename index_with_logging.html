@@ -828,15 +828,19 @@ body {
       }
       
       clearBuildLog();
+      addBuildLog('Starting build process...', '🚀');
+      addBuildLog(`Your request: "${userInput}"`, '📝');
+      addBuildLog('Plan Mode: ON, Enterprise Mode: ON', '⚙️');
       
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
       buildBtn.innerHTML = '<span>⏳</span> Building...';
+      
       document.getElementById('aiActivity').textContent = 'Building';
+      addBuildLog('Connecting to SuperAgent API...', '📡');
       
       try {
-        // Use the NEW streaming endpoint
-        const response = await fetch('/api/v1/build-streaming', {
+        const response = await fetch('/api/v1/build-realtime', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -848,50 +852,12 @@ body {
           })
         });
         
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
+        const data = await response.json();
+        currentBuildId = data.build_id;
+        addBuildLog(`Build started! ID: ${currentBuildId}`, '✅');
+        addBuildLog('Streaming build progress...', '📊');
         
-        // Read the streaming response
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          // Decode the chunk
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.substring(6));
-                
-                // Handle different message types
-                if (data.type === 'log') {
-                  addBuildLog(data.message, data.icon || '');
-                } else if (data.type === 'step') {
-                  updateStep(data.step, data.status);
-                } else if (data.type === 'preview') {
-                  // Update preview
-                  const iframe = document.getElementById('previewIframe');
-                  iframe.src = data.url;
-                } else if (data.type === 'complete') {
-                  buildBtn.disabled = false;
-                  buildBtn.innerHTML = '✨ Build My App';
-                  document.getElementById('aiActivity').textContent = 'Complete';
-                } else if (data.type === 'error') {
-                  throw new Error(data.message);
-                }
-              } catch (parseError) {
-                console.error('Parse error:', parseError);
-              }
-            }
-          }
-        }
-        
+        startStreamingProgress(currentBuildId);
       } catch (error) {
         console.error('Build error:', error);
         addBuildLog(`Build failed: ${error.message}`, '❌');

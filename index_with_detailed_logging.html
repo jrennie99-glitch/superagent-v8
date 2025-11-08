@@ -561,80 +561,6 @@ body {
 @keyframes shimmer {
   to { left: 100%; }
 }
-
-/* Detailed Build Log Panel */
-.build-log-panel {
-  margin-top: 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
-  border-left: 3px solid var(--electric-cyan);
-}
-
-.build-log-header {
-  padding: 0.8rem 1.2rem;
-  background: rgba(139, 92, 246, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.build-log-title {
-  color: var(--nebula-purple);
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.build-log-content {
-  padding: 1rem;
-  max-height: 280px;
-  overflow-y: auto;
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-  font-size: 0.75rem;
-  line-height: 1.6;
-}
-
-.log-entry {
-  padding: 0.3rem 0;
-  animation: logFadeIn 0.3s ease-in;
-  color: #c9d1d9;
-}
-
-@keyframes logFadeIn {
-  from { opacity: 0; transform: translateX(-5px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.log-timestamp {
-  color: #6b7280;
-  font-size: 0.7rem;
-  margin-right: 0.5rem;
-}
-
-.log-icon {
-  margin-right: 0.3rem;
-}
-
-.build-log-content::-webkit-scrollbar {
-  width: 5px;
-}
-
-.build-log-content::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-.build-log-content::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 3px;
-}
-
-.build-log-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.7);
-}
 </style>
 </head>
 <body>
@@ -719,14 +645,6 @@ body {
             </div>
           </div>
         </div>
-        
-        <!-- Detailed Build Log -->
-        <div class="build-log-panel" id="buildLogPanel" style="display: none;">
-          <div class="build-log-header">
-            <div class="build-log-title">📝 Build Log</div>
-          </div>
-          <div class="build-log-content" id="buildLogContent"></div>
-        </div>
       </div>
       
       <!-- Right Panel - Live Preview -->
@@ -793,33 +711,6 @@ body {
     let currentBuildId = null;
     let eventSource = null;
     
-    // Build logging functions
-    function addBuildLog(message, icon = '') {
-      const logPanel = document.getElementById('buildLogPanel');
-      const logContent = document.getElementById('buildLogContent');
-      
-      // Show panel if hidden
-      if (logPanel.style.display === 'none') {
-        logPanel.style.display = 'block';
-      }
-      
-      const logEntry = document.createElement('div');
-      logEntry.className = 'log-entry';
-      
-      const now = new Date();
-      const timestamp = now.toLocaleTimeString();
-      
-      logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span><span class="log-icon">${icon}</span>${message}`;
-      
-      logContent.appendChild(logEntry);
-      logContent.scrollTop = logContent.scrollHeight;
-    }
-    
-    function clearBuildLog() {
-      const logContent = document.getElementById('buildLogContent');
-      logContent.innerHTML = '';
-    }
-    
     async function startBuild() {
       const userInput = document.getElementById('userInput').value.trim();
       if (!userInput) {
@@ -827,16 +718,14 @@ body {
         return;
       }
       
-      clearBuildLog();
-      
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
       buildBtn.innerHTML = '<span>⏳</span> Building...';
+      
       document.getElementById('aiActivity').textContent = 'Building';
       
       try {
-        // Use the NEW streaming endpoint
-        const response = await fetch('/api/v1/build-streaming', {
+        const response = await fetch('/api/v1/build-realtime', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -848,53 +737,12 @@ body {
           })
         });
         
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
+        const data = await response.json();
+        currentBuildId = data.build_id;
         
-        // Read the streaming response
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          // Decode the chunk
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.substring(6));
-                
-                // Handle different message types
-                if (data.type === 'log') {
-                  addBuildLog(data.message, data.icon || '');
-                } else if (data.type === 'step') {
-                  updateStep(data.step, data.status);
-                } else if (data.type === 'preview') {
-                  // Update preview
-                  const iframe = document.getElementById('previewIframe');
-                  iframe.src = data.url;
-                } else if (data.type === 'complete') {
-                  buildBtn.disabled = false;
-                  buildBtn.innerHTML = '✨ Build My App';
-                  document.getElementById('aiActivity').textContent = 'Complete';
-                } else if (data.type === 'error') {
-                  throw new Error(data.message);
-                }
-              } catch (parseError) {
-                console.error('Parse error:', parseError);
-              }
-            }
-          }
-        }
-        
+        startStreamingProgress(currentBuildId);
       } catch (error) {
         console.error('Build error:', error);
-        addBuildLog(`Build failed: ${error.message}`, '❌');
         buildBtn.disabled = false;
         buildBtn.innerHTML = '✨ Build My App';
         document.getElementById('aiActivity').textContent = 'Error';
@@ -930,17 +778,11 @@ body {
     function updateStep(stepNumber, status) {
       const steps = document.querySelectorAll('.step-hexagon');
       if (steps[stepNumber - 1]) {
-        const stepTitle = steps[stepNumber - 1].querySelector('.step-title').textContent;
-        const stepDetail = steps[stepNumber - 1].querySelector('.step-detail').textContent;
-        
         steps[stepNumber - 1].classList.remove('active', 'complete');
         if (status === 'active') {
           steps[stepNumber - 1].classList.add('active');
-          addBuildLog(`Step ${stepNumber}: ${stepTitle}`, '⏳');
-          addBuildLog(`   ${stepDetail}`, '');
         } else if (status === 'complete') {
           steps[stepNumber - 1].classList.add('complete');
-          addBuildLog(`${stepTitle} complete!`, '✅');
         }
       }
     }

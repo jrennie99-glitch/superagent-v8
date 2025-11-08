@@ -143,6 +143,7 @@ from api.browser_testing import router as browser_testing_router
 from api.agent_builder import router as agent_builder_router
 from api.realtime_build import router as realtime_build_router
 from api.streaming_build import router as streaming_build_router
+from api.streaming_realtime_build import router as streaming_realtime_build_router
 from api.plan_analyzer import router as plan_analyzer_router
 from api.file_upload import router as file_upload_router
 from api.upload_endpoints import upload_router
@@ -294,6 +295,7 @@ app.include_router(plan_analyzer_router, tags=["Plan Analyzer - Replit-style Con
 app.include_router(file_upload_router, tags=["File Upload - Images/Videos/Audio/Documents"])
 app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
 app.include_router(streaming_build_router, tags=["V2.1 Streaming Build - INSTANT FEEDBACK"])
+app.include_router(streaming_realtime_build_router, tags=["V3.0 TRUE STREAMING - Like Manus/Replit/Cursor"])
 app.include_router(upload_router, tags=["V2.0 Multi-Modal Upload - SPECTACULAR"])
 app.include_router(autonomous_build_router, tags=["V2.0 Autonomous App Builder - SPECTACULAR"])
 app.include_router(live_dashboard_router, tags=["V2.0 Live Dashboard - Replit x Cursor x Bolt"])
