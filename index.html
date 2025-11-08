@@ -455,6 +455,28 @@ body {
   align-items: center;
 }
 
+.preview-control-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--nebula-purple);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.preview-control-item:hover .control-label {
+  opacity: 1;
+  text-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
+}
+
 .control-button {
   width: 60px;
   height: 60px;
@@ -972,15 +994,29 @@ body {
           </div>
         </div>
         
-        <!-- Input Controls (File Upload & Microphone) -->
+        <!-- Input Controls (File Upload, Video Upload & Microphone) -->
         <div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0;">
-          <button class="control-button" onclick="document.getElementById('fileUpload').click()" title="Upload File">
-            📎
-          </button>
+          <div class="preview-control-item" style="display: inline-flex; flex-direction: column; align-items: center; gap: 5px;">
+            <button class="control-button" onclick="document.getElementById('fileUpload').click()" title="Upload File" aria-label="Upload File">
+              📎
+            </button>
+            <div class="control-label">File</div>
+          </div>
           <input type="file" id="fileUpload" style="display: none;" accept="image/*,.pdf,.txt,.js,.py,.html,.css" onchange="handleFileUpload(event)">
-          <button class="control-button" onclick="toggleVoiceInput()" title="Voice Input" id="voiceBtn">
-            🎤
-          </button>
+          
+          <div class="preview-control-item" style="display: inline-flex; flex-direction: column; align-items: center; gap: 5px;">
+            <button class="control-button" onclick="openVideoUpload()" title="Upload or Record Video" aria-label="Video Upload" id="videoBtn">
+              🎬
+            </button>
+            <div class="control-label">Video</div>
+          </div>
+          
+          <div class="preview-control-item" style="display: inline-flex; flex-direction: column; align-items: center; gap: 5px;">
+            <button class="control-button" onclick="toggleVoiceInput()" title="Voice Input" aria-label="Voice Input" id="voiceBtn">
+              🎤
+            </button>
+            <div class="control-label">Voice</div>
+          </div>
         </div>
         
         <!-- Build Mode Selector -->
@@ -1070,17 +1106,26 @@ body {
           </div>
         </div>
         
-        <!-- Floating Preview Controls -->
+        <!-- Floating Preview Controls with Labels -->
         <div class="preview-controls">
-          <button class="control-button" onclick="refreshPreview()" title="Refresh">
-            🔄
-          </button>
-          <button class="control-button" onclick="openInNewTab()" title="Open in New Tab">
-            ↗️
-          </button>
-          <button class="control-button" onclick="showQR()" title="QR Code">
-            📱
-          </button>
+          <div class="preview-control-item">
+            <button class="control-button" onclick="refreshPreview()" title="Refresh Preview" aria-label="Refresh Preview">
+              🔄
+            </button>
+            <div class="control-label">Refresh</div>
+          </div>
+          <div class="preview-control-item">
+            <button class="control-button" onclick="openInNewTab()" title="Open in New Tab" aria-label="Open in New Tab">
+              ↗️
+            </button>
+            <div class="control-label">Open</div>
+          </div>
+          <div class="preview-control-item">
+            <button class="control-button" onclick="showQR()" title="QR Code for Mobile" aria-label="Show QR Code">
+              📱
+            </button>
+            <div class="control-label">Mobile</div>
+          </div>
         </div>
         
         <!-- Status Bar (hidden when not building) -->
