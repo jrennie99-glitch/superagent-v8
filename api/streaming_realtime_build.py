@@ -221,16 +221,31 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 cybersecurity_agent
             )
             
-            # Detect language from instruction
+            # Detect language from instruction with visual/interactive bias
             instruction_lower = instruction.lower()
-            if 'python' in instruction_lower or 'flask' in instruction_lower or 'django' in instruction_lower:
+            
+            # Explicitly backend/CLI requests → Python
+            if any(word in instruction_lower for word in ['python', 'flask', 'django', 'fastapi', 'api', 'backend', 'cli', 'command line', 'script']):
                 language = 'python'
-            elif 'react' in instruction_lower or 'next' in instruction_lower or 'vue' in instruction_lower or 'node' in instruction_lower:
+            
+            # Explicitly frontend frameworks → JavaScript
+            elif any(word in instruction_lower for word in ['react', 'next', 'vue', 'angular', 'node', 'express']):
                 language = 'javascript'
-            elif 'website' in instruction_lower or 'webpage' in instruction_lower or 'landing' in instruction_lower:
+            
+            # Visual/interactive requests (NO-CODE PLATFORM: default to web apps!)
+            elif any(word in instruction_lower for word in [
+                'calculator', 'todo', 'task', 'game', 'quiz', 'form', 'survey',
+                'dashboard', 'chart', 'graph', 'timer', 'counter', 'stopwatch',
+                'weather', 'converter', 'gallery', 'portfolio', 'blog', 'chat',
+                'website', 'webpage', 'landing', 'app', 'page', 'ui', 'interface',
+                'button', 'menu', 'navbar', 'header', 'footer', 'card', 'modal',
+                'visual', 'interactive', 'colorful', 'beautiful', 'modern', 'simple'
+            ]):
                 language = 'html'
+            
+            # Default to HTML for no-code platform (users want visual apps!)
             else:
-                language = 'python'  # default
+                language = 'html'  # Changed from 'python' to 'html'
             
             yield f"data: {json.dumps({'type': 'log', 'message': f'📊 Detected language: {language.upper()}', 'icon': '📊'})}\n\n"
             await asyncio.sleep(0.2)

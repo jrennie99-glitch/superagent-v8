@@ -505,19 +505,34 @@ class EnterpriseBuildSystem:
     
     # Helper methods
     def _detect_project_type(self, instruction: str, language: str) -> str:
-        """Detect project type from instruction"""
+        """Detect project type from instruction with visual/interactive bias"""
         instruction_lower = instruction.lower()
         
+        # Explicitly API/backend requests
         if "api" in instruction_lower or "backend" in instruction_lower:
             return "api"
-        elif "website" in instruction_lower or "web app" in instruction_lower:
-            return "webapp"
-        elif "cli" in instruction_lower or "command line" in instruction_lower:
+        
+        # Explicitly CLI/script requests
+        elif "cli" in instruction_lower or "command line" in instruction_lower or "script" in instruction_lower:
             return "cli"
+        
+        # Bot/chatbot requests
         elif "bot" in instruction_lower:
             return "bot"
+        
+        # Visual/interactive requests (NO-CODE: default to webapp!)
+        elif any(word in instruction_lower for word in [
+            'calculator', 'todo', 'task', 'game', 'quiz', 'form', 'survey',
+            'dashboard', 'chart', 'timer', 'counter', 'weather', 'converter',
+            'gallery', 'portfolio', 'blog', 'chat', 'website', 'web app', 'webpage',
+            'app', 'ui', 'interface', 'button', 'visual', 'interactive',
+            'colorful', 'beautiful', 'modern', 'simple'
+        ]) or language == 'html':
+            return "webapp"
+        
+        # Default to webapp for no-code platform (users want visual apps!)
         else:
-            return "general"
+            return "webapp"  # Changed from "general" to "webapp"
     
     def _needs_database(self, instruction: str) -> bool:
         """Check if project needs database"""
