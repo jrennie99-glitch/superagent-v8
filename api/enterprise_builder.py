@@ -119,7 +119,10 @@ class EnterpriseBuildSystem:
                 await progress_callback(f"Stage 5/11: Installed {len(stage_result['installed'])} dependencies", 45)
             
             # STAGE 6: E2E Feature Verification (NEW - validates features actually work!)
-            if language.lower() in ["html", "web"] and architecture.get("wants_advanced"):
+            # Run E2E for ALL web apps with interactive features (not just "advanced" keyword apps)
+            should_run_e2e = language.lower() in ["html", "web"]
+            
+            if should_run_e2e:
                 print("\n" + "="*70)
                 print("🧪 STAGE 6: E2E FEATURE VERIFICATION (Real Browser Testing)")
                 print("="*70)
@@ -133,20 +136,42 @@ class EnterpriseBuildSystem:
                 results["e2e_results"] = stage_result
                 results["stages"].append(stage_result)
                 
+                # QUALITY GATE: Check E2E results
+                critical_issues = stage_result.get("critical_issues", [])
+                passed = stage_result.get("passed", 0)
+                total = stage_result.get("total", 0)
+                coverage = stage_result.get("coverage_percent", 0)
+                
                 if progress_callback:
-                    e2e_status = f"✅ {stage_result.get('passed', 0)}/{stage_result.get('total', 0)} features work"
+                    e2e_status = f"{passed}/{total} features work ({coverage:.0f}% coverage)"
                     await progress_callback(f"Stage 6/11: E2E verified - {e2e_status}", 55)
                 
-                # CRITICAL: Check if E2E tests revealed issues
-                critical_issues = stage_result.get("critical_issues", [])
+                # ENFORCE QUALITY GATE: Fail build if critical issues found
                 if critical_issues:
                     print(f"\n❌ E2E VERIFICATION FAILED - {len(critical_issues)} CRITICAL ISSUES:")
                     for issue in critical_issues:
                         print(f"   • {issue}")
-                    print("\n⚠️  This app will NOT be delivered until critical features work properly!")
+                    print("\n🚫 BUILD BLOCKED: This app cannot be delivered with broken features!")
+                    print("   SuperAgent's quality standards require all advertised features to work.")
                     
-                    # For now, log the issues but continue (in future, we could regenerate)
+                    results["success"] = False
                     results["e2e_critical_issues"] = critical_issues
+                    results["failure_reason"] = "E2E tests failed - critical features broken"
+                    
+                    # Stop build process - don't continue with broken app
+                    raise Exception(f"E2E Quality Gate Failed: {len(critical_issues)} critical issues found. Build blocked.")
+                
+                # WARN if coverage is low (but don't fail)
+                elif coverage < 70:
+                    print(f"\n⚠️  E2E Coverage Warning: Only {coverage:.0f}% of expected features verified")
+                    print(f"   Passed: {passed}/{total} tests")
+                    print("   This app may have incomplete functionality.")
+                    results["e2e_warning"] = f"Low coverage: {coverage:.0f}%"
+                else:
+                    print(f"\n✅ E2E VERIFICATION PASSED:")
+                    print(f"   ✓ {passed}/{total} features verified ({coverage:.0f}% coverage)")
+                    print(f"   ✓ No critical issues found")
+                    print(f"   ✓ App is ready for delivery")
             else:
                 if progress_callback:
                     await progress_callback("Stage 6/11: E2E testing skipped (non-web app)", 55)
