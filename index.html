@@ -683,7 +683,7 @@ body {
             <div class="step-icon">🎯</div>
             <div class="step-content">
               <div class="step-title">Architecting</div>
-              <div class="step-detail">Planning your app structure...</div>
+              <div class="step-detail"></div>
             </div>
           </div>
           
@@ -691,7 +691,7 @@ body {
             <div class="step-icon">🎨</div>
             <div class="step-content">
               <div class="step-title">Designing</div>
-              <div class="step-detail">Creating beautiful user interface...</div>
+              <div class="step-detail"></div>
             </div>
           </div>
           
@@ -699,7 +699,7 @@ body {
             <div class="step-icon">⚡</div>
             <div class="step-content">
               <div class="step-title">Building Features</div>
-              <div class="step-detail">Adding interactive functionality...</div>
+              <div class="step-detail"></div>
             </div>
           </div>
           
@@ -707,7 +707,7 @@ body {
             <div class="step-icon">💾</div>
             <div class="step-content">
               <div class="step-title">Database Setup</div>
-              <div class="step-detail">Configuring data persistence...</div>
+              <div class="step-detail"></div>
             </div>
           </div>
           
@@ -715,7 +715,7 @@ body {
             <div class="step-icon">🚀</div>
             <div class="step-content">
               <div class="step-title">Production Deploy</div>
-              <div class="step-detail">Launching your app live...</div>
+              <div class="step-detail"></div>
             </div>
           </div>
         </div>
@@ -828,11 +828,14 @@ body {
       }
       
       clearBuildLog();
+      clearBuildSteps();  // Clear all step boxes at start
       
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
       buildBtn.innerHTML = '<span>⏳</span> Building...';
       document.getElementById('aiActivity').textContent = 'Building';
+      
+      let currentStep = 0;
       
       try {
         // Use the NEW streaming endpoint
@@ -872,8 +875,17 @@ body {
                 // Handle different message types
                 if (data.type === 'log') {
                   addBuildLog(data.message, data.icon || '');
+                  // Update the current step box with this message
+                  if (currentStep > 0 && currentStep <= 5) {
+                    const steps = document.querySelectorAll('.step-hexagon');
+                    const stepDetailEl = steps[currentStep - 1].querySelector('.step-detail');
+                    // Extract clean message without percentage/icons
+                    let cleanMsg = data.message.replace(/\[\d+%\]\s*/, '').substring(0, 50);
+                    stepDetailEl.textContent = cleanMsg + (cleanMsg.length >= 50 ? '...' : '');
+                  }
                 } else if (data.type === 'step') {
-                  updateStep(data.step, data.status);
+                  currentStep = data.step;
+                  updateStep(data.step, data.status, data.title || '');
                 } else if (data.type === 'preview') {
                   // Update preview
                   const iframe = document.getElementById('previewIframe');
@@ -927,22 +939,35 @@ body {
       };
     }
     
-    function updateStep(stepNumber, status) {
+    function updateStep(stepNumber, status, message = '') {
       const steps = document.querySelectorAll('.step-hexagon');
       if (steps[stepNumber - 1]) {
         const stepTitle = steps[stepNumber - 1].querySelector('.step-title').textContent;
-        const stepDetail = steps[stepNumber - 1].querySelector('.step-detail').textContent;
+        const stepDetailEl = steps[stepNumber - 1].querySelector('.step-detail');
         
         steps[stepNumber - 1].classList.remove('active', 'complete');
         if (status === 'active') {
           steps[stepNumber - 1].classList.add('active');
+          // Update the box with live message
+          if (message) {
+            stepDetailEl.textContent = message;
+          }
           addBuildLog(`Step ${stepNumber}: ${stepTitle}`, '⏳');
-          addBuildLog(`   ${stepDetail}`, '');
         } else if (status === 'complete') {
           steps[stepNumber - 1].classList.add('complete');
+          stepDetailEl.textContent = '✅ Complete';
           addBuildLog(`${stepTitle} complete!`, '✅');
         }
       }
+    }
+    
+    function clearBuildSteps() {
+      // Clear all step details when starting new build
+      const steps = document.querySelectorAll('.step-hexagon');
+      steps.forEach(step => {
+        step.classList.remove('active', 'complete');
+        step.querySelector('.step-detail').textContent = '';
+      });
     }
     
     function refreshPreview() {
