@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<parameter name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SuperAgent - Revolutionary No-Code App Builder</title>
 <style>
 * {
@@ -31,7 +31,7 @@ body {
   position: relative;
 }
 
-/* Cosmic Background */
+/* Animated Cosmic Background */
 .cosmic-background {
   position: fixed;
   top: 0;
@@ -92,23 +92,25 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* 3D Chrome Logo Header */
 .header-logo {
   text-align: center;
-  padding: 2rem 2rem 1rem;
+  padding: 3rem 2rem 2rem;
   perspective: 1000px;
 }
 
 .logo-3d {
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 900;
   background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 25%, #ec4899 50%, #8b5cf6 75%, #06b6d4 100%);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.6));
-  animation: holographic-shift 8s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.6))
+          drop-shadow(0 0 60px rgba(236, 72, 153, 0.4));
+  animation: holographic-shift 8s ease-in-out infinite, logo-float 6s ease-in-out infinite;
+  transform-style: preserve-3d;
   letter-spacing: 0.05em;
 }
 
@@ -117,135 +119,462 @@ body {
   50% { background-position: 100% 50%; }
 }
 
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(2deg); }
+}
+
 .subtitle {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #06b6d4;
   margin-top: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.3em;
   opacity: 0.8;
+  animation: glow-pulse 3s ease-in-out infinite;
 }
 
-/* Main Content Area - 3 Column Layout */
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 30px rgba(6, 182, 212, 0.4); }
+}
+
+/* Main Content Area */
 .main-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 25% 35% 40%;
-  gap: 1rem;
-  padding: 0 1rem 1rem;
-  max-width: 1900px;
+  grid-template-columns: 45% 55%;
+  gap: 2rem;
+  padding: 0 2rem 2rem;
+  max-width: 1800px;
   margin: 0 auto;
   width: 100%;
 }
 
-/* Left Panel - Input */
-.input-panel {
+/* Left Panel - Build Console */
+.build-console {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
-.input-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
+/* 3D Holographic Input Sphere */
+.input-sphere-container {
+  perspective: 1000px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.input-sphere {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.1));
+  border: 2px solid rgba(6, 182, 212, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: sphere-rotate 20s linear infinite, sphere-pulse 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 0 60px rgba(6, 182, 212, 0.4),
+    0 0 100px rgba(139, 92, 246, 0.2),
+    inset 0 0 60px rgba(6, 182, 212, 0.1);
+}
+
+@keyframes sphere-rotate {
+  0% { transform: rotateY(0deg) rotateX(10deg); }
+  100% { transform: rotateY(360deg) rotateX(10deg); }
+}
+
+@keyframes sphere-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.sphere-input {
+  width: 85%;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.5rem;
-}
-
-.input-card h3 {
-  color: var(--electric-cyan);
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-}
-
-.app-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 1rem;
   color: #fff;
-  font-size: 1rem;
-  resize: vertical;
-  min-height: 120px;
+  font-size: 1.1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
   outline: none;
   transition: all 0.3s ease;
-  user-select: text;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  font-family: inherit;
 }
 
-.app-input:focus {
+.sphere-input:focus {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(6, 182, 212, 0.5);
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
+.sphere-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Orbiting AI Nodes */
+.ai-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--electric-cyan), transparent);
+  box-shadow: 0 0 15px var(--electric-cyan);
+  animation: orbit 8s linear infinite;
+}
+
+.ai-node:nth-child(2) { animation-delay: -2s; }
+.ai-node:nth-child(3) { animation-delay: -4s; }
+.ai-node:nth-child(4) { animation-delay: -6s; }
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+}
+
+/* Build Button */
 .build-button {
   width: 100%;
-  padding: 1.2rem;
-  font-size: 1.2rem;
+  padding: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-pink));
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   color: white;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+  box-shadow: 
+    0 10px 40px rgba(139, 92, 246, 0.4),
+    0 0 20px rgba(236, 72, 153, 0.3);
 }
 
-.build-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 60px rgba(139, 92, 246, 0.6);
+.build-button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 15px 60px rgba(139, 92, 246, 0.6),
+    0 0 40px rgba(236, 72, 153, 0.5);
 }
 
-.build-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.build-button:active {
+  transform: translateY(-2px) scale(0.98);
 }
 
-/* Build Options */
-.build-options {
+.build-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.build-button:hover::before {
+  left: 100%;
+}
+
+/* Floating Hexagonal Build Steps */
+.build-steps {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.step-hexagon {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: step-appear 0.6s ease-out backwards;
+}
+
+.step-hexagon:nth-child(1) { animation-delay: 0.1s; border-left: 3px solid var(--electric-cyan); }
+.step-hexagon:nth-child(2) { animation-delay: 0.2s; border-left: 3px solid var(--nebula-purple); }
+.step-hexagon:nth-child(3) { animation-delay: 0.3s; border-left: 3px solid var(--cyber-pink); }
+.step-hexagon:nth-child(4) { animation-delay: 0.4s; border-left: 3px solid var(--holographic-gold); }
+.step-hexagon:nth-child(5) { animation-delay: 0.5s; border-left: 3px solid var(--neon-green); }
+
+@keyframes step-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) rotateY(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+.step-hexagon.active {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--nebula-purple);
+  box-shadow: 
+    0 0 30px rgba(139, 92, 246, 0.3),
+    inset 0 0 20px rgba(139, 92, 246, 0.1);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.step-hexagon.complete {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: var(--neon-green);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.6);
+  }
+}
+
+.step-icon {
+  font-size: 1.8rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.step-detail {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Right Panel - Live Preview */
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 3D Curved Preview Screen */
+.preview-screen {
+  flex: 1;
+  perspective: 2000px;
+  min-height: 600px;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  overflow: hidden;
+  transform: rotateY(-2deg) rotateX(2deg);
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  box-shadow: 
+    0 30px 90px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(6, 182, 212, 0.2);
+  animation: frame-float 8s ease-in-out infinite;
+}
+
+@keyframes frame-float {
+  0%, 100% { transform: rotateY(-2deg) rotateX(2deg) translateZ(0); }
+  50% { transform: rotateY(2deg) rotateX(-2deg) translateZ(20px); }
+}
+
+.preview-frame:hover {
+  transform: rotateY(0deg) rotateX(0deg) translateZ(30px);
+}
+
+/* Holographic Border Animation */
+.preview-frame::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, 
+    var(--electric-cyan) 0%, 
+    var(--nebula-purple) 25%, 
+    var(--cyber-pink) 50%, 
+    var(--nebula-purple) 75%, 
+    var(--electric-cyan) 100%);
+  background-size: 300% 300%;
+  border-radius: 24px;
+  z-index: -1;
+  animation: holographic-border 6s linear infinite;
+  filter: blur(8px);
+  opacity: 0.8;
+}
+
+@keyframes holographic-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 20px;
+  background: white;
+}
+
+/* Floating Preview Controls */
+.preview-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--nebula-purple);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+}
+
+/* Status Bar */
+.status-bar {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
   gap: 0.8rem;
 }
 
-.option-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.progress-ring {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: var(--nebula-purple);
+  animation: spin 2s linear infinite;
 }
 
-.option-group label {
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.status-text {
   font-size: 0.9rem;
-  color: #c9d1d9;
-  cursor: pointer;
+  opacity: 0.8;
 }
 
-.option-group input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
+.status-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--electric-cyan);
 }
 
-/* Middle Panel - Build Log */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .logo-3d {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-3d {
+    font-size: 2rem;
+  }
+  
+  .input-sphere {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .preview-screen {
+    min-height: 400px;
+  }
+}
+
+/* Loading Animation */
+.loading-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  to { left: 100%; }
+}
+
+/* Detailed Build Log Panel */
 .build-log-panel {
-  display: flex;
-  flex-direction: column;
+  margin-top: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   overflow: hidden;
+  border-left: 3px solid var(--electric-cyan);
 }
 
 .build-log-header {
-  padding: 1rem 1.5rem;
+  padding: 0.8rem 1.2rem;
   background: rgba(139, 92, 246, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -253,176 +582,58 @@ body {
   align-items: center;
 }
 
-.build-log-header h3 {
+.build-log-title {
   color: var(--nebula-purple);
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.build-status {
-  font-size: 0.9rem;
-  color: var(--electric-cyan);
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
 .build-log-content {
-  flex: 1;
   padding: 1rem;
+  max-height: 280px;
   overflow-y: auto;
-  max-height: 600px;
   font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   line-height: 1.6;
 }
 
 .log-entry {
-  padding: 0.5rem 0;
-  border-left: 3px solid transparent;
-  padding-left: 1rem;
-  margin-bottom: 0.5rem;
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.log-entry.info {
-  border-left-color: var(--electric-cyan);
-  color: #a8dadc;
-}
-
-.log-entry.success {
-  border-left-color: var(--neon-green);
-  color: #90ee90;
-}
-
-.log-entry.warning {
-  border-left-color: var(--holographic-gold);
-  color: #ffd700;
-}
-
-.log-entry.error {
-  border-left-color: var(--cyber-pink);
-  color: #ff6b6b;
-}
-
-.log-entry.step {
-  border-left-color: var(--nebula-purple);
+  padding: 0.3rem 0;
+  animation: logFadeIn 0.3s ease-in;
   color: #c9d1d9;
-  font-weight: 600;
-  margin-top: 1rem;
+}
+
+@keyframes logFadeIn {
+  from { opacity: 0; transform: translateX(-5px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .log-timestamp {
   color: #6b7280;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   margin-right: 0.5rem;
 }
 
 .log-icon {
-  margin-right: 0.5rem;
+  margin-right: 0.3rem;
 }
 
-/* Right Panel - Preview */
-.preview-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.preview-screen {
-  flex: 1;
-  perspective: 2000px;
-  min-height: 500px;
-}
-
-.preview-frame {
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba(6, 182, 212, 0.3);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-.preview-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 14px;
-  background: white;
-}
-
-.preview-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #6b7280;
-  font-size: 1.1rem;
-  text-align: center;
-  padding: 2rem;
-}
-
-.preview-controls {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.control-button {
-  padding: 0.8rem 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.control-button:hover {
-  background: rgba(139, 92, 246, 0.2);
-  border-color: var(--nebula-purple);
-  transform: translateY(-2px);
-}
-
-/* Scrollbar Styling */
 .build-log-content::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 
 .build-log-content::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .build-log-content::-webkit-scrollbar-thumb {
   background: rgba(139, 92, 246, 0.5);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .build-log-content::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.7);
-}
-
-/* Responsive */
-@media (max-width: 1400px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .build-log-content {
-    max-height: 400px;
-  }
 }
 </style>
 </head>
@@ -435,7 +646,7 @@ body {
   
   <!-- Main Container -->
   <div class="container">
-    <!-- Header -->
+    <!-- 3D Chrome Logo Header -->
     <div class="header-logo">
       <h1 class="logo-3d">SuperAgent</h1>
       <p class="subtitle">No-Code App Builder</p>
@@ -443,89 +654,124 @@ body {
     
     <!-- Main Content Area -->
     <div class="main-content">
-      <!-- Left Panel - Input -->
-      <div class="input-panel">
-        <div class="input-card">
-          <h3>💡 Describe Your App</h3>
-          <textarea 
-            class="app-input" 
-            id="userInput"
-            placeholder="Example: Create a todo list app with add, delete, and mark as complete features..."
-          ></textarea>
-        </div>
-        
-        <div class="input-card">
-          <h3>⚙️ Build Options</h3>
-          <div class="build-options">
-            <div class="option-group">
-              <input type="checkbox" id="planMode" checked>
-              <label for="planMode">📋 Plan Mode (Show architecture planning)</label>
-            </div>
-            <div class="option-group">
-              <input type="checkbox" id="enterpriseMode" checked>
-              <label for="enterpriseMode">🏢 Enterprise Mode (Quality checks)</label>
-            </div>
-            <div class="option-group">
-              <input type="checkbox" id="livePreview" checked>
-              <label for="livePreview">👁️ Live Preview</label>
-            </div>
-            <div class="option-group">
-              <input type="checkbox" id="autoDeploy">
-              <label for="autoDeploy">🚀 Auto Deploy</label>
-            </div>
+      <!-- Left Panel - Build Console -->
+      <div class="build-console">
+        <!-- 3D Holographic Input Sphere -->
+        <div class="input-sphere-container">
+          <div class="input-sphere">
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <textarea 
+              class="sphere-input" 
+              id="userInput"
+              placeholder="Describe your vision..."
+              rows="3"
+            ></textarea>
           </div>
         </div>
         
+        <!-- Build Button -->
         <button class="build-button" id="buildBtn" onclick="startBuild()">
           ✨ Build My App
         </button>
+        
+        <!-- Floating Hexagonal Build Steps -->
+        <div class="build-steps" id="buildSteps">
+          <div class="step-hexagon">
+            <div class="step-icon">🎯</div>
+            <div class="step-content">
+              <div class="step-title">Architecting</div>
+              <div class="step-detail">Planning your app structure...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">🎨</div>
+            <div class="step-content">
+              <div class="step-title">Designing</div>
+              <div class="step-detail">Creating beautiful user interface...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">⚡</div>
+            <div class="step-content">
+              <div class="step-title">Building Features</div>
+              <div class="step-detail">Adding interactive functionality...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">💾</div>
+            <div class="step-content">
+              <div class="step-title">Database Setup</div>
+              <div class="step-detail">Configuring data persistence...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">🚀</div>
+            <div class="step-content">
+              <div class="step-title">Production Deploy</div>
+              <div class="step-detail">Launching your app live...</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Detailed Build Log -->
+        <div class="build-log-panel" id="buildLogPanel" style="display: none;">
+          <div class="build-log-header">
+            <div class="build-log-title">📝 Build Log</div>
+          </div>
+          <div class="build-log-content" id="buildLogContent"></div>
+        </div>
       </div>
       
-      <!-- Middle Panel - Build Log -->
-      <div class="build-log-panel">
-        <div class="build-log-header">
-          <h3>
-            <span>📝</span>
-            <span>Build Log</span>
-          </h3>
-          <div class="build-status" id="buildStatus">Ready</div>
-        </div>
-        <div class="build-log-content" id="buildLog">
-          <div class="log-entry info">
-            <span class="log-icon">ℹ️</span>
-            <span>Welcome to SuperAgent! Describe your app and click "Build My App" to get started.</span>
-          </div>
-          <div class="log-entry info">
-            <span class="log-icon">✨</span>
-            <span>I'll show you detailed step-by-step progress, just like Replit, Cursor, and Bolt!</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Right Panel - Preview -->
+      <!-- Right Panel - Live Preview -->
       <div class="preview-panel">
+        <!-- 3D Curved Preview Screen -->
         <div class="preview-screen">
           <div class="preview-frame">
-            <div class="preview-placeholder" id="previewPlaceholder">
-              <div>
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🎨</div>
-                <div>Your app preview will appear here</div>
-                <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">Live preview with instant updates</div>
-              </div>
-            </div>
             <iframe 
               class="preview-iframe" 
               id="previewIframe"
               src="about:blank"
-              style="display: none;"
             ></iframe>
+            <div class="loading-shimmer"></div>
           </div>
         </div>
         
+        <!-- Floating Preview Controls -->
         <div class="preview-controls">
-          <button class="control-button" onclick="refreshPreview()">🔄 Refresh</button>
-          <button class="control-button" onclick="openInNewTab()">↗️ Open in New Tab</button>
-          <button class="control-button" onclick="downloadCode()">💾 Download Code</button>
+          <button class="control-button" onclick="refreshPreview()" title="Refresh">
+            🔄
+          </button>
+          <button class="control-button" onclick="openInNewTab()" title="Open in New Tab">
+            ↗️
+          </button>
+          <button class="control-button" onclick="showQR()" title="QR Code">
+            📱
+          </button>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <div class="status-item">
+            <div class="progress-ring"></div>
+            <div>
+              <div class="status-text">Build Progress</div>
+              <div class="status-value" id="progressValue">0%</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div style="font-size: 2rem;">⚡</div>
+            <div>
+              <div class="status-text">AI Activity</div>
+              <div class="status-value" id="aiActivity">Ready</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -534,7 +780,7 @@ body {
   <script>
     // Generate particles
     const particlesContainer = document.getElementById('particles');
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 50; i++) {
       const particle = document.createElement('div');
       particle.className = 'particle';
       particle.style.left = Math.random() * 100 + '%';
@@ -546,218 +792,140 @@ body {
     
     let currentBuildId = null;
     let eventSource = null;
-    let buildLogElement = document.getElementById('buildLog');
-    let previewUrl = null;
     
-    function addLog(message, type = 'info', icon = 'ℹ️') {
+    // Build logging functions
+    function addBuildLog(message, icon = '') {
+      const logPanel = document.getElementById('buildLogPanel');
+      const logContent = document.getElementById('buildLogContent');
+      
+      // Show panel if hidden
+      if (logPanel.style.display === 'none') {
+        logPanel.style.display = 'block';
+      }
+      
       const logEntry = document.createElement('div');
-      logEntry.className = `log-entry ${type}`;
+      logEntry.className = 'log-entry';
       
-      const timestamp = new Date().toLocaleTimeString();
-      logEntry.innerHTML = `
-        <span class="log-timestamp">[${timestamp}]</span>
-        <span class="log-icon">${icon}</span>
-        <span>${message}</span>
-      `;
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString();
       
-      buildLogElement.appendChild(logEntry);
-      buildLogElement.scrollTop = buildLogElement.scrollHeight;
+      logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span><span class="log-icon">${icon}</span>${message}`;
+      
+      logContent.appendChild(logEntry);
+      logContent.scrollTop = logContent.scrollHeight;
     }
     
-    function clearLog() {
-      buildLogElement.innerHTML = '';
-    }
-    
-    function updateStatus(status) {
-      document.getElementById('buildStatus').textContent = status;
+    function clearBuildLog() {
+      const logContent = document.getElementById('buildLogContent');
+      logContent.innerHTML = '';
     }
     
     async function startBuild() {
       const userInput = document.getElementById('userInput').value.trim();
       if (!userInput) {
-        addLog('Please describe your app first!', 'warning', '⚠️');
+        alert('Please describe your app vision!');
         return;
       }
       
+      clearBuildLog();
+      addBuildLog('Starting build process...', '🚀');
+      addBuildLog(`Your request: "${userInput}"`, '📝');
+      addBuildLog('Plan Mode: ON, Enterprise Mode: ON', '⚙️');
+      
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
-      buildBtn.innerHTML = '⏳ Building...';
+      buildBtn.innerHTML = '<span>⏳</span> Building...';
       
-      clearLog();
-      updateStatus('Building...');
-      
-      addLog('🚀 Starting build process...', 'step', '🚀');
-      addLog(`📝 Your request: "${userInput}"`, 'info', '📝');
-      
-      const planMode = document.getElementById('planMode').checked;
-      const enterpriseMode = document.getElementById('enterpriseMode').checked;
-      const livePreview = document.getElementById('livePreview').checked;
-      const autoDeploy = document.getElementById('autoDeploy').checked;
-      
-      addLog(`⚙️ Plan Mode: ${planMode ? 'ON' : 'OFF'}`, 'info', '⚙️');
-      addLog(`🏢 Enterprise Mode: ${enterpriseMode ? 'ON' : 'OFF'}`, 'info', '🏢');
-      addLog(`👁️ Live Preview: ${livePreview ? 'ON' : 'OFF'}`, 'info', '👁️');
-      addLog(`🚀 Auto Deploy: ${autoDeploy ? 'ON' : 'OFF'}`, 'info', '🚀');
+      document.getElementById('aiActivity').textContent = 'Building';
+      addBuildLog('Connecting to SuperAgent API...', '📡');
       
       try {
-        addLog('📡 Connecting to SuperAgent API...', 'info', '📡');
-        
         const response = await fetch('/api/v1/build-realtime', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             instruction: userInput,
-            plan_mode: planMode,
-            enterprise_mode: enterpriseMode,
-            live_preview: livePreview,
-            auto_deploy: autoDeploy
+            plan_mode: true,
+            enterprise_mode: true,
+            live_preview: true,
+            auto_deploy: false
           })
         });
         
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}: ${response.statusText}`);
-        }
-        
         const data = await response.json();
         currentBuildId = data.build_id;
+        addBuildLog(`Build started! ID: ${currentBuildId}`, '✅');
+        addBuildLog('Streaming build progress...', '📊');
         
-        addLog(`✅ Build started! ID: ${currentBuildId}`, 'success', '✅');
-        addLog('📊 Streaming build progress...', 'info', '📊');
-        
-        // Poll for progress instead of SSE (more reliable)
-        pollBuildProgress(currentBuildId);
-        
+        startStreamingProgress(currentBuildId);
       } catch (error) {
         console.error('Build error:', error);
-        addLog(`❌ Build failed: ${error.message}`, 'error', '❌');
-        addLog('💡 Tip: Make sure the backend API is running', 'warning', '💡');
+        addBuildLog(`Build failed: ${error.message}`, '❌');
         buildBtn.disabled = false;
         buildBtn.innerHTML = '✨ Build My App';
-        updateStatus('Error');
+        document.getElementById('aiActivity').textContent = 'Error';
       }
     }
     
-    async function pollBuildProgress(buildId) {
-      const maxAttempts = 60; // 60 seconds max
-      let attempts = 0;
+    function startStreamingProgress(buildId) {
+      if (eventSource) eventSource.close();
       
-      const pollInterval = setInterval(async () => {
-        attempts++;
+      eventSource = new EventSource(`/api/v1/build-stream/${buildId}`);
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         
-        if (attempts > maxAttempts) {
-          clearInterval(pollInterval);
-          addLog('⏱️ Build timeout - taking longer than expected', 'warning', '⏱️');
+        if (data.type === 'step') {
+          updateStep(data.step_number, data.status);
+          document.getElementById('progressValue').textContent = 
+            Math.round((data.step_number / 5) * 100) + '%';
+        } else if (data.type === 'complete') {
+          eventSource.close();
           document.getElementById('buildBtn').disabled = false;
           document.getElementById('buildBtn').innerHTML = '✨ Build My App';
-          updateStatus('Timeout');
-          return;
+          document.getElementById('aiActivity').textContent = 'Complete';
+          document.getElementById('progressValue').textContent = '100%';
+          
+          if (data.preview_url) {
+            document.getElementById('previewIframe').src = data.preview_url;
+          }
         }
-        
-        try {
-          const response = await fetch(`/api/v1/build-progress/${buildId}`);
-          if (!response.ok) {
-            throw new Error(`Failed to get progress: ${response.status}`);
-          }
-          
-          const progress = await response.json();
-          
-          // Log each step
-          if (progress.steps) {
-            progress.steps.forEach(step => {
-              const stepId = `step-${step.step_number}`;
-              if (!document.getElementById(stepId)) {
-                const logDiv = document.createElement('div');
-                logDiv.id = stepId;
-                
-                if (step.status === 'active') {
-                  addLog(`${step.title}`, 'step', '⏳');
-                  addLog(`   ${step.detail}`, 'info', '   ');
-                } else if (step.status === 'complete') {
-                  addLog(`${step.title}`, 'success', '✅');
-                  addLog(`   ${step.detail}`, 'success', '   ');
-                } else if (step.status === 'error') {
-                  addLog(`${step.title}`, 'error', '❌');
-                  addLog(`   ${step.detail}`, 'error', '   ');
-                }
-              }
-            });
-          }
-          
-          // Update status
-          updateStatus(progress.status.charAt(0).toUpperCase() + progress.status.slice(1));
-          
-          // Check if complete
-          if (progress.status === 'complete') {
-            clearInterval(pollInterval);
-            addLog('🎉 Build complete!', 'success', '🎉');
-            addLog(`⏱️ Total time: ${progress.total_time.toFixed(1)}s`, 'success', '⏱️');
-            
-            if (progress.preview_url) {
-              previewUrl = progress.preview_url;
-              showPreview(previewUrl);
-              addLog(`👁️ Preview ready: ${previewUrl}`, 'success', '👁️');
-            }
-            
-            if (progress.deployment_url) {
-              addLog(`🌐 Deployed at: ${progress.deployment_url}`, 'success', '🌐');
-            }
-            
-            document.getElementById('buildBtn').disabled = false;
-            document.getElementById('buildBtn').innerHTML = '✨ Build My App';
-            updateStatus('Complete ✅');
-          } else if (progress.status === 'error') {
-            clearInterval(pollInterval);
-            addLog(`❌ Build failed: ${progress.error}`, 'error', '❌');
-            document.getElementById('buildBtn').disabled = false;
-            document.getElementById('buildBtn').innerHTML = '✨ Build My App';
-            updateStatus('Error ❌');
-          }
-          
-        } catch (error) {
-          console.error('Progress poll error:', error);
-          // Don't stop polling on individual errors
-        }
-      }, 1000); // Poll every second
+      };
     }
     
-    function showPreview(url) {
-      const placeholder = document.getElementById('previewPlaceholder');
-      const iframe = document.getElementById('previewIframe');
-      
-      placeholder.style.display = 'none';
-      iframe.style.display = 'block';
-      iframe.src = url;
+    function updateStep(stepNumber, status) {
+      const steps = document.querySelectorAll('.step-hexagon');
+      if (steps[stepNumber - 1]) {
+        const stepTitle = steps[stepNumber - 1].querySelector('.step-title').textContent;
+        const stepDetail = steps[stepNumber - 1].querySelector('.step-detail').textContent;
+        
+        steps[stepNumber - 1].classList.remove('active', 'complete');
+        if (status === 'active') {
+          steps[stepNumber - 1].classList.add('active');
+          addBuildLog(`Step ${stepNumber}: ${stepTitle}`, '⏳');
+          addBuildLog(`   ${stepDetail}`, '');
+        } else if (status === 'complete') {
+          steps[stepNumber - 1].classList.add('complete');
+          addBuildLog(`${stepTitle} complete!`, '✅');
+        }
+      }
     }
     
     function refreshPreview() {
       const iframe = document.getElementById('previewIframe');
-      if (iframe.src && iframe.src !== 'about:blank') {
-        iframe.src = iframe.src;
-        addLog('🔄 Preview refreshed', 'info', '🔄');
-      }
+      iframe.src = iframe.src;
     }
     
     function openInNewTab() {
-      if (previewUrl) {
-        window.open(previewUrl, '_blank');
-        addLog('↗️ Opened in new tab', 'info', '↗️');
-      } else {
-        addLog('⚠️ No preview available yet', 'warning', '⚠️');
+      const iframe = document.getElementById('previewIframe');
+      if (iframe.src && iframe.src !== 'about:blank') {
+        window.open(iframe.src, '_blank');
       }
     }
     
-    function downloadCode() {
-      addLog('💾 Download feature coming soon!', 'info', '💾');
+    function showQR() {
+      alert('QR Code feature coming soon!');
     }
-    
-    // Enable copy-paste
-    document.addEventListener('paste', function(e) {
-      console.log('Paste event detected');
-    });
-    
-    document.addEventListener('copy', function(e) {
-      console.log('Copy event detected');
-    });
   </script>
 </body>
 </html>
