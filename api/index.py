@@ -514,7 +514,7 @@ class BuildAppRequest(BaseModel):
 
 class EnterpriseBuildRequest(BaseModel):
     instruction: str
-    language: str
+    language: str = "html"  # Default to HTML for visual/interactive apps (no-code platform!)
     enable_checkpoints: bool = True
     enable_testing: bool = True
     enable_security_scan: bool = True

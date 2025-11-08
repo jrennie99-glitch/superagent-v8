@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="keyboard">
+            <button class="button" id="clear" onclick="clearDisplay()">C</button>
+            <button class="button" id="delete" onclick="deleteLastCharacter()">DEL</button>
+            <button class="button" id="equals" onclick="calculateResult()">=</button>
+            <button class="button" id="divide" onclick="appendOperator('÷')">÷</button>
+            <button class="button" id="multiply" onclick="appendOperator('×')">×</button>
+            <button class="button" id="subtract" onclick="appendOperator('-')">-</button>
+            <button class="button" id="add" onclick="appendOperator('+')">+</button>
+            <button class="button" id="sqrt" onclick="calculateSquareRoot()">√</button>
+            <button class="button" id="pi" onclick="appendPi()">π</button>
+            <button class="button" id="square" onclick="calculateSquare()">²</button>
+            <button class="button" id="cube" onclick="calculateCube()">³</button>
+            <button class="button" id="zero" onclick="appendNumber(0)">0</button>
+            <button class="button" id="one" onclick="appendNumber(1)">1</button>
+            <button class="button" id="two" onclick="appendNumber(2)">2</button>
+            <button class="button" id="three" onclick="appendNumber(3)">3</button>
+            <button class="button" id="four" onclick="appendNumber(4)">4</button>
+            <button class="button" id="five" onclick="appendNumber(5)">5</button>
+            <button class="button" id="six" onclick="appendNumber(6)">6</button>
+            <button class="button" id="seven" onclick="appendNumber(7)">7</button>
+            <button class="button" id="eight" onclick="appendNumber(8)">8</button>
+            <button class="button" id="nine" onclick="appendNumber(9)">9</button>
+            <button class="button" id="decimal" onclick="appendDecimal()">.</button>
+        </div>
+        <div class="history" id="history"></div>
+        <div class="settings">
+            <button class="button" id="undo" onclick="undoLastAction()">Undo</button>
+            <button class="button" id="redo" onclick="redoLastAction()">Redo</button>
+            <button class="button" id="export" onclick="exportData()">Export</button>
+            <button class="button" id="import" onclick="importData()">Import</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

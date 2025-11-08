@@ -67,6 +67,22 @@ class EnterpriseBuildSystem:
             "checkpoint_after": None
         }
         
+        # 🎯 INTELLIGENT LANGUAGE OVERRIDE: Force HTML for visual/interactive apps
+        # NO-CODE PLATFORM: Users want visual apps, not backend APIs!
+        instruction_lower = instruction.lower()
+        visual_keywords = [
+            'calculator', 'todo', 'task list', 'game', 'quiz', 'form', 'survey',
+            'dashboard', 'chart', 'timer', 'counter', 'weather app', 'converter',
+            'gallery', 'portfolio', 'website', 'web app', 'ui', 'interface',
+            'button', 'colorful', 'beautiful', 'modern', 'simple app'
+        ]
+        
+        if any(keyword in instruction_lower for keyword in visual_keywords):
+            if language.lower() not in ["html", "web", "javascript"]:
+                print(f"🎨 Smart Detection: '{instruction[:50]}...' is a visual app")
+                print(f"   Overriding language from '{language}' → 'html' for better UX")
+                language = "html"
+        
         try:
             # STAGE 1: Pre-Build Safety - Create Checkpoint
             if enable_checkpoints:
