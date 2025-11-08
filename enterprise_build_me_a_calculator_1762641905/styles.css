@@ -1,0 +1,124 @@
+<!-- 
+  Calculator Styles
+  ================
+  Premium design with glass-morphism, shadows, and smooth animations
+-->
+
+<style>
+  /* Global Styles */
+  :root {
+    --primary-color: #3498db;
+    --secondary-color: #f1c40f;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+    --glass-morphism: rgba(255, 255, 255, 0.2);
+    --shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Calculator Container */
+  .calculator {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* Display Screen */
+  .display-screen {
+    grid-column: 1 / 5;
+    padding: 20px;
+    background-color: var(--glass-morphism);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    font-size: 24px;
+    font-weight: bold;
+    text-align: right;
+    overflow: hidden;
+  }
+
+  /* Number Buttons */
+  .number-button {
+    padding: 20px;
+    background-color: var(--glass-morphism);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .number-button:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  /* Operator Buttons */
+  .operator-button {
+    padding: 20px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .operator-button:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  /* Equal Button */
+  .equal-button {
+    grid-column: 1 / 5;
+    padding: 20px;
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .equal-button:hover {
+    background-color: var(--secondary-color);
+  }
+
+  /* Clear Button */
+  .clear-button {
+    grid-column: 1 / 5;
+    padding: 20px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .clear-button:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .calculator {
+      max-width: 300px;
+      margin: 20px auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .calculator {
+      max-width: 250px;
+      margin: 10px auto;
+    }
+  }
+</style>

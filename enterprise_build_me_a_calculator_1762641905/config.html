@@ -1,0 +1,59 @@
+<!-- config.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" id="settings">Settings</a></li>
+                <li><a href="#" id="help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="calculator">
+            <div class="display">
+                <input type="text" id="display" disabled>
+            </div>
+            <div class="keys">
+                <button id="clear" class="key">C</button>
+                <button id="backspace" class="key">&#8592;</button>
+                <button id="divide" class="key">&#247;</button>
+                <button id="multiply" class="key">&#215;</button>
+                <button id="seven" class="key">7</button>
+                <button id="eight" class="key">8</button>
+                <button id="nine" class="key">9</button>
+                <button id="subtract" class="key">&#8722;</button>
+                <button id="four" class="key">4</button>
+                <button id="five" class="key">5</button>
+                <button id="six" class="key">6</button>
+                <button id="add" class="key">&#43;</button>
+                <button id="one" class="key">1</button>
+                <button id="two" class="key">2</button>
+                <button id="three" class="key">3</button>
+                <button id="equals" class="key">&#61;</button>
+                <button id="zero" class="key">0</button>
+                <button id="decimal" class="key">.</button>
+                <button id="sqrt" class="key">&#8730;</button>
+                <button id="pi" class="key">&#960;</button>
+                <button id="square" class="key">x&#178;</button>
+                <button id="cube" class="key">x&#179;</button>
+            </div>
+        </section>
+        <section class="history">
+            <h2>Calculation History</h2>
+            <ul id="history-list"></ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Calculator</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

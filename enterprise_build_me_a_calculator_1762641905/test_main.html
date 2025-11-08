@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#" id="settings-btn">Settings</a></li>
+                <li><a href="#" id="help-btn">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="calculator-container">
+            <div class="calculator">
+                <div class="display" id="display">0</div>
+                <div class="keys">
+                    <button class="key" id="clear-btn">C</button>
+                    <button class="key" id="backspace-btn">⌫</button>
+                    <button class="key" id="equals-btn">=</button>
+                    <button class="key" id="add-btn">+</button>
+                    <button class="key" id="subtract-btn">−</button>
+                    <button class="key" id="multiply-btn">×</button>
+                    <button class="key" id="divide-btn">÷</button>
+                    <button class="key" id="sqrt-btn">√</button>
+                    <button class="key" id="pi-btn">π</button>
+                    <button class="key" id="exp-btn">^</button>
+                    <button class="key" id="log-btn">log</button>
+                    <button class="key" id="sin-btn">sin</button>
+                    <button class="key" id="cos-btn">cos</button>
+                    <button class="key" id="tan-btn">tan</button>
+                    <button class="key" id="one-btn">1</button>
+                    <button class="key" id="two-btn">2</button>
+                    <button class="key" id="three-btn">3</button>
+                    <button class="key" id="four-btn">4</button>
+                    <button class="key" id="five-btn">5</button>
+                    <button class="key" id="six-btn">6</button>
+                    <button class="key" id="seven-btn">7</button>
+                    <button class="key" id="eight-btn">8</button>
+                    <button class="key" id="nine-btn">9</button>
+                    <button class="key" id="zero-btn">0</button>
+                    <button class="key" id="decimal-btn">.</button>
+                </div>
+            </div>
+        </section>
+        <section class="history-container">
+            <h2>Calculation History</h2>
+            <ul id="history-list"></ul>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
