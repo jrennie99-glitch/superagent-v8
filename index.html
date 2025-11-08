@@ -161,7 +161,7 @@ body {
 /* 3D Holographic Input Sphere */
 .input-sphere-container {
   perspective: 1000px;
-  height: 250px;
+  height: 360px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -169,8 +169,8 @@ body {
 }
 
 .input-sphere {
-  width: 280px;
-  height: 280px;
+  width: 480px;
+  height: 480px;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.1));
   border: 2px solid rgba(6, 182, 212, 0.3);
@@ -197,8 +197,9 @@ body {
 }
 
 .sphere-input {
-  width: 85%;
-  min-height: 180px;
+  width: 92%;
+  min-height: 280px;
+  max-width: 420px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -242,8 +243,8 @@ body {
 .ai-node:nth-child(4) { animation-delay: -6s; }
 
 @keyframes orbit {
-  0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+  0% { transform: rotate(0deg) translateX(250px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(250px) rotate(-360deg); }
 }
 
 /* Build Button */
@@ -566,8 +567,22 @@ body {
   }
   
   .input-sphere {
-    width: 220px;
-    height: 220px;
+    width: 320px;
+    height: 320px;
+  }
+  
+  .input-sphere-container {
+    height: 280px;
+  }
+  
+  @keyframes orbit {
+    0% { transform: rotate(0deg) translateX(170px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(170px) rotate(-360deg); }
+  }
+  
+  .sphere-input {
+    width: 90%;
+    min-height: 200px;
   }
   
   .preview-screen {
@@ -995,7 +1010,7 @@ body {
               class="sphere-input" 
               id="userInput"
               placeholder="Describe your vision..."
-              rows="7"
+              rows="10"
             ></textarea>
           </div>
         </div>
