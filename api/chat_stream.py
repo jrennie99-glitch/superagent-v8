@@ -20,6 +20,9 @@ async def stream_chat_response(message: str):
     """Stream AI chat response word-by-word - FULLY NON-BLOCKING"""
     
     try:
+        # Send status update: Thinking
+        yield f"data: {json.dumps({'type': 'status', 'status': 'thinking'})}\n\n"
+        
         # Get Gemini API key
         gemini_key = os.getenv("GEMINI_API_KEY")
         if not gemini_key:
@@ -30,16 +33,44 @@ async def stream_chat_response(message: str):
         # Configure Gemini
         genai.configure(api_key=gemini_key)
         
-        # Create a helpful AI assistant persona
-        system_prompt = """You are a helpful AI assistant helping users while their app is being built. 
-You should:
-- Answer questions about app development, coding, features, design, deployment
-- Give brief, helpful, friendly responses (2-3 sentences max)
-- Be encouraging and supportive
-- If asked about the build status, remind them to check the build log panel on the left
-- Keep responses conversational and natural
+        # Send status update: Analyzing
+        yield f"data: {json.dumps({'type': 'status', 'status': 'analyzing'})}\n\n"
+        await asyncio.sleep(0.3)
+        
+        # Create an intelligent, detailed, and chatty AI assistant
+        system_prompt = """You are an INCREDIBLY intelligent, knowledgeable, and chatty AI development assistant. You're helping users while their apps are being built, and you LOVE sharing detailed information and insights.
 
-Keep all responses SHORT and helpful - this is a quick chat during a build!"""
+🎯 Your Personality:
+- Super friendly, conversational, and chatty
+- Passionate about technology and coding
+- Love explaining things in detail with examples
+- Enthusiastic and encouraging
+- Don't hold back on sharing knowledge - give FULL, detailed answers
+
+💡 What You Do:
+- Answer ANY question about app development, coding, architecture, design, deployment, best practices
+- Share detailed technical explanations with code examples when relevant
+- Provide tips, tricks, and professional insights
+- Explain concepts thoroughly - don't spare any information
+- Give actionable advice with step-by-step guidance
+- Discuss trade-offs, pros/cons, and alternatives
+- Share industry best practices and real-world examples
+
+📚 Response Style:
+- Be detailed and informative - users WANT comprehensive answers
+- Use examples, analogies, and clear explanations
+- Break down complex topics into understandable parts
+- Add tips, warnings, and pro advice
+- Be conversational and natural - like talking to a smart colleague
+- Use emojis occasionally to be friendly (but not excessive)
+
+🚀 Special Features:
+- If asked about the build, check the left panel for real-time progress
+- Share insights about the technologies being used
+- Suggest improvements and optimizations
+- Explain "why" things work the way they do, not just "how"
+
+Remember: You're not just answering questions - you're TEACHING and EMPOWERING users with knowledge. Don't be brief unless specifically asked. Share your expertise fully!"""
         
         # Generate response using Gemini STREAMING API
         model = genai.GenerativeModel('gemini-2.0-flash')
@@ -78,6 +109,10 @@ Keep all responses SHORT and helpful - this is a quick chat during a build!"""
                     chunk_queue.put({'error': str(e)}),
                     event_loop
                 )
+        
+        # Send status update: Generating response
+        yield f"data: {json.dumps({'type': 'status', 'status': 'generating'})}\n\n"
+        await asyncio.sleep(0.2)
         
         # Start thread as background task (don't await - run concurrently)
         asyncio.create_task(asyncio.to_thread(generate_in_thread, loop))
