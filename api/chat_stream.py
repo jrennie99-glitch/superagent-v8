@@ -23,8 +23,9 @@ async def stream_chat_response(message: str):
         # Send status update: Thinking
         yield f"data: {json.dumps({'type': 'status', 'status': 'thinking'})}\n\n"
         
-        # Get Gemini API key
-        gemini_key = os.getenv("GEMINI_API_KEY")
+        # Get Gemini API key (custom or default)
+        from api.custom_key_manager import get_custom_gemini_key
+        gemini_key = get_custom_gemini_key()
         if not gemini_key:
             yield f"data: {json.dumps({'type': 'text', 'content': 'Sorry, AI is not configured.'})}\n\n"
             yield f"data: {json.dumps({'type': 'complete'})}\n\n"

@@ -62,6 +62,7 @@ from api.screenshot_tool import ScreenshotTool
 from api.module_installer import ModuleInstaller
 from api.workflow_manager import WorkflowManager
 from api.user_management import user_manager
+from api.custom_key_manager import router as custom_key_router
 
 # Import Autonomous Agent
 from api.autonomous_agent import AutonomousAgent
@@ -299,6 +300,7 @@ app.include_router(chat_stream_router, tags=["Interactive Chat - Chat During Bui
 app.include_router(realtime_build_router, tags=["Real-time Build - Like Replit/Cursor/Bolt"])
 app.include_router(streaming_build_router, tags=["V2.1 Streaming Build - INSTANT FEEDBACK"])
 app.include_router(streaming_realtime_build_router, tags=["V3.0 TRUE STREAMING - Like Manus/Replit/Cursor"])
+app.include_router(custom_key_router, tags=["Settings - Custom API Key"])
 app.include_router(upload_router, tags=["V2.0 Multi-Modal Upload - SPECTACULAR"])
 app.include_router(autonomous_build_router, tags=["V2.0 Autonomous App Builder - SPECTACULAR"])
 app.include_router(live_dashboard_router, tags=["V2.0 Live Dashboard - Replit x Cursor x Bolt"])

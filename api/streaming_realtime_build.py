@@ -200,12 +200,13 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
     async for chunk in stream_log_message(config_msg, '⚙️'):
         yield chunk
     
-    # Get Gemini API key
-    gemini_key = os.getenv("GEMINI_API_KEY")
+    # Get Gemini API key (custom or default)
+    from api.custom_key_manager import get_custom_gemini_key
+    gemini_key = get_custom_gemini_key()
     if not gemini_key:
-        async for chunk in stream_log_message('❌ Error: GEMINI_API_KEY not found', '❌'):
+        async for chunk in stream_log_message('❌ Error: No API key found', '❌'):
             yield chunk
-        yield f"data: {json.dumps({'type': 'error', 'message': 'API key not configured. Please add GEMINI_API_KEY to your secrets.'})}\n\n"
+        yield f"data: {json.dumps({'type': 'error', 'message': 'API key not configured. Please add your own Gemini API key in Settings or contact admin.'})}\n\n"
         return
     
     # Configure Gemini
