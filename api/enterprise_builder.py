@@ -512,7 +512,7 @@ Generate ONLY the complete, working JavaScript code with ALL features functional
                         generated_files.append({
                             "name": file_plan["name"],
                             "type": file_plan["type"],
-                            "code": self._clean_code(response_text),
+                            "code": self._clean_code(response_text or ""),
                             "language": language
                         })
                         print(f"  ✓ Generated {file_plan['name']}.{file_plan['type']}")
@@ -546,7 +546,7 @@ Focus on ensuring ALL advanced features are present:
 Return the COMPLETE ENHANCED JavaScript code with all features:"""
                         
                         enhanced_code_text = self._generate_content(model, provider, enhance_prompt)
-                        enhanced_code = self._clean_code(enhanced_code_text)
+                        enhanced_code = self._clean_code(enhanced_code_text or "")
                         js_file['code'] = enhanced_code
                         print("  ✓ JavaScript enhanced with advanced features")
                     
@@ -559,7 +559,7 @@ Return the COMPLETE ENHANCED JavaScript code with all features:"""
                         generated_files.append({
                             "name": file_plan["name"],
                             "type": file_plan["type"],
-                            "code": self._clean_code(response_text),
+                            "code": self._clean_code(response_text or ""),
                             "language": language
                         })
                         await asyncio.sleep(0.5)
@@ -630,7 +630,7 @@ The validation_keywords should be code patterns to check for (e.g., "sin(", "cos
                     
                     try:
                         checklist_response_text = self._generate_content(model, provider, checklist_prompt)
-                        feature_checklist_text = self._clean_code(checklist_response_text)
+                        feature_checklist_text = self._clean_code(checklist_response_text or "")
                         print(f"✅ Feature checklist generated: {feature_checklist_text[:200]}...")
                         
                         # Parse JSON (handle markdown code fences)
@@ -902,7 +902,7 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
                 
                 # Generate code
                 generated_code_text = self._generate_content(model, provider, prompt)
-                generated_code = self._clean_code(generated_code_text)
+                generated_code = self._clean_code(generated_code_text or "")
                 
                 generated_files.append({
                     "name": "main",
