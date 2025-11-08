@@ -166,11 +166,25 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 files_created = result.get('files_created', [])
                 build_time = result.get('build_time', 0)
                 
+                # Get just filenames (not full code) for JSON response
+                file_list = [{'name': f.get('name', ''), 'type': f.get('type', '')} for f in files_created] if files_created else []
+                
                 yield f"data: {json.dumps({'type': 'log', 'message': f'✅ Enterprise build complete in {build_time}s!', 'icon': '✅'})}\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': f'📁 Created {len(files_created)} files in {project_dir}', 'icon': '📁'})}\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': '🎉 Production-ready application generated!', 'icon': '🎉'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': 5, 'status': 'complete'})}\n\n"
-                yield f"data: {json.dumps({'type': 'complete', 'project_dir': project_dir, 'files': files_created})}\n\n"
+                
+                # Send completion with download link (NOT full code)
+                project_name = project_dir.split('/')[-1] if project_dir else 'project'
+                completion_data = {
+                    'type': 'complete', 
+                    'project_dir': project_dir,
+                    'project_name': project_name,
+                    'file_count': len(files_created),
+                    'files': file_list,
+                    'download_url': f'/api/v1/download-project/{project_name}'
+                }
+                yield f"data: {json.dumps(completion_data)}\n\n"
             else:
                 error = result.get('error', 'Unknown error')
                 yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Build failed: {error}', 'icon': '❌'})}\n\n"
@@ -218,6 +232,35 @@ Return ONLY the complete HTML code."""
         except Exception as e:
             yield f"data: {json.dumps({'type': 'log', 'message': f'❌ Error: {str(e)}', 'icon': '❌'})}\n\n"
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+@router.get("/download-project/{project_name}")
+async def download_project(project_name: str):
+    """Download generated project as ZIP file"""
+    from fastapi.responses import FileResponse
+    import zipfile
+    import os
+    
+    # Find the project directory
+    project_dir = f"/home/runner/workspace/{project_name}"
+    
+    if not os.path.exists(project_dir):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Create ZIP file
+    zip_path = f"/tmp/{project_name}.zip"
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(project_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, project_dir)
+                zipf.write(file_path, arcname)
+    
+    return FileResponse(
+        zip_path, 
+        media_type='application/zip',
+        filename=f"{project_name}.zip"
+    )
 
 @router.post("/build-streaming")
 async def build_streaming(request: StreamingBuildRequest):
