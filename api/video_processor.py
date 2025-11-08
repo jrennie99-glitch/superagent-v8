@@ -4,8 +4,7 @@ Handles video upload, analysis, and app generation from video content
 """
 
 import os
-import base64
-import tempfile
+import uuid
 from pathlib import Path
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException
 from fastapi.responses import JSONResponse
@@ -35,11 +34,17 @@ async def upload_video(
         if not video.content_type or not video.content_type.startswith('video/'):
             raise HTTPException(status_code=400, detail="Invalid file type. Please upload a video file.")
         
-        # Save video temporarily
+        # Save video temporarily with safe UUID filename
         temp_dir = Path("uploads")
         temp_dir.mkdir(exist_ok=True)
         
-        video_path = temp_dir / video.filename
+        # Generate safe filename - prevent path traversal attacks
+        # Extract original extension for proper MIME type handling
+        original_name = video.filename or "video.bin"
+        extension = Path(original_name).suffix if '.' in original_name else ".mp4"
+        safe_filename = f"{uuid.uuid4()}{extension}"
+        
+        video_path = temp_dir / safe_filename
         with open(video_path, "wb") as f:
             f.write(content)
         
@@ -75,7 +80,7 @@ Provide a comprehensive analysis that would allow another AI to recreate this ap
             return JSONResponse({
                 "success": True,
                 "analysis": analysis,
-                "filename": video.filename,
+                "filename": original_name,  # Return original name for display
                 "instructions": instructions
             })
             
