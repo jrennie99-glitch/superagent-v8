@@ -450,9 +450,10 @@ async def preview_static_file(project_name: str, file_path: str):
     if '..' in file_path or file_path.startswith('/'):
         raise HTTPException(status_code=403, detail="Invalid file path")
     
-    # Build safe path
-    project_dir = f"/home/runner/workspace/{project_name}"
-    full_path = os.path.join(project_dir, file_path)
+    # Build safe path (cross-platform compatible)
+    from pathlib import Path
+    project_dir = Path.cwd() / project_name
+    full_path = os.path.join(str(project_dir), file_path)
     
     # Verify path is within project directory (security check)
     if not os.path.abspath(full_path).startswith(os.path.abspath(project_dir)):
@@ -482,8 +483,9 @@ async def download_project(project_name: str):
     import zipfile
     import os
     
-    # Find the project directory
-    project_dir = f"/home/runner/workspace/{project_name}"
+    # Find the project directory (cross-platform compatible)
+    from pathlib import Path
+    project_dir = str(Path.cwd() / project_name)
     
     if not os.path.exists(project_dir):
         from fastapi import HTTPException
