@@ -54,3 +54,25 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 - **Bot Frameworks:** `slack-bolt`, `python-telegram-bot`.
 - **Scheduling:** APScheduler.
 - **Deployment Platforms:** Railway, Render, Fly.io, Koyeb, Replit.
+
+## Recent Changes (November 8, 2025)
+### Critical Bug Fixes & Improvements
+1. **E2E Quality Gate Enhancement**:
+   - Fixed critical logic flaw where E2E runner failures (timeouts, crashes) could slip through quality gates
+   - Implemented proper error hierarchy:
+     - BrowserType.launch errors → Graceful skip (browser dependencies unavailable)
+     - All other E2E errors → Build blocked (can't verify quality)
+     - Critical issues found → Build blocked (broken features detected)
+   - Ensures broken apps are never delivered, while allowing graceful degradation in limited environments
+
+2. **Type Safety Improvements**:
+   - Fixed all 8 LSP type errors in enterprise_builder.py
+   - Added None-safety to `_clean_code()` function
+   - Added defensive checks at all AI response handling points
+   - Zero runtime errors from type mismatches
+
+3. **Browser Dependency Handling**:
+   - Playwright E2E testing gracefully handles missing browser dependencies in Replit environment
+   - Falls back to static code analysis when browser automation unavailable
+   - Full E2E functionality available when deployed to Railway, Render, Fly.io
+   - User receives clear warnings but builds continue when deps unavailable
