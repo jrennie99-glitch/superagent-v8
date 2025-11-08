@@ -1,0 +1,297 @@
+<style>
+  /* Global Styles */
+  :root {
+    --primary-color: #4CAF50;
+    --secondary-color: #3F51B5;
+    --accent-color: #FF9800;
+    --text-color: #333;
+    --background-color: #f4f4f4;
+    --glass-bg: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.3);
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  /* Calculator Container */
+  .calculator {
+    width: 400px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .calculator {
+      width: 90%;
+      max-width: 500px;
+    }
+  }
+
+  /* Display */
+  .display {
+    background-color: #ecf0f1;
+    padding: 20px;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .display input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    text-align: right;
+    font-size: 2.5em;
+    color: var(--text-color);
+    outline: none;
+  }
+
+  /* History Display */
+  .history-display {
+    padding: 10px 20px;
+    text-align: right;
+    font-size: 1.2em;
+    color: #777;
+    height: 30px;
+    overflow: hidden;
+  }
+
+  /* Buttons */
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+  }
+
+  .button {
+    background-color: #fff;
+    border: none;
+    padding: 20px;
+    font-size: 1.5em;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 0; /* Remove rounded corners here */
+  }
+
+  .button:hover {
+    background-color: #eee;
+  }
+
+  .button:active {
+    background-color: #ddd;
+  }
+
+  .button.operator {
+    background-color: #f39c12;
+    color: white;
+  }
+
+  .button.operator:hover {
+    background-color: #e67e22;
+  }
+
+  .button.operator:active {
+    background-color: #d35400;
+  }
+
+  .button.equals {
+    background-color: var(--primary-color);
+    color: white;
+    grid-column: span 2;
+  }
+
+  .button.equals:hover {
+    background-color: #27ae60;
+  }
+
+  .button.equals:active {
+    background-color: #219653;
+  }
+
+  .button.clear {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .button.clear:hover {
+    background-color: #c0392b;
+  }
+
+  .button.clear:active {
+    background-color: #922b21;
+  }
+
+  /* Advanced Functions */
+  .advanced-functions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+  }
+
+  .advanced-functions button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .advanced-functions button:hover {
+    background-color: #303f9f;
+  }
+
+  .advanced-functions button:active {
+    background-color: #283593;
+  }
+
+  /* Settings Modal (Example) */
+  .settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+  }
+
+  .settings-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Error Handling */
+  .error-message {
+    color: red;
+    font-size: 0.9em;
+    padding: 5px 20px;
+    text-align: center;
+    min-height: 20px;
+  }
+
+  /* Keyboard Support */
+  /* Add specific styling if needed */
+
+  /* Loading State */
+  .loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Tooltips */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+/* Memory Styles */
+.memory-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.memory-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 5px;
+}
+
+.memory-display {
+    text-align: center;
+    font-size: 1.1em;
+    color: #555;
+    min-height: 24px;
+}
+
+/* History List Styles */
+.history-list {
+    max-height: 150px;
+    overflow-y: auto;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.history-list li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
+}
+
+.history-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.history-controls button {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.history-controls button:hover {
+    background-color: #2980b9;
+}
+</style>

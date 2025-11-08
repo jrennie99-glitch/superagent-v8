@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="calculator">
+    <header>
+      <h1>ProCalc</h1>
+      <button id="settings-btn" aria-label="Open settings">⚙️</button>
+    </header>
+
+    <div id="settings-panel" class="settings-panel hidden">
+      <h2>Settings</h2>
+      <div class="setting">
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+      <div class="setting">
+        <label for="precision-input">Precision:</label>
+        <input type="number" id="precision-input" min="0" max="10" value="4">
+      </div>
+      <button id="save-settings">Save</button>
+      <button id="close-settings">Close</button>
+    </div>
+
+
+    <div class="display">
+      <div class="history" id="history"></div>
+      <input type="text" id="result" value="0" disabled>
+    </div>
+
+    <div class="keypad">
+      <div class="operators">
+        <button data-action="undo" aria-label="Undo">↶</button>
+        <button data-action="redo" aria-label="Redo">↷</button>
+        <button data-action="clear" aria-label="Clear">C</button>
+        <button data-action="delete" aria-label="Delete">DEL</button>
+      </div>
+      <div class="functions">
+        <button data-value="sin(" aria-label="Sine">sin</button>
+        <button data-value="cos(" aria-label="Cosine">cos</button>
+        <button data-value="tan(" aria-label="Tangent">tan</button>
+        <button data-value="log(" aria-label="Logarithm">log</button>
+        <button data-value="ln(" aria-label="Natural Logarithm">ln</button>
+        <button data-value="sqrt(" aria-label="Square Root">√</button>
+        <button data-value="pi" aria-label="Pi">π</button>
+        <button data-value="(" aria-label="Open Parenthesis">(</button>
+        <button data-value=")" aria-label="Close Parenthesis">)</button>
+        <button data-value="^" aria-label="Exponent">xⁿ</button>
+        <button data-value="!" aria-label="Factorial">n!</button>
+        <button data-value="abs(" aria-label="Absolute Value">abs</button>
+        <button data-value="ceil(" aria-label="Ceiling">ceil</button>
+        <button data-value="floor(" aria-label="Floor">floor</button>
+        <button data-value="round(" aria-label="Round">round</button>
+
+      </div>
+      <div class="digits">
+        <button data-value="7" aria-label="Seven">7</button>
+        <button data-value="8" aria-label="Eight">8</button>
+        <button data-value="9" aria-label="Nine">9</button>
+        <button data-value="÷" aria-label="Divide">÷</button>
+        <button data-value="4" aria-label="Four">4</button>
+        <button data-value="5" aria-label="Five">5</button>
+        <button data-value="6" aria-label="Six">6</button>
+        <button data-value="×" aria-label="Multiply">×</button>
+        <button data-value="1" aria-label="One">1</button>
+        <button data-value="2" aria-label="Two">2</button>
+        <button data-value="3" aria-label="Three">3</button>
+        <button data-value="−" aria-label="Subtract">−</button>
+        <button data-value="0" aria-label="Zero">0</button>
+        <button data-value="." aria-label="Decimal">.</button>
+        <button data-action="ans" aria-label="Answer">Ans</button>
+        <button data-value="+" aria-label="Add">+</button>
+      </div>
+      <div class="equals">
+        <button data-action="calculate" aria-label="Calculate">=</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 ProCalc. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <div id="error-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <p id="error-message"></p>
+    </div>
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+
+</html>
