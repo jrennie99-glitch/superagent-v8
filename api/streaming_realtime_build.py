@@ -80,14 +80,6 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 cybersecurity_agent
             )
             
-            # Progress callback to stream updates
-            async def progress_callback(message: str, percent: int):
-                yield f"data: {json.dumps({'type': 'log', 'message': f'[{percent}%] {message}', 'icon': '⏳'})}\n\n"
-                # Update step based on percentage
-                step = max(1, min(5, (percent // 20) + 1))
-                if percent % 20 == 0:
-                    yield f"data: {json.dumps({'type': 'step', 'step': step, 'status': 'active'})}\n\n"
-            
             # Detect language from instruction
             instruction_lower = instruction.lower()
             if 'python' in instruction_lower or 'flask' in instruction_lower or 'django' in instruction_lower:
