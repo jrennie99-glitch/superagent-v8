@@ -1188,7 +1188,7 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
                 "critical_issues": [f"E2E testing failed: {str(e)}"]
             }
     
-    async def _verify_feature_coverage(self, files: List[Dict], required_features: List[str]) -> Dict:
+    async def _verify_feature_coverage(self, files: List[Dict], required_features: List[str], instruction: str = "") -> Dict:
         """NEW: Verify that all required features are actually implemented in the code"""
         try:
             # Get all code content
@@ -1228,7 +1228,7 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
             critical_issues = []
             
             # Check for proper expression evaluation (not just sequential calculator)
-            if "calculator" in instruction.lower():
+            if instruction and "calculator" in instruction.lower():
                 has_parser = any(keyword in js_code.lower() for keyword in ["shunting", "precedence", "parse expression", "ast", "token"])
                 if not has_parser:
                     critical_issues.append("Missing proper expression parser - will calculate 2+3×4 as 20 instead of 14")
