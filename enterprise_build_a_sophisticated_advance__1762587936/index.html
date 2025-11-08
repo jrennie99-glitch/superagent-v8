@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="header" class="header">
+        <h1 id="title" class="title">Advanced Calculator</h1>
+        <nav id="nav" class="nav">
+            <ul id="nav-list" class="nav-list">
+                <li id="basic-tab" class="nav-item active"><a href="#basic">Basic</a></li>
+                <li id="scientific-tab" class="nav-item"><a href="#scientific">Scientific</a></li>
+                <li id="programmer-tab" class="nav-item"><a href="#programmer">Programmer</a></li>
+                <li id="statistics-tab" class="nav-item"><a href="#statistics">Statistics</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="main" class="main">
+        <section id="basic" class="tab-content active">
+            <div id="display" class="display"></div>
+            <div id="keyboard" class="keyboard">
+                <button id="clear" class="key">C</button>
+                <button id="escape" class="key">Esc</button>
+                <button id="zero" class="key">0</button>
+                <button id="one" class="key">1</button>
+                <button id="two" class="key">2</button>
+                <button id="three" class="key">3</button>
+                <button id="four" class="key">4</button>
+                <button id="five" class="key">5</button>
+                <button id="six" class="key">6</button>
+                <button id="seven" class="key">7</button>
+                <button id="eight" class="key">8</button>
+                <button id="nine" class="key">9</button>
+                <button id="plus" class="key">+</button>
+                <button id="minus" class="key">-</button>
+                <button id="multiply" class="key">*</button>
+                <button id="divide" class="key">/</button>
+                <button id="equals" class="key">=</button>
+            </div>
+        </section>
+        <section id="scientific" class="tab-content">
+            <div id="scientific-display" class="display"></div>
+            <div id="scientific-keyboard" class="keyboard">
+                <button id="sin" class="key">sin</button>
+                <button id="cos" class="key">cos</button>
+                <button id="tan" class="key">tan</button>
+                <button id="asin" class="key">asin</button>
+                <button id="acos" class="key">acos</button>
+                <button id="atan" class="key">atan</button>
+                <button id="log" class="key">log</button>
+                <button id="ln" class="key">ln</button>
+                <button id="log10" class="key">log10</button>
+                <button id="sqrt" class="key">sqrt</button>
+                <button id="cbrt" class="key">cbrt</button>
+                <button id="exp" class="key">exp</button>
+            </div>
+        </section>
+        <section id="programmer" class="tab-content">
+            <div id="programmer-display" class="display"></div>
+            <div id="programmer-keyboard" class="keyboard">
+                <button id="hex" class="key">hex</button>
+                <button id="bin" class="key">bin</button>
+                <button id="oct" class="key">oct</button>
+            </div>
+        </section>
+        <section id="statistics" class="tab-content">
+            <div id="statistics-display" class="display"></div>
+            <div id="statistics-keyboard" class="keyboard">
+                <button id="mean" class="key">mean</button>
+                <button id="median" class="key">median</button>
+                <button id="mode" class="key">mode</button>
+                <button id="stddev" class="key">stddev</button>
+            </div>
+        </section>
+        <div id="memory" class="memory">
+            <button id="m-plus" class="key">M+</button>
+            <button id="m-minus" class="key">M-</button>
+            <button id="mr" class="key">MR</button>
+            <button id="mc" class="key">MC</button>
+        </div>
+        <div id="history" class="history">
+            <h2 id="history-title" class="title">Calculation History</h2>
+            <ul id="history-list" class="list"></ul>
+            <button id="clear-history" class="key">Clear History</button>
+        </div>
+        <div id="constants" class="constants">
+            <h2 id="constants-title" class="title">Constants</h2>
+            <button id="pi" class="key">π</button>
+            <button id="e" class="key">e</button>
+            <button id="phi" class="key">φ</button>
+            <button id="c" class="key">c</button>
+        </div>
+        <div id="settings" class="settings">
+            <h2 id="settings-title" class="title">Settings</h2>
+            <label id="theme-label" for="theme">Theme:</label>
+            <select id="theme" class="select">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+            <label id="angle-unit-label" for="angle-unit">Angle Unit:</label>
+            <select id="angle-unit" class="select">
+                <option value="degrees">Degrees</option>
+                <option value="radians">Radians</option>
+            </select>
+        </div>
+        <div id="copy" class="copy">
+            <button id="copy-result" class="key">Copy Result</button>
+        </div>
+        <div id="categories" class="categories">
+            <h2 id="categories-title" class="title">Categories</h2>
+            <ul id="categories-list" class="list"></ul>
+            <button id="add-category" class="key">Add Category</button>
+        </div>
+        <div id="priorities" class="priorities">
+            <h2 id="priorities-title" class="title">Priorities</h2>
+            <ul id="priorities-list" class="list"></ul>
+            <button id="add-priority" class="key">Add Priority</button>
+        </div>
+        <div id="due-dates" class="due-dates">
+            <h2 id="due-dates-title" class="title">Due Dates</h2>
+            <ul id="due-dates-list" class="list"></ul>
+            <button id="add-due-date" class="key">Add Due Date</button>
+        </div>
+        <div id="search" class="search">
+            <input id="search-input" type="text" placeholder="Search...">
+            <button id="search-button" class="key">Search</button>
+        </div>
+        <div id="export" class="export">
+            <button id="export-button" class="key">Export</button>
+        </div>
+        <div id="live-charts" class="live-charts">
+            <h2 id="live-charts-title" class="title">Live Charts</h2>
+            <canvas id="chart" width="400" height="200"></canvas>
+        </div>
+        <div id="widgets" class="widgets">
+            <h2 id="widgets-title" class="title">Widgets</h2>
+            <ul id="widgets-list" class="list"></ul>
+            <button id="add-widget" class="key">Add Widget</button>
+        </div>
+        <div id="filters" class="filters">
+            <h2 id="filters-title" class="title">Filters</h2>
+            <ul id="filters-list" class="list"></ul>
+            <button id="add-filter" class="key">Add Filter</button>
+        </div>
+        <div id="auth" class="auth">
+            <h2 id="auth-title" class="title">Authentication</h2>
+            <input id="username" type="text" placeholder="Username...">
+            <input id="password" type="password" placeholder="Password...">
+            <button id="login" class="key">Login</button>
+        </div>
+        <div id="data-storage" class="data-storage">
+            <h2 id="data-storage-title" class="title">Data Storage</h2>
+            <ul id="data-storage-list" class="list"></ul>
+            <button id="add-data" class="key">Add Data</button>
+        </div>
+        <div id="error-handling" class="error-handling">
+            <h2 id="error-handling-title" class="title">Error Handling</h2>
+            <ul id="error-handling-list" class="list"></ul>
+            <button id="add-error" class="key">Add Error</button>
+        </div>
+        <div id="user-preferences" class="user-preferences">
+            <h2 id="user-preferences-title" class="title">User Preferences</h2>
+            <ul id="user-preferences-list" class="list"></ul>
+            <button id="add-preference" class="key">Add Preference</button>
+        </div>
+        <div id="contextual-help" class="contextual-help">
+            <h2 id="contextual-help-title" class="title">Contextual Help</h2>
+            <ul id="contextual-help-list" class="list"></ul>
+            <button id="add-help" class="key">Add Help</button>
+        </div>
+        <div id="collaboration" class="collaboration">
+            <h2 id="collaboration-title" class="title">Collaboration</h2>
+            <ul id="collaboration-list" class="list"></ul>
+            <button id="add-collaborator" class="key">Add Collaborator</button>
+        </div>
+        <div id="integration" class="integration">
+            <h2 id="integration-title" class="title">Integration</h2>
+            <ul id="integration-list" class="list"></ul>
+            <button id="add-integration" class="key">Add Integration</button>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
