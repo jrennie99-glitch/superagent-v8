@@ -756,8 +756,8 @@ body {
           </button>
         </div>
         
-        <!-- Status Bar -->
-        <div class="status-bar">
+        <!-- Status Bar (hidden when not building) -->
+        <div class="status-bar" id="statusBar" style="display: none;">
           <div class="status-item">
             <div class="progress-ring"></div>
             <div>
@@ -769,7 +769,7 @@ body {
             <div style="font-size: 2rem;">⚡</div>
             <div>
               <div class="status-text">AI Activity</div>
-              <div class="status-value" id="aiActivity">Ready</div>
+              <div class="status-value" id="aiActivity">Idle</div>
             </div>
           </div>
         </div>
@@ -830,10 +830,14 @@ body {
       clearBuildLog();
       clearBuildSteps();  // Clear all step boxes at start
       
+      // Show status bar and reset values
+      document.getElementById('statusBar').style.display = 'flex';
+      document.getElementById('progressValue').textContent = '0%';
+      document.getElementById('aiActivity').textContent = 'Building';
+      
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
       buildBtn.innerHTML = '<span>⏳</span> Building...';
-      document.getElementById('aiActivity').textContent = 'Building';
       
       let currentStep = 0;
       
@@ -883,9 +887,16 @@ body {
                     let cleanMsg = data.message.replace(/\[\d+%\]\s*/, '').substring(0, 50);
                     stepDetailEl.textContent = cleanMsg + (cleanMsg.length >= 50 ? '...' : '');
                   }
+                  // Update progress percentage if available in message
+                  if (data.percent !== undefined) {
+                    document.getElementById('progressValue').textContent = data.percent + '%';
+                  }
                 } else if (data.type === 'step') {
                   currentStep = data.step;
                   updateStep(data.step, data.status, data.title || '');
+                  // Update progress based on step (each step is ~20%)
+                  const progress = Math.round((data.step / 5) * 100);
+                  document.getElementById('progressValue').textContent = progress + '%';
                 } else if (data.type === 'preview') {
                   // Update preview
                   const iframe = document.getElementById('previewIframe');
@@ -894,6 +905,11 @@ body {
                   buildBtn.disabled = false;
                   buildBtn.innerHTML = '✨ Build My App';
                   document.getElementById('aiActivity').textContent = 'Complete';
+                  document.getElementById('progressValue').textContent = '100%';
+                  // Hide status bar after 3 seconds
+                  setTimeout(() => {
+                    document.getElementById('statusBar').style.display = 'none';
+                  }, 3000);
                 } else if (data.type === 'error') {
                   throw new Error(data.message);
                 }
@@ -910,6 +926,10 @@ body {
         buildBtn.disabled = false;
         buildBtn.innerHTML = '✨ Build My App';
         document.getElementById('aiActivity').textContent = 'Error';
+        // Hide status bar after error
+        setTimeout(() => {
+          document.getElementById('statusBar').style.display = 'none';
+        }, 3000);
       }
     }
     
