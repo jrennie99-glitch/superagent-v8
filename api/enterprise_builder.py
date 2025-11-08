@@ -248,15 +248,52 @@ class EnterpriseBuildSystem:
                 "architecture": {"type": "simple", "files_to_create": []}
             }
     
-    async def _stage_code_generation(self, instruction: str, language: str, architecture: Dict) -> Dict:
-        """Stage 3: Generate code for all files"""
-        try:
+    def _initialize_ai_model(self):
+        """Initialize AI model based on available API keys
+        
+        Returns: (model, provider_name)
+        """
+        from api.custom_key_manager import get_ai_provider, get_custom_groq_key, get_custom_gemini_key
+        
+        provider = get_ai_provider()
+        
+        if provider == "groq":
+            # GROQ - Ultra-fast inference
+            from groq import Groq
+            groq_key = get_custom_groq_key()
+            client = Groq(api_key=groq_key)
+            print(f"🚀 Using GROQ AI (blazing fast inference)")
+            return client, "groq"
+        else:
+            # Gemini - Default
             import google.generativeai as genai
-            from api.custom_key_manager import get_custom_gemini_key
-            
             gemini_key = get_custom_gemini_key()
             genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel('gemini-2.0-flash')
+            print(f"🤖 Using Gemini AI")
+            return model, "gemini"
+    
+    def _generate_content(self, model, provider, prompt):
+        """Universal content generation across providers"""
+        if provider == "groq":
+            # GROQ uses OpenAI-compatible API
+            response = model.chat.completions.create(
+                model="llama-3.3-70b-versatile",  # Best GROQ model
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                max_tokens=8000
+            )
+            return response.choices[0].message.content
+        else:
+            # Gemini
+            response = model.generate_content(prompt)
+            return response.text
+    
+    async def _stage_code_generation(self, instruction: str, language: str, architecture: Dict) -> Dict:
+        """Stage 3: Generate code for all files"""
+        try:
+            # Initialize AI model (GROQ or Gemini based on availability)
+            model, provider = self._initialize_ai_model()
             
             generated_files = []
             
@@ -298,8 +335,8 @@ Return ONLY a numbered list of features (no code):
 ...
 """
                     
-                    spec_response = model.generate_content(spec_prompt)
-                    feature_spec = self._clean_code(spec_response.text)
+                    spec_response_text = self._generate_content(model, provider, spec_prompt)
+                    feature_spec = self._clean_code(spec_response_text)
                     print(f"✅ Specification complete: {len(feature_spec.split(chr(10)))} features planned")
                     
                     # Step 2: Generate initial code for each file
@@ -358,11 +395,11 @@ Generate ONLY the JavaScript code:"""
                         else:
                             prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
                         
-                        response = model.generate_content(prompt)
+                        response_text = self._generate_content(model, provider, prompt)
                         generated_files.append({
                             "name": file_plan["name"],
                             "type": file_plan["type"],
-                            "code": self._clean_code(response.text),
+                            "code": self._clean_code(response_text),
                             "language": language
                         })
                         print(f"  ✓ Generated {file_plan['name']}.{file_plan['type']}")
@@ -395,8 +432,8 @@ Focus on ensuring ALL advanced features are present:
 
 Return the COMPLETE ENHANCED JavaScript code with all features:"""
                         
-                        enhance_response = model.generate_content(enhance_prompt)
-                        enhanced_code = self._clean_code(enhance_response.text)
+                        enhanced_code_text = self._generate_content(model, provider, enhance_prompt)
+                        enhanced_code = self._clean_code(enhanced_code_text)
                         js_file['code'] = enhanced_code
                         print("  ✓ JavaScript enhanced with advanced features")
                     
@@ -404,12 +441,12 @@ Return the COMPLETE ENHANCED JavaScript code with all features:"""
                     # Standard multi-file generation
                     for file_plan in architecture["files_to_create"]:
                         prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
-                        response = model.generate_content(prompt)
+                        response_text = self._generate_content(model, provider, prompt)
                         
                         generated_files.append({
                             "name": file_plan["name"],
                             "type": file_plan["type"],
-                            "code": self._clean_code(response.text),
+                            "code": self._clean_code(response_text),
                             "language": language
                         })
                         await asyncio.sleep(0.5)
@@ -479,8 +516,8 @@ Return ONLY valid JSON in this format:
 The validation_keywords should be code patterns to check for (e.g., "sin(", "cos(", "localStorage", ".drag", etc.)"""
                     
                     try:
-                        checklist_response = model.generate_content(checklist_prompt)
-                        feature_checklist_text = self._clean_code(checklist_response.text)
+                        checklist_response_text = self._generate_content(model, provider, checklist_prompt)
+                        feature_checklist_text = self._clean_code(checklist_response_text)
                         print(f"✅ Feature checklist generated: {feature_checklist_text[:200]}...")
                         
                         # Parse JSON (handle markdown code fences)
@@ -751,8 +788,8 @@ NEVER DO:
 Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanced else "EXCELLENT"}:"""
                 
                 # Generate code
-                response = model.generate_content(prompt)
-                generated_code = self._clean_code(response.text)
+                generated_code_text = self._generate_content(model, provider, prompt)
+                generated_code = self._clean_code(generated_code_text)
                 
                 generated_files.append({
                     "name": "main",

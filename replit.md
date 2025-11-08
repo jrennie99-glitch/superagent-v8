@@ -14,7 +14,12 @@ SuperAgent is a complete Replit Agent clone providing an autonomous development 
 - I want the agent to use the most efficient and relevant AI model for the task
 
 ## System Architecture
-SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It integrates Google Gemini AI (`gemini-2.0-flash`) for core code generation, complemented by a 2-Supervisor System that utilizes multiple AI providers for enhanced code verification and security scanning.
+SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It features a **Multi-Provider AI System** with automatic provider detection:
+- **Primary Providers**: GROQ (`llama-3.3-70b-versatile`) for blazing-fast inference, Google Gemini AI (`gemini-2.0-flash`) for large free tier
+- **Custom API Key System**: USER_GROQ_API_KEY and USER_GEMINI_API_KEY environment variables for user's personal keys with their own quotas
+- **Auto-Detection**: System automatically selects the best available provider based on configured keys (GROQ prioritized for speed)
+- **Universal Generation**: Single codebase supports multiple AI providers seamlessly
+- Complemented by a 2-Supervisor System that utilizes multiple AI providers for enhanced code verification and security scanning.
 
 **UI/UX Decisions:**
 The UI features a clean, minimal, and sophisticated aesthetic with a purple gradient theme, aiming for a premium user experience. It includes a mobile-first Progressive Web App (PWA) design, a comprehensive Memory Viewer, split-screen interactive chat with live streaming build logs, and labeled button controls for improved accessibility and user experience.
