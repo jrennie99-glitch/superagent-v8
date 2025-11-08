@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator Tests</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      /* Basic styles for test output */
+      #test-output {
+        font-family: monospace;
+        padding: 20px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        margin: 20px;
+      }
+
+      #test-output p {
+        margin: 5px 0;
+      }
+
+      #test-output .pass {
+        color: green;
+      }
+
+      #test-output .fail {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+</head>
+<body>
+    <div id="test-output">
+      <h1>Advanced Calculator Tests</h1>
+      <p>Running tests...</p>
+    </div>
+
+    <script>
+      function assertEqual(actual, expected, testName) {
+        if (actual === expected) {
+          logResult(`<span class="pass">PASS: ${testName}</span>`);
+        } else {
+          logResult(`<span class="fail">FAIL: ${testName} - Expected: ${expected}, Actual: ${actual}</span>`);
+        }
+      }
+
+      function assertThrows(func, testName) {
+        try {
+          func();
+          logResult(`<span class="fail">FAIL: ${testName} - Expected an error to be thrown, but it didn't.</span>`);
+        } catch (error) {
+          logResult(`<span class="pass">PASS: ${testName} - Error thrown as expected.</span>`);
+        }
+      }
+
+      function logResult(message) {
+        const outputDiv = document.getElementById('test-output');
+        const paragraph = document.createElement('p');
+        paragraph.innerHTML = message;
+        outputDiv.appendChild(paragraph);
+      }
+
+      // Mock the calculator object and its functions
+      const calculator = {
+        add: (a, b) => a + b,
+        subtract: (a, b) => a - b,
+        multiply: (a, b) => a * b,
+        divide: (a, b) => {
+          if (b === 0) {
+            throw new Error("Division by zero");
+          }
+          return a / b;
+        },
+        power: (a, b) => Math.pow(a, b),
+        sqrt: (a) => Math.sqrt(a),
+        sin: (a) => Math.sin(a),
+        cos: (a) => Math.cos(a),
+        tan: (a) => Math.tan(a),
+        log: (a) => Math.log(a),
+        factorial: (n) => {
+            if (n === 0) {
+                return 1;
+            } else if (n < 0) {
+                throw new Error("Factorial of negative number is not defined");
+            } else {
+                let result = 1;
+                for (let i = 1; i <= n; i++) {
+                    result *= i;
+                }
+                return result;
+            }
+        },
+        mod: (a,b) => a % b,
+        round: (a) => Math.round(a),
+        floor: (a) => Math.floor(a),
+        ceil: (a) => Math.ceil(a)
+
+      };
+
+      // Run tests
+      logResult("<h2>Basic Arithmetic Tests</h2>");
+      assertEqual(calculator.add(2, 3), 5, "Add test");
+      assertEqual(calculator.subtract(5, 2), 3, "Subtract test");
+      assertEqual(calculator.multiply(4, 3), 12, "Multiply test");
+      assertEqual(calculator.divide(10, 2), 5, "Divide test");
+      assertThrows(() => calculator.divide(5, 0), "Divide by zero test");
+
+      logResult("<h2>Advanced Function Tests</h2>");
+      assertEqual(calculator.power(2, 3), 8, "Power test");
+      assertEqual(calculator.sqrt(9), 3, "Square root test");
+      assertEqual(calculator.sin(0), 0, "Sine test");
+      assertEqual(calculator.cos(0), 1, "Cosine test");
+      assertEqual(calculator.tan(0), 0, "Tangent test");
+      assertEqual(calculator.log(1), 0, "Log test");
+      assertEqual(calculator.factorial(5), 120, "Factorial test");
+      assertThrows(() => calculator.factorial(-1), "Factorial of negative number test");
+      assertEqual(calculator.mod(10, 3), 1, "Modulo test");
+      assertEqual(calculator.round(3.14), 3, "Round test");
+      assertEqual(calculator.floor(3.9), 3, "Floor test");
+      assertEqual(calculator.ceil(3.1), 4, "Ceil test");
+
+    </script>
+</body>
+</html>

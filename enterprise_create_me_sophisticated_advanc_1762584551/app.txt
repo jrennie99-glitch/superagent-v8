@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="calculator">
+
+        <div class="header">
+            <h1>Advanced Calculator</h1>
+            <div class="settings-icon" onclick="toggleSettings()">⚙</div>
+        </div>
+
+        <div class="settings-panel">
+            <h2>Settings</h2>
+            <div class="setting">
+                <label for="theme">Theme:</label>
+                <select id="theme" onchange="setTheme(this.value)">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="system">System</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label for="precision">Precision:</label>
+                <input type="number" id="precision" value="8" min="1" max="16" onchange="setPrecision(this.value)">
+            </div>
+            <button onclick="resetSettings()">Reset to Default</button>
+        </div>
+
+
+        <div class="display">
+            <div id="history"></div>
+            <input type="text" id="result" value="0" disabled>
+        </div>
+
+        <div class="buttons">
+            <button onclick="clearDisplay()" class="clear">AC</button>
+            <button onclick="backspace()" class="operator">←</button>
+            <button onclick="appendToDisplay('(')" class="operator">(</button>
+            <button onclick="appendToDisplay(')')" class="operator">)</button>
+
+            <button onclick="appendToDisplay('7')" class="number">7</button>
+            <button onclick="appendToDisplay('8')" class="number">8</button>
+            <button onclick="appendToDisplay('9')" class="number">9</button>
+            <button onclick="appendToDisplay('÷')" class="operator">÷</button>
+
+            <button onclick="appendToDisplay('4')" class="number">4</button>
+            <button onclick="appendToDisplay('5')" class="number">5</button>
+            <button onclick="appendToDisplay('6')" class="number">6</button>
+            <button onclick="appendToDisplay('×')" class="operator">×</button>
+
+            <button onclick="appendToDisplay('1')" class="number">1</button>
+            <button onclick="appendToDisplay('2')" class="number">2</button>
+            <button onclick="appendToDisplay('3')" class="number">3</button>
+            <button onclick="appendToDisplay('−')" class="operator">−</button>
+
+            <button onclick="appendToDisplay('0')" class="number">0</button>
+            <button onclick="appendToDisplay('.')" class="number">.</button>
+            <button onclick="calculate()" class="equal">=</button>
+            <button onclick="appendToDisplay('+')" class="operator">+</button>
+
+            <button onclick="power()" class="advanced">x²</button>
+            <button onclick="squareRoot()" class="advanced">√</button>
+            <button onclick="pi()" class="advanced">π</button>
+            <button onclick="factorial()" class="advanced">x!</button>
+
+            <button onclick="powerOfTen()" class="advanced">10ˣ</button>
+            <button onclick="logarithm()" class="advanced">log</button>
+            <button onclick="naturalLog()" class="advanced">ln</button>
+            <button onclick="exponent()" class="advanced">eˣ</button>
+        </div>
+
+        <div class="footer">
+            <button onclick="undo()" id="undoButton">Undo</button>
+            <button onclick="redo()" id="redoButton">Redo</button>
+            <button onclick="exportData()">Export</button>
+            <button onclick="importData()">Import</button>
+        </div>
+
+        <input type="file" id="importFile" style="display:none" onchange="handleFileImport(this.files)">
+
+    </div>
+
+    <div class="tooltip"></div>
+
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

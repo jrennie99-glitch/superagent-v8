@@ -1,0 +1,405 @@
+<style>
+/* General Styles */
+:root {
+  --primary-color: #4CAF50;
+  --secondary-color: #3F51B5;
+  --background-color: #F0F4F8;
+  --text-color: #333333;
+  --accent-color: #FF9800;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: var(--text-color);
+}
+
+/* Calculator Container */
+.calculator {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  overflow: hidden;
+  width: 400px;
+  max-width: 95%; /* Responsive width */
+  transition: all 0.3s ease;
+}
+
+.calculator:hover {
+  box-shadow: 0 15px 40px var(--shadow-color);
+}
+
+/* Display */
+.display {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 20px;
+  text-align: right;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.display-history {
+  font-size: 1.2rem;
+  height: 25px; /* Prevent display jumping */
+  overflow: hidden; /* Prevent overflow */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.display-value {
+  font-size: 2.5rem;
+  font-weight: 600;
+  height: 40px; /* Prevent display jumping */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Buttons Grid */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+}
+
+.button {
+  background-color: #FAFAFA;
+  border: none;
+  font-size: 1.5rem;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  user-select: none; /* Prevent text selection */
+}
+
+.button:hover {
+  background-color: #EEEEEE;
+}
+
+.button:active {
+  background-color: #DDDDDD;
+}
+
+/* Special Buttons */
+.button.operator {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.button.operator:hover {
+  background-color: #F47C00;
+}
+
+.button.equal {
+  grid-column: span 2;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.button.equal:hover {
+  background-color: #43A047;
+}
+
+.button.clear {
+  background-color: #E57373;
+  color: white;
+}
+
+.button.clear:hover {
+  background-color: #D32F2F;
+}
+
+/* Sidebar (Expandable) */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: #ECEFF1;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.sidebar-container.open {
+  transform: translateX(0);
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  right: -40px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  z-index: 101;
+}
+
+.sidebar {
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  color: var(--secondary-color);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 10px 0;
+  border-bottom: 1px solid #CFD8DC;
+}
+
+.sidebar a {
+  color: var(--text-color);
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.sidebar a:hover {
+  color: var(--primary-color);
+}
+
+/* Settings Panel */
+.settings-panel {
+  padding: 20px;
+}
+
+.setting-item {
+  margin-bottom: 15px;
+}
+
+.setting-item label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.setting-item input[type="checkbox"],
+.setting-item select {
+  margin-left: 10px;
+  padding: 8px;
+  border: 1px solid #CFD8DC;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 200px;
+}
+
+/* History Panel */
+.history-panel {
+  padding: 20px;
+}
+
+.history-item {
+  padding: 10px;
+  border-bottom: 1px solid #CFD8DC;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+/* Tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 150px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Keyboard Shortcuts (Visual) */
+.keyboard-shortcuts {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px var(--shadow-color);
+  backdrop-filter: blur(5px); /* Glass effect */
+  z-index: 99;
+}
+
+.keyboard-shortcuts h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.shortcut-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.shortcut-key {
+  background-color: #607D8B;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .calculator {
+    width: 95%;
+  }
+  .buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .button {
+    padding: 15px;
+    font-size: 1.2rem;
+  }
+
+  .sidebar-container {
+    width: 80%;
+  }
+
+  .keyboard-shortcuts {
+    display: none; /* Hide on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  .display-value {
+    font-size: 2rem;
+  }
+}
+
+/* Error State */
+.display-value.error {
+  color: #FF5252;
+  animation: errorShake 0.3s ease-in-out;
+}
+
+@keyframes errorShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* Loading State */
+.calculator.loading {
+  opacity: 0.7;
+  pointer-events: none; /* Disable interactions */
+}
+
+.calculator::before {
+  content: 'Loading...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  z-index: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.calculator {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Advanced Functions Styling */
+
+.button.advanced {
+    background-color: #673AB7;
+    color: white;
+}
+
+.button.advanced:hover {
+    background-color: #512DA8;
+}
+
+/* Memory Functions Styling */
+
+.memory-controls {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.memory-button {
+    background-color: #009688;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.memory-button:hover {
+    background-color: #00796B;
+}
+</style>
