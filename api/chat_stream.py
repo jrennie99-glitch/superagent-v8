@@ -35,7 +35,7 @@ async def stream_chat_response(message: str):
         
         # Send status update: Analyzing
         yield f"data: {json.dumps({'type': 'status', 'status': 'analyzing'})}\n\n"
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(0.1)
         
         # Create an intelligent, detailed, and chatty AI assistant
         system_prompt = """You are an INCREDIBLY intelligent, knowledgeable, and chatty AI development assistant. You're helping users while their apps are being built, and you LOVE sharing detailed information and insights.
@@ -112,7 +112,7 @@ Remember: You're not just answering questions - you're TEACHING and EMPOWERING u
         
         # Send status update: Generating response
         yield f"data: {json.dumps({'type': 'status', 'status': 'generating'})}\n\n"
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(0.05)
         
         # Start thread as background task (don't await - run concurrently)
         asyncio.create_task(asyncio.to_thread(generate_in_thread, loop))
