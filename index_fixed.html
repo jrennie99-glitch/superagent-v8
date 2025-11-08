@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperAgent - Revolutionary No-Code App Builder</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cosmic-dark: #0a0e1a;
+  --deep-space: #0d1117;
+  --nebula-purple: #8b5cf6;
+  --cyber-pink: #ec4899;
+  --neon-blue: #3b82f6;
+  --electric-cyan: #06b6d4;
+  --holographic-gold: #fbbf24;
+  --neon-green: #10b981;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--cosmic-dark);
+  color: #c9d1d9;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated Cosmic Background */
+.cosmic-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: radial-gradient(ellipse at top, #1a1f3a 0%, #0a0e1a 50%, #000000 100%);
+  animation: cosmic-pulse 20s ease-in-out infinite;
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Particle System */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.8), transparent);
+  border-radius: 50%;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Main Container */
+.container {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3D Chrome Logo Header */
+.header-logo {
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+  perspective: 1000px;
+}
+
+.logo-3d {
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 25%, #ec4899 50%, #8b5cf6 75%, #06b6d4 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.6))
+          drop-shadow(0 0 60px rgba(236, 72, 153, 0.4));
+  animation: holographic-shift 8s ease-in-out infinite, logo-float 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+  letter-spacing: 0.05em;
+}
+
+@keyframes holographic-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(2deg); }
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #06b6d4;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  opacity: 0.8;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 30px rgba(6, 182, 212, 0.4); }
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 2rem;
+  padding: 0 2rem 2rem;
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Left Panel - Build Console */
+.build-console {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 3D Holographic Input Sphere */
+.input-sphere-container {
+  perspective: 1000px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.input-sphere {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.1));
+  border: 2px solid rgba(6, 182, 212, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: sphere-rotate 20s linear infinite, sphere-pulse 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 0 60px rgba(6, 182, 212, 0.4),
+    0 0 100px rgba(139, 92, 246, 0.2),
+    inset 0 0 60px rgba(6, 182, 212, 0.1);
+}
+
+@keyframes sphere-rotate {
+  0% { transform: rotateY(0deg) rotateX(10deg); }
+  100% { transform: rotateY(360deg) rotateX(10deg); }
+}
+
+@keyframes sphere-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* FIXED: Explicit copy-paste support */
+.sphere-input {
+  width: 85%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #fff;
+  font-size: 1.1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  outline: none;
+  transition: all 0.3s ease;
+  /* Ensure copy-paste works */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+.sphere-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.sphere-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Orbiting AI Nodes */
+.ai-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--electric-cyan), transparent);
+  box-shadow: 0 0 15px var(--electric-cyan);
+  animation: orbit 8s linear infinite;
+}
+
+.ai-node:nth-child(2) { animation-delay: -2s; }
+.ai-node:nth-child(3) { animation-delay: -4s; }
+.ai-node:nth-child(4) { animation-delay: -6s; }
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+}
+
+/* Build Button */
+.build-button {
+  width: 100%;
+  padding: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-pink));
+  border: none;
+  border-radius: 16px;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 10px 40px rgba(139, 92, 246, 0.4),
+    0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+.build-button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 15px 60px rgba(139, 92, 246, 0.6),
+    0 0 40px rgba(236, 72, 153, 0.5);
+}
+
+.build-button:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.build-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.build-button:hover::before {
+  left: 100%;
+}
+
+/* Floating Hexagonal Build Steps */
+.build-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.step-hexagon {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: step-appear 0.6s ease-out backwards;
+}
+
+.step-hexagon:nth-child(1) { animation-delay: 0.1s; border-left: 3px solid var(--electric-cyan); }
+.step-hexagon:nth-child(2) { animation-delay: 0.2s; border-left: 3px solid var(--nebula-purple); }
+.step-hexagon:nth-child(3) { animation-delay: 0.3s; border-left: 3px solid var(--cyber-pink); }
+.step-hexagon:nth-child(4) { animation-delay: 0.4s; border-left: 3px solid var(--holographic-gold); }
+.step-hexagon:nth-child(5) { animation-delay: 0.5s; border-left: 3px solid var(--neon-green); }
+
+@keyframes step-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) rotateY(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+.step-hexagon.active {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--nebula-purple);
+  box-shadow: 
+    0 0 30px rgba(139, 92, 246, 0.3),
+    inset 0 0 20px rgba(139, 92, 246, 0.1);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.step-hexagon.complete {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: var(--neon-green);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.6);
+  }
+}
+
+.step-icon {
+  font-size: 1.8rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.step-detail {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Right Panel - Live Preview */
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 3D Curved Preview Screen */
+.preview-screen {
+  flex: 1;
+  perspective: 2000px;
+  min-height: 600px;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  overflow: hidden;
+  transform: rotateY(-2deg) rotateX(2deg);
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  box-shadow: 
+    0 30px 90px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(6, 182, 212, 0.2);
+  animation: frame-float 8s ease-in-out infinite;
+}
+
+@keyframes frame-float {
+  0%, 100% { transform: rotateY(-2deg) rotateX(2deg) translateZ(0); }
+  50% { transform: rotateY(2deg) rotateX(-2deg) translateZ(20px); }
+}
+
+.preview-frame:hover {
+  transform: rotateY(0deg) rotateX(0deg) translateZ(30px);
+}
+
+/* Holographic Border Animation */
+.preview-frame::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, 
+    var(--electric-cyan) 0%, 
+    var(--nebula-purple) 25%, 
+    var(--cyber-pink) 50%, 
+    var(--nebula-purple) 75%, 
+    var(--electric-cyan) 100%);
+  background-size: 300% 300%;
+  border-radius: 24px;
+  z-index: -1;
+  animation: holographic-border 6s linear infinite;
+  filter: blur(8px);
+  opacity: 0.8;
+}
+
+@keyframes holographic-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 20px;
+  background: white;
+}
+
+/* Floating Preview Controls */
+.preview-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--nebula-purple);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+}
+
+/* Status Bar */
+.status-bar {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.progress-ring {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: var(--nebula-purple);
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.status-text {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.status-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--electric-cyan);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .logo-3d {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-3d {
+    font-size: 2rem;
+  }
+  
+  .input-sphere {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .preview-screen {
+    min-height: 400px;
+  }
+}
+
+/* Loading Animation */
+.loading-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  to { left: 100%; }
+}
+</style>
+</head>
+<body>
+  <!-- Cosmic Background -->
+  <div class="cosmic-background"></div>
+  
+  <!-- Particle System -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <!-- 3D Chrome Logo Header -->
+    <div class="header-logo">
+      <h1 class="logo-3d">SuperAgent</h1>
+      <p class="subtitle">No-Code App Builder</p>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Left Panel - Build Console -->
+      <div class="build-console">
+        <!-- 3D Holographic Input Sphere -->
+        <div class="input-sphere-container">
+          <div class="input-sphere">
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <div class="ai-node"></div>
+            <textarea 
+              class="sphere-input" 
+              id="userInput"
+              placeholder="Describe your vision..."
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        
+        <!-- Build Button -->
+        <button class="build-button" id="buildBtn" onclick="startBuild()">
+          ✨ Build My App
+        </button>
+        
+        <!-- Floating Hexagonal Build Steps -->
+        <div class="build-steps" id="buildSteps">
+          <div class="step-hexagon">
+            <div class="step-icon">🎯</div>
+            <div class="step-content">
+              <div class="step-title">Architecting</div>
+              <div class="step-detail">Planning your app structure...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">🎨</div>
+            <div class="step-content">
+              <div class="step-title">Designing</div>
+              <div class="step-detail">Creating beautiful user interface...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">⚡</div>
+            <div class="step-content">
+              <div class="step-title">Building Features</div>
+              <div class="step-detail">Adding interactive functionality...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">💾</div>
+            <div class="step-content">
+              <div class="step-title">Database Setup</div>
+              <div class="step-detail">Configuring data persistence...</div>
+            </div>
+          </div>
+          
+          <div class="step-hexagon">
+            <div class="step-icon">🚀</div>
+            <div class="step-content">
+              <div class="step-title">Production Deploy</div>
+              <div class="step-detail">Launching your app live...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Panel - Live Preview -->
+      <div class="preview-panel">
+        <!-- 3D Curved Preview Screen -->
+        <div class="preview-screen">
+          <div class="preview-frame">
+            <iframe 
+              class="preview-iframe" 
+              id="previewIframe"
+              src="about:blank"
+            ></iframe>
+            <div class="loading-shimmer"></div>
+          </div>
+        </div>
+        
+        <!-- Floating Preview Controls -->
+        <div class="preview-controls">
+          <button class="control-button" onclick="refreshPreview()" title="Refresh">
+            🔄
+          </button>
+          <button class="control-button" onclick="openInNewTab()" title="Open in New Tab">
+            ↗️
+          </button>
+          <button class="control-button" onclick="showQR()" title="QR Code">
+            📱
+          </button>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <div class="status-item">
+            <div class="progress-ring"></div>
+            <div>
+              <div class="status-text">Build Progress</div>
+              <div class="status-value" id="progressValue">0%</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div style="font-size: 2rem;">⚡</div>
+            <div>
+              <div class="status-text">AI Activity</div>
+              <div class="status-value" id="aiActivity">Ready</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Generate particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.width = particle.style.height = (Math.random() * 4 + 1) + 'px';
+      particle.style.animationDuration = (Math.random() * 20 + 10) + 's';
+      particle.style.animationDelay = (Math.random() * 5) + 's';
+      particlesContainer.appendChild(particle);
+    }
+    
+    let currentBuildId = null;
+    let eventSource = null;
+    
+    // FIXED: Ensure copy-paste works with keyboard shortcuts
+    document.addEventListener('paste', function(e) {
+      // Allow paste events to propagate normally
+      console.log('Paste event detected');
+    });
+    
+    document.addEventListener('copy', function(e) {
+      // Allow copy events to propagate normally
+      console.log('Copy event detected');
+    });
+    
+    async function startBuild() {
+      const userInput = document.getElementById('userInput').value.trim();
+      if (!userInput) {
+        alert('Please describe your app vision!');
+        return;
+      }
+      
+      const buildBtn = document.getElementById('buildBtn');
+      buildBtn.disabled = true;
+      buildBtn.innerHTML = '<span>⏳</span> Building...';
+      
+      document.getElementById('aiActivity').textContent = 'Building';
+      
+      try {
+        const response = await fetch('/api/v1/build-realtime', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instruction: userInput,
+            plan_mode: true,
+            enterprise_mode: true,
+            live_preview: true,
+            auto_deploy: false
+          })
+        });
+        
+        const data = await response.json();
+        currentBuildId = data.build_id;
+        
+        startStreamingProgress(currentBuildId);
+      } catch (error) {
+        console.error('Build error:', error);
+        buildBtn.disabled = false;
+        buildBtn.innerHTML = '✨ Build My App';
+        document.getElementById('aiActivity').textContent = 'Error';
+      }
+    }
+    
+    function startStreamingProgress(buildId) {
+      if (eventSource) eventSource.close();
+      
+      eventSource = new EventSource(`/api/v1/build-stream/${buildId}`);
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'step') {
+          updateStep(data.step_number, data.status);
+          document.getElementById('progressValue').textContent = 
+            Math.round((data.step_number / 5) * 100) + '%';
+        } else if (data.type === 'complete') {
+          eventSource.close();
+          document.getElementById('buildBtn').disabled = false;
+          document.getElementById('buildBtn').innerHTML = '✨ Build My App';
+          document.getElementById('aiActivity').textContent = 'Complete';
+          document.getElementById('progressValue').textContent = '100%';
+          
+          if (data.preview_url) {
+            document.getElementById('previewIframe').src = data.preview_url;
+          }
+        }
+      };
+    }
+    
+    function updateStep(stepNumber, status) {
+      const steps = document.querySelectorAll('.step-hexagon');
+      if (steps[stepNumber - 1]) {
+        steps[stepNumber - 1].classList.remove('active', 'complete');
+        if (status === 'active') {
+          steps[stepNumber - 1].classList.add('active');
+        } else if (status === 'complete') {
+          steps[stepNumber - 1].classList.add('complete');
+        }
+      }
+    }
+    
+    function refreshPreview() {
+      const iframe = document.getElementById('previewIframe');
+      iframe.src = iframe.src;
+    }
+    
+    function openInNewTab() {
+      const iframe = document.getElementById('previewIframe');
+      if (iframe.src && iframe.src !== 'about:blank') {
+        window.open(iframe.src, '_blank');
+      }
+    }
+    
+    function showQR() {
+      alert('QR Code feature coming soon!');
+    }
+  </script>
+</body>
+</html>
