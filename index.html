@@ -198,22 +198,28 @@ body {
 
 .sphere-input {
   width: 85%;
+  min-height: 180px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.5rem;
   color: #fff;
   font-size: 1.1rem;
-  text-align: center;
+  text-align: left;
   backdrop-filter: blur(10px);
   outline: none;
   transition: all 0.3s ease;
+  resize: vertical;
+  z-index: 100;
+  position: relative;
+  line-height: 1.6;
 }
 
 .sphere-input:focus {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(6, 182, 212, 0.5);
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  z-index: 101;
 }
 
 .sphere-input::placeholder {
@@ -989,7 +995,7 @@ body {
               class="sphere-input" 
               id="userInput"
               placeholder="Describe your vision..."
-              rows="3"
+              rows="7"
             ></textarea>
           </div>
         </div>
