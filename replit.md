@@ -10,6 +10,17 @@ SuperAgent is a complete Replit Agent clone designed to provide a fully autonomo
 Key capabilities include an admin-only Auto App Builder for generating complete applications from descriptions or code, and integration with Runway ML for AI video generation.
 
 ## Recent Changes
+### November 8, 2025 - Live Streaming Build Logs (Chat-Like Experience)
+- **Real-Time Streaming Logs:** Build logs now stream word-by-word like a live chat conversation
+  - Implemented `stream_log_message()` helper that yields text deltas with 15ms delays for smooth streaming
+  - Added `log-stream` event type with unique message IDs for incremental text updates
+  - Typing cursor animation (blinking purple cursor) appears during streaming, removed when complete
+  - All build messages now stream smoothly instead of appearing instantly
+  - Auto-scroll to bottom as new text appears for seamless UX
+  - Architect-approved implementation with no performance issues or security concerns
+  - Maintains backward compatibility with existing progress/error events
+  - Creates the exact same chat-like experience as Replit Agent's real-time build logs
+
 ### November 8, 2025 - Labeled Controls & Video-to-App AI Analysis
 - **Labeled Button Controls:** All control buttons now have visible text labels for better UX
   - Preview controls: "Refresh", "Open", "Mobile" labels below buttons with purple glow effects
