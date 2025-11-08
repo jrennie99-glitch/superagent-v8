@@ -1,60 +1,52 @@
 """
-Custom API Key Manager - Allows users to use their own Gemini API key
+Custom API Key Manager - Secure API key management via Replit Secrets
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 import os
-import json
 
 router = APIRouter(prefix="/api/v1", tags=["Settings"])
-
-CUSTOM_KEY_FILE = "/tmp/custom_gemini_key.json"
 
 class CustomKeyRequest(BaseModel):
     api_key: str
 
 def get_custom_gemini_key():
-    """Get custom Gemini API key if set, otherwise use default"""
-    try:
-        if os.path.exists(CUSTOM_KEY_FILE):
-            with open(CUSTOM_KEY_FILE, 'r') as f:
-                data = json.load(f)
-                custom_key = data.get('gemini_api_key')
-                if custom_key:
-                    return custom_key
-    except Exception as e:
-        print(f"Error reading custom key: {e}")
+    """Get Gemini API key - Priority: USER_GEMINI_API_KEY > GEMINI_API_KEY (system default)"""
     
-    # Fallback to default environment key
-    return os.getenv("GEMINI_API_KEY")
+    # Priority 1: Check if user set their own key via Replit Secrets
+    user_key = os.getenv("USER_GEMINI_API_KEY")
+    if user_key:
+        print("✅ Using USER_GEMINI_API_KEY (your personal key with your own quota)")
+        return user_key
+    
+    # Priority 2: Fallback to default system key (shared quota - may hit rate limits)
+    system_key = os.getenv("GEMINI_API_KEY")
+    if system_key:
+        print("⚠️ Using default system API key (shared quota - may experience rate limits)")
+        return system_key
+    
+    print("❌ No API key found!")
+    return None
 
-@router.post("/set-custom-key")
-async def set_custom_key(request: CustomKeyRequest):
-    """Set a custom Gemini API key"""
-    try:
-        # Save to file
-        with open(CUSTOM_KEY_FILE, 'w') as f:
-            json.dump({'gemini_api_key': request.api_key}, f)
-        
-        return {
-            "success": True,
-            "message": "Custom API key saved! Your builds will now use your own quota."
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/has-custom-key")
-async def has_custom_key():
-    """Check if a custom API key is set"""
-    has_key = os.path.exists(CUSTOM_KEY_FILE)
-    return {"has_custom_key": has_key}
-
-@router.delete("/remove-custom-key")
-async def remove_custom_key():
-    """Remove custom API key and revert to default"""
-    try:
-        if os.path.exists(CUSTOM_KEY_FILE):
-            os.remove(CUSTOM_KEY_FILE)
-        return {"success": True, "message": "Reverted to default API key"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/api-key-status")
+async def api_key_status():
+    """Check which API key is currently in use"""
+    user_key_set = bool(os.getenv("USER_GEMINI_API_KEY"))
+    system_key_set = bool(os.getenv("GEMINI_API_KEY"))
+    
+    if user_key_set:
+        status = "using_personal_key"
+        message = "✅ Using your personal API key (your own quota)"
+    elif system_key_set:
+        status = "using_shared_key"
+        message = "⚠️ Using shared system key (may experience rate limits)"
+    else:
+        status = "no_key"
+        message = "❌ No API key configured"
+    
+    return {
+        "status": status,
+        "message": message,
+        "has_personal_key": user_key_set,
+        "has_system_key": system_key_set
+    }
