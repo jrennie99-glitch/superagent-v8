@@ -978,10 +978,16 @@ body {
       clearBuildLog();
       clearBuildSteps();  // Clear all step boxes at start
       
+      // Show build log panel
+      document.getElementById('buildLogPanel').style.display = 'block';
+      
       // Show status bar and reset values
       document.getElementById('statusBar').style.display = 'flex';
       document.getElementById('progressValue').textContent = '0%';
       document.getElementById('aiActivity').textContent = 'Building';
+      
+      // Add initial log entry
+      addBuildLog('🚀 Starting build process...', '🚀');
       
       const buildBtn = document.getElementById('buildBtn');
       buildBtn.disabled = true;
