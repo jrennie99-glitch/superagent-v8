@@ -1217,16 +1217,29 @@ Generate ONLY the code for THIS file (no explanations). Make it WORLD-CLASS:"""
         """Get appropriate file extension"""
         lang_lower = language.lower()
         
+        # Check file type first (for multi-file web projects)
+        if file_type == "html":
+            return ".html"
+        elif file_type == "css":
+            return ".css"
+        elif file_type == "js":
+            return ".js"
+        elif file_type == "frontend":
+            return ".html"
+        elif file_type == "styles":
+            return ".css"
+        elif file_type == "script":
+            return ".js"
+        
+        # Check language
         if lang_lower == "python":
             return ".py"
         elif lang_lower in ["javascript", "node"]:
             return ".js"
         elif lang_lower == "typescript":
             return ".ts"
-        elif file_type == "frontend":
+        elif lang_lower == "html":
             return ".html"
-        elif file_type == "styles":
-            return ".css"
         else:
             return ".txt"
     
