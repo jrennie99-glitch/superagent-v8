@@ -101,6 +101,9 @@ class EnterpriseBuildSystem:
                 raise Exception(f"Failed to create project structure: {stage_result.get('error', 'Unknown error')}")
             
             project_dir = stage_result["project_dir"]
+            preview_url = stage_result.get("preview_url")
+            if preview_url:
+                results["preview_url"] = preview_url
             if progress_callback:
                 await progress_callback("Stage 4/9: Project structure created", 44)
             
@@ -822,28 +825,44 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
             project_dir.mkdir(parents=True, exist_ok=True)
             
             created_files = []
+            html_files = []  # Track HTML files with their actual filenames
+            
             for file_info in files:
                 # Determine file extension
                 ext = self._get_file_extension(file_info["language"], file_info["type"])
                 filename = f"{file_info['name']}{ext}"
                 filepath = project_dir / filename
                 
+                # Track HTML files
+                if ext == ".html" or file_info["type"] == "html":
+                    html_files.append(filename)
+                
                 # Write file
                 filepath.write_text(file_info["code"])
                 created_files.append(str(filepath))
+            
+            # Generate preview URL for web apps
+            preview_url = None
+            if html_files:
+                # Prefer index.html if it exists, otherwise use first HTML file
+                entry_html = next((f for f in html_files if 'index' in f.lower()), html_files[0])
+                folder_name = project_dir.name
+                preview_url = f"/apps/{folder_name}/{entry_html}"
             
             return {
                 "stage": "create_files",
                 "success": True,
                 "project_dir": str(project_dir),
-                "files_created": created_files
+                "files_created": created_files,
+                "preview_url": preview_url
             }
         except Exception as e:
             return {
                 "stage": "create_files",
                 "success": False,
                 "error": str(e),
-                "project_dir": ""
+                "project_dir": "",
+                "preview_url": None
             }
     
     async def _stage_install_dependencies(self, project_dir: str, language: str, architecture: Dict) -> Dict:

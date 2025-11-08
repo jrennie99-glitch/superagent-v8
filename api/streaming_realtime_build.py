@@ -342,8 +342,16 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 files_created = result.get('files_created', [])
                 build_time = result.get('build_time', 0)
                 
+                # Check if enterprise builder provided a preview URL
+                enterprise_preview_url = result.get('preview_url')
+                
                 # Detect project type and build metadata
                 project_meta = _analyze_project_type(files_created, project_dir)
+                
+                # PRIORITY: Use enterprise builder's preview URL if available
+                if enterprise_preview_url:
+                    project_meta['is_previewable'] = True
+                    project_meta['preview_url'] = enterprise_preview_url
                 
                 # Build file tree structure with actual file sizes
                 file_tree = _build_file_tree(files_created, project_dir)
