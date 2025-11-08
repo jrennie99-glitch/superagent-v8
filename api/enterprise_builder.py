@@ -186,11 +186,34 @@ class EnterpriseBuildSystem:
     async def _stage_architecture_planning(self, instruction: str, language: str, multi_file: bool) -> Dict:
         """Stage 2: Plan architecture and file structure"""
         try:
+            # Detect if user wants advanced/sophisticated app
+            instruction_lower = instruction.lower()
+            wants_advanced = (
+                'advanced' in instruction_lower or
+                'sophisticated' in instruction_lower or
+                'enterprise' in instruction_lower or
+                'professional' in instruction_lower or
+                'full-featured' in instruction_lower or
+                'comprehensive' in instruction_lower or
+                'powerful' in instruction_lower or
+                'feature-rich' in instruction_lower or
+                'complete solution' in instruction_lower or
+                'any math' in instruction_lower or
+                'any calculation' in instruction_lower or
+                'all features' in instruction_lower
+            )
+            
+            # FORCE multi-file for advanced requests to enable better code organization
+            if wants_advanced and language.lower() in ["html", "web"]:
+                multi_file = True
+                print(f"🚀 [ADVANCED MODE] Forcing multi-file architecture for better code quality")
+            
             # Analyze instruction to determine architecture
             architecture = {
                 "type": self._detect_project_type(instruction, language),
                 "language": language,
                 "multi_file": multi_file,
+                "wants_advanced": wants_advanced,  # Store for later stages
                 "needs_database": self._needs_database(instruction),
                 "needs_api": self._needs_api(instruction),
                 "needs_frontend": self._needs_frontend(instruction),
@@ -199,7 +222,15 @@ class EnterpriseBuildSystem:
             
             # Plan file structure
             if multi_file:
-                architecture["files_to_create"] = self._plan_file_structure(architecture)
+                # For advanced web apps, create separate HTML/CSS/JS files
+                if wants_advanced and language.lower() in ["html", "web"]:
+                    architecture["files_to_create"] = [
+                        {"name": "index", "type": "html"},
+                        {"name": "style", "type": "css"},
+                        {"name": "script", "type": "js"}
+                    ]
+                else:
+                    architecture["files_to_create"] = self._plan_file_structure(architecture)
             else:
                 architecture["files_to_create"] = [{"name": "main", "type": "primary"}]
             
@@ -229,21 +260,159 @@ class EnterpriseBuildSystem:
             
             generated_files = []
             
+            wants_advanced = architecture.get("wants_advanced", False)
+            
             if architecture["multi_file"] and len(architecture["files_to_create"]) > 1:
-                # Multi-file project
-                for file_plan in architecture["files_to_create"]:
-                    prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
-                    response = model.generate_content(prompt)
+                print(f"\n🔨 Generating multi-file project with {len(architecture['files_to_create'])} files...")
+                
+                # ITERATIVE APPROACH: Generate initial draft, then enhance
+                if wants_advanced:
+                    # Step 1: Generate feature specification first
+                    print("📋 Step 1: Creating comprehensive feature specification...")
+                    spec_prompt = f"""You are planning an ADVANCED, ENTERPRISE-LEVEL application.
+
+USER REQUEST: "{instruction}"
+
+Create a detailed technical specification listing ALL required features for this sophisticated app.
+
+For a CALCULATOR, include:
+- Scientific functions (sin, cos, tan, asin, acos, atan, log, ln, log10, sqrt, cbrt, exp)
+- Advanced operations (powers x^y, factorial n!, modulo %, abs, round, floor, ceil)
+- Expression evaluation with order of operations: "3×(5+2)÷7"
+- Memory functions: M+ (add to memory), M- (subtract), MR (recall), MC (clear)
+- Calculation history with scrollable list, copy results, clear history
+- Keyboard shortcuts: Enter=calculate, C=clear, Escape=clear, 0-9=digits, +−×÷=operators
+- Multiple modes with tabs: Basic, Scientific, Programmer (hex/bin/oct), Statistics
+- Angle units toggle: Degrees ↔ Radians for trig functions
+- Constants panel: π, e, φ (golden ratio), c (speed of light)
+- Dark theme with gradient backgrounds
+- Responsive design for mobile
+
+For TODO LISTS, include drag-drop, categories, priorities, due dates, search, export.
+
+For DASHBOARDS, include live charts, real-time updates, multiple widgets, filters.
+
+Return ONLY a numbered list of features (no code):
+1. Feature one description
+2. Feature two description
+...
+"""
                     
-                    generated_files.append({
-                        "name": file_plan["name"],
-                        "type": file_plan["type"],
-                        "code": self._clean_code(response.text),
-                        "language": language
-                    })
+                    spec_response = model.generate_content(spec_prompt)
+                    feature_spec = self._clean_code(spec_response.text)
+                    print(f"✅ Specification complete: {len(feature_spec.split(chr(10)))} features planned")
                     
-                    # Small delay to avoid rate limits
-                    await asyncio.sleep(0.5)
+                    # Step 2: Generate initial code for each file
+                    print("🎨 Step 2: Generating initial code files...")
+                    for file_plan in architecture["files_to_create"]:
+                        if file_plan["type"] == "html":
+                            prompt = f"""Generate the HTML structure for an ADVANCED {instruction}.
+
+FEATURE SPECIFICATION:
+{feature_spec}
+
+Create a complete HTML file with:
+- Semantic HTML5 structure
+- All UI elements for every feature in the spec
+- Proper IDs and classes for JavaScript hooks
+- Mobile-responsive meta tags
+- Links to style.css and script.js
+
+Generate ONLY the HTML code:"""
+                        
+                        elif file_plan["type"] == "css":
+                            prompt = f"""Generate the CSS styling for an ADVANCED {instruction}.
+
+FEATURE SPECIFICATION:
+{feature_spec}
+
+Create comprehensive CSS with:
+- Premium gradient backgrounds (purple, blue, indigo gradients)
+- Glass-morphism effects with backdrop-filter
+- Smooth 60fps animations and transitions
+- Professional color palette and typography
+- Responsive design (mobile-first, 320px+, 768px+, 1024px+)
+- Grid/flexbox layouts
+- Hover effects and active states
+- Dark theme optimized
+
+Generate ONLY the CSS code:"""
+                        
+                        elif file_plan["type"] == "js":
+                            prompt = f"""Generate the JavaScript logic for an ADVANCED {instruction}.
+
+FEATURE SPECIFICATION:
+{feature_spec}
+
+Create complete JavaScript with:
+- ALL features from the specification implemented
+- Scientific calculations using Math library
+- Expression parsing and evaluation
+- Event listeners for all buttons and keyboard
+- localStorage for data persistence
+- Error handling and input validation
+- Clean, modular, well-commented code
+
+Generate ONLY the JavaScript code:"""
+                        
+                        else:
+                            prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
+                        
+                        response = model.generate_content(prompt)
+                        generated_files.append({
+                            "name": file_plan["name"],
+                            "type": file_plan["type"],
+                            "code": self._clean_code(response.text),
+                            "language": language
+                        })
+                        print(f"  ✓ Generated {file_plan['name']}.{file_plan['type']}")
+                        await asyncio.sleep(0.3)
+                    
+                    # Step 3: Enhancement pass - analyze and improve
+                    print("⚡ Step 3: Running enhancement pass to add missing features...")
+                    js_file = next((f for f in generated_files if f["type"] == "js"), None)
+                    
+                    if js_file:
+                        enhance_prompt = f"""You are enhancing an application to make it TRULY ENTERPRISE-LEVEL.
+
+ORIGINAL REQUEST: "{instruction}"
+
+FEATURE SPECIFICATION (ALL REQUIRED):
+{feature_spec}
+
+CURRENT JAVASCRIPT CODE:
+```javascript
+{js_file['code']}
+```
+
+Analyze the current code and ADD any missing features from the specification.
+Focus on ensuring ALL advanced features are present:
+- Scientific functions (sin, cos, tan, log, etc.)
+- Memory functions (M+, M-, MR, MC)
+- Calculation history
+- Keyboard shortcuts
+- Expression parsing
+
+Return the COMPLETE ENHANCED JavaScript code with all features:"""
+                        
+                        enhance_response = model.generate_content(enhance_prompt)
+                        enhanced_code = self._clean_code(enhance_response.text)
+                        js_file['code'] = enhanced_code
+                        print("  ✓ JavaScript enhanced with advanced features")
+                    
+                else:
+                    # Standard multi-file generation
+                    for file_plan in architecture["files_to_create"]:
+                        prompt = self._create_file_prompt(instruction, language, file_plan, architecture)
+                        response = model.generate_content(prompt)
+                        
+                        generated_files.append({
+                            "name": file_plan["name"],
+                            "type": file_plan["type"],
+                            "code": self._clean_code(response.text),
+                            "language": language
+                        })
+                        await asyncio.sleep(0.5)
             else:
                 # Detect if user wants advanced/sophisticated app (precise detection)
                 instruction_lower = instruction.lower()
@@ -584,61 +753,6 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
                 # Generate code
                 response = model.generate_content(prompt)
                 generated_code = self._clean_code(response.text)
-                
-                # STEP 3: Validate advanced features (if applicable)
-                if feature_checklist and wants_advanced:
-                    validation_keywords = feature_checklist.get("validation_keywords", [])
-                    max_retries = 2
-                    retry_count = 0
-                    missing_features = []
-                    
-                    while retry_count < max_retries:
-                        missing_features = []
-                        
-                        print(f"\n🔍 Validation attempt {retry_count + 1}/{max_retries}: Checking {len(validation_keywords)} required features...")
-                        for keyword in validation_keywords:
-                            if keyword.lower() not in generated_code.lower():
-                                missing_features.append(keyword)
-                        
-                        # Check if all features are present
-                        if not missing_features:
-                            print(f"✅ All {len(validation_keywords)} features validated successfully!")
-                            break
-                        
-                        # If critical features are missing and we have retries left
-                        if retry_count < max_retries - 1:
-                            print(f"⚠️ Missing {len(missing_features)} features: {', '.join(missing_features[:5])}")
-                            print(f"🔄 Retry {retry_count + 1}/{max_retries - 1}: Re-generating with stronger emphasis...")
-                            
-                            retry_prompt = f"""The previous code was INCOMPLETE. It's missing CRITICAL FEATURES that were explicitly required.
-
-USER REQUEST: "{instruction}"
-
-YOU FORGOT TO INCLUDE THESE FEATURES:
-{chr(10).join([f"❌ MISSING: {feat}" for feat in missing_features])}
-
-COMPLETE FEATURE CHECKLIST (EVERY ONE IS MANDATORY):
-{features_list}
-
-This is attempt {retry_count + 2}. You MUST include EVERY feature from the checklist.
-Do NOT skip any features. Generate a COMPLETE implementation.
-Use proper symbols (÷ × − + √ π), beautiful gradients, smooth animations.
-
-Generate ONLY the complete HTML code with ALL features (no explanations):"""
-                            
-                            retry_response = model.generate_content(retry_prompt)
-                            generated_code = self._clean_code(retry_response.text)
-                            retry_count += 1
-                        else:
-                            # Max retries reached - this is a validation failure
-                            break
-                    
-                    # CRITICAL: If features are still missing after all retries, fail the build
-                    if missing_features:
-                        error_msg = f"❌ VALIDATION FAILED: Advanced features still missing after {max_retries} attempts: {', '.join(missing_features[:10])}"
-                        print(error_msg)
-                        print("💡 TIP: Try simpler instructions or request specific features explicitly")
-                        raise Exception(error_msg)
                 
                 generated_files.append({
                     "name": "main",
