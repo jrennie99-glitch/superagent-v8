@@ -19,7 +19,19 @@ router = APIRouter(prefix="/api/v1", tags=["Streaming Build"])
 
 def _analyze_project_type(files_created: list, project_dir: str) -> dict:
     """Analyze project type and determine if it's previewable"""
-    file_names = [f.get('name', '') for f in files_created]
+    import os
+    
+    # Get actual files from disk (not in-memory data)
+    file_names = []
+    if os.path.exists(project_dir):
+        for root, dirs, files in os.walk(project_dir):
+            for file in files:
+                rel_path = os.path.relpath(os.path.join(root, file), project_dir)
+                file_names.append(rel_path)
+    
+    # Fallback to in-memory data if directory doesn't exist
+    if not file_names:
+        file_names = [f.get('filename', f.get('name', '')) for f in files_created]
     
     # Check for single HTML file (simple static site)
     if len(files_created) == 1 and file_names[0].endswith('.html'):
@@ -102,13 +114,26 @@ def _analyze_project_type(files_created: list, project_dir: str) -> dict:
         ]
     }
 
-def _build_file_tree(files_created: list) -> list:
-    """Build a structured file tree from created files"""
+def _build_file_tree(files_created: list, project_dir: str = None) -> list:
+    """Build a structured file tree from created files - reads actual file sizes from disk"""
+    import os
     tree = []
+    
     for file_info in files_created:
-        name = file_info.get('name', '')
+        name = file_info.get('filename', file_info.get('name', ''))
         file_type = file_info.get('type', 'file')
-        size = len(file_info.get('content', ''))
+        
+        # Get actual file size from disk
+        size = 0
+        if project_dir and os.path.exists(project_dir):
+            file_path = os.path.join(project_dir, name)
+            if os.path.exists(file_path):
+                size = os.path.getsize(file_path)
+        
+        # Fallback: try to get size from code/content field
+        if size == 0:
+            content = file_info.get('code', file_info.get('content', ''))
+            size = len(content) if content else 0
         
         tree.append({
             'name': name,
@@ -285,8 +310,8 @@ async def stream_build_progress(instruction: str, plan_mode: bool, enterprise_mo
                 # Detect project type and build metadata
                 project_meta = _analyze_project_type(files_created, project_dir)
                 
-                # Build file tree structure
-                file_tree = _build_file_tree(files_created)
+                # Build file tree structure with actual file sizes
+                file_tree = _build_file_tree(files_created, project_dir)
                 
                 yield f"data: {json.dumps({'type': 'log', 'message': f'✅ Enterprise build complete in {build_time}s!', 'icon': '✅'})}\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': f'📁 Created {len(files_created)} files in {project_dir}', 'icon': '📁'})}\n\n"
