@@ -67,17 +67,62 @@ class EnterpriseBuildSystem:
             "checkpoint_after": None
         }
         
-        # 🎯 INTELLIGENT LANGUAGE OVERRIDE: Force HTML for visual/interactive apps
-        # NO-CODE PLATFORM: Users want visual apps, not backend APIs!
+        # 🎯 INTELLIGENT LANGUAGE OVERRIDE: Detect intended app type
+        # NO-CODE PLATFORM: Visual apps → HTML, Backend/APIs/CLI → Python
+        import re
         instruction_lower = instruction.lower()
-        visual_keywords = [
-            'calculator', 'todo', 'task list', 'game', 'quiz', 'form', 'survey',
-            'dashboard', 'chart', 'timer', 'counter', 'weather app', 'converter',
-            'gallery', 'portfolio', 'website', 'web app', 'ui', 'interface',
-            'button', 'colorful', 'beautiful', 'modern', 'simple app'
+        
+        # Backend/API/CLI keywords - with word boundaries to avoid false matches
+        backend_patterns = [
+            # API & Web Services (word boundaries to avoid matching "application")
+            r'\bapi\b', r'\bbackend\b', r'\bserver\b', r'\bendpoint\b',
+            r'rest api', r'graphql', r'\brest\b',
+            r'microservice', r'\bwebhook\b', r'api gateway', r'service endpoint',
+            # Frameworks
+            r'\bflask\b', r'fastapi', r'django', r'express server', r'node server',
+            # Database & Storage
+            r'\bdatabase\b', r'\bsql\b', r'\bcrud\b', r'postgres', r'mysql', r'mongodb',
+            # Authentication & Security
+            r'authentication', r'auth api', r'login api', r'\bjwt\b', r'oauth',
+            # Infrastructure
+            r'serverless', r'\blambda\b', r'cloud function', r'\bworker\b', r'\bqueue\b',
+            # CLI & Scripts
+            r'\bcli\b', r'command line', r'\bscript\b', r'automation', r'\bcron\b',
+            r'command tool', r'cli tool', r'terminal'
         ]
         
-        if any(keyword in instruction_lower for keyword in visual_keywords):
+        # Visual/interactive keywords - phrases don't need word boundaries
+        visual_keywords = [
+            # Interactive Tools
+            'calculator', 'todo', 'task list', 'task manager', 'game', 'quiz',
+            'form', 'survey', 'poll', 'timer', 'counter', 'stopwatch',
+            # Data Visualization
+            'dashboard', 'chart', 'graph', 'visualization', 'analytics',
+            # Converters & Tools
+            'weather app', 'converter', 'unit converter', 'color picker',
+            # Content & Media
+            'gallery', 'portfolio', 'blog', 'photo gallery', 'image viewer',
+            # General Web UI
+            'website', 'web app', 'webpage', 'landing page', 'home page',
+            'ui', 'interface', 'user interface', 'button', 'menu',
+            # Style Descriptors (strong visual intent)
+            'colorful', 'beautiful', 'modern', 'simple app', 'interactive',
+            'animated', 'responsive', 'mobile app'
+        ]
+        
+        # Check with word-boundary regex for backend (prevents "application" → "api" match)
+        is_backend = any(re.search(pattern, instruction_lower) for pattern in backend_patterns)
+        # Simple substring for visual (phrases like "calculator" are safe)
+        is_visual = any(keyword in instruction_lower for keyword in visual_keywords)
+        
+        if is_backend:
+            # Keep or force Python for backend/API/CLI
+            if language.lower() in ["html", "web", "javascript"]:
+                print(f"🔧 Smart Detection: '{instruction[:50]}...' is a backend/API/CLI")
+                print(f"   Overriding language from '{language}' → 'python' for backend")
+                language = "python"
+        elif is_visual:
+            # Force HTML for visual/interactive apps
             if language.lower() not in ["html", "web", "javascript"]:
                 print(f"🎨 Smart Detection: '{instruction[:50]}...' is a visual app")
                 print(f"   Overriding language from '{language}' → 'html' for better UX")
