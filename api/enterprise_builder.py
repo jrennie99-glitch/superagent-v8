@@ -651,6 +651,11 @@ display.innerText = currentValue;     // ❌ WRONG for <input>
 
 REMEMBER: <input> and <textarea> = .value property
            <div> and <span> = .textContent property
+
+✅ CHECKLIST BEFORE YOU WRITE updateDisplay():
+□ Is 'display' an <input> element? → Use display.value = currentValue
+□ Is 'display' an <input> element? → NEVER use display.textContent
+□ ALWAYS use .value for inputs - no exceptions!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CRITICAL IMPLEMENTATION REQUIREMENTS:
@@ -682,6 +687,10 @@ CRITICAL IMPLEMENTATION REQUIREMENTS:
    - Responsive design for all screen sizes
    - Accessibility features (ARIA labels, keyboard navigation)
    - Loading states and error messages
+
+🚨 FINAL REMINDER BEFORE GENERATING CODE:
+For <input> elements: ALWAYS use .value property (display.value = currentValue)
+NEVER use .textContent for inputs - it will not work!
 
 Generate ONLY the complete, working JavaScript code with ALL features functional:"""
                         
