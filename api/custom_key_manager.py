@@ -120,3 +120,30 @@ async def api_key_status():
             "is_active": active_provider == "groq"
         }
     }
+
+@router.get("/rate-limit-status")
+async def rate_limit_status():
+    """Check rate limit status and failover information"""
+    from api.rate_limit_failover import get_rate_limit_tracker
+    
+    tracker = get_rate_limit_tracker()
+    status = tracker.get_status()
+    
+    # Add helpful messages
+    groq_status = status["groq"]
+    gemini_status = status["gemini"]
+    
+    if not groq_status["available"] and not gemini_status["available"]:
+        message = "⚠️ Both providers are rate limited. Please wait for reset."
+    elif not groq_status["available"]:
+        message = f"⚠️ GROQ rate limited. Using Gemini as backup. GROQ resets in {groq_status['seconds_until_reset']}s"
+    elif not gemini_status["available"]:
+        message = f"⚠️ Gemini rate limited. Using GROQ as backup. Gemini resets in {gemini_status['seconds_until_reset']}s"
+    else:
+        message = "✅ All providers available"
+    
+    return {
+        "message": message,
+        "status": status,
+        "automatic_failover": "enabled"
+    }
