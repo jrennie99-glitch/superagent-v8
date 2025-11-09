@@ -188,21 +188,3 @@ function handleButtonClick(e) {
 
 // Initialize
 loadHistory();
-```
-
-**Explanation:**
-
-The code implements a simple calculator with basic operations. It uses state variables to store the current value, memory, and history. The `calculate` function parses the expression and performs the operation. The `saveToHistory` function saves the calculation to the history array and stores it in local storage. The `handleButtonClick` function handles button clicks and updates the current value accordingly. The `handleKeyPress` function handles keyboard events and triggers the corresponding button click event.
-
-**Usage:**
-
-To use this code, simply create a new JavaScript file (e.g., `script.js`) and paste the code into it. Then, create a new HTML file (e.g., `index.html`) and add a script tag that references the JavaScript file. You can then interact with the calculator by clicking on the buttons or using the keyboard shortcuts.
-
-**Notes:**
-
-* The code uses local storage to persist the history and theme.
-* The code uses a simple expression parser to evaluate the expression.
-* The code handles errors by displaying an error message.
-* The code uses a modular structure to keep the code organized and maintainable.
-* The code uses helper functions to perform complex operations.
-* The code uses event listeners to handle button clicks and keyboard events.
