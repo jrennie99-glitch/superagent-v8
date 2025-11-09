@@ -1,7 +1,7 @@
 # SuperAgent - Complete Replit Agent Clone
 
 ## Overview
-SuperAgent is a complete Replit Agent clone providing an autonomous development experience. It allows users to generate, manage, and deploy applications efficiently using natural language to produce production-ready code. The platform aims to enhance productivity and code quality through autonomous planning, multi-step execution, and comprehensive code generation, including an intelligent plan mode for comprehensive project planning and feature suggestions. Key capabilities include an admin-only Auto App Builder and integration with Runway ML for AI video generation.
+SuperAgent is a complete Replit Agent clone providing an autonomous development experience. It allows users to generate, manage, and deploy applications efficiently using natural language to produce production-ready code. The platform aims to enhance productivity and code quality through autonomous planning, multi-step execution, and comprehensive code generation. Key capabilities include an admin-only Auto App Builder and integration with Runway ML for AI video generation. The project envisions a no-code platform where users can articulate ideas in plain language to generate production-ready web applications with live previews.
 
 ## User Preferences
 - Platform should operate like a true no-code tool - users shouldn't need technical knowledge to build anything
@@ -14,38 +14,25 @@ SuperAgent is a complete Replit Agent clone providing an autonomous development 
 - I want the agent to use the most efficient and relevant AI model for the task
 
 ## System Architecture
-SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It features a **Multi-Provider AI System** with automatic provider detection and intelligent failover:
-- **Primary Providers**: GROQ (`llama-3.3-70b-versatile`) for blazing-fast inference, Google Gemini AI (`gemini-2.0-flash`) for large free tier
-- **Custom API Key System**: USER_GROQ_API_KEY and USER_GEMINI_API_KEY environment variables for user's personal keys with their own quotas
-- **Auto-Detection**: System automatically selects the best available provider based on configured keys (GROQ prioritized for speed)
-- **Automatic Rate Limit Failover (NEW Nov 2025)**: When one provider hits rate limits, system automatically switches to backup provider without manual intervention. Tracks reset times and returns to preferred provider when available. Zero-downtime AI generation with transparent failover between GROQ and Gemini.
-- **Universal Generation**: Single codebase supports multiple AI providers seamlessly
-- Complemented by a 2-Supervisor System that utilizes multiple AI providers for enhanced code verification and security scanning.
+SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It features a Multi-Provider AI System with automatic provider detection and intelligent failover.
 
 **UI/UX Decisions:**
-The UI features a clean, minimal, and sophisticated aesthetic with a purple gradient theme, aiming for a premium user experience. It includes a mobile-first Progressive Web App (PWA) design, a comprehensive Memory Viewer, split-screen interactive chat with live streaming build logs, and labeled button controls for improved accessibility and user experience.
+The UI features a clean, minimal, and sophisticated aesthetic with a purple gradient theme. It includes a mobile-first Progressive Web App (PWA) design, a comprehensive Memory Viewer, split-screen interactive chat with live streaming build logs, and labeled button controls for accessibility.
 
 **Technical Implementations & Feature Specifications:**
-- **Core AI Capabilities:** Natural language processing for autonomous planning, multi-step execution, code generation, Tool-Calling System, and advanced-intent detection for sophisticated app generation. Features tiered guidance for different request complexities (Standard vs. Advanced).
-- **Enterprise Build System (ENHANCED Nov 2025):** An 11-stage build process with:
-  - **Spec-Driven Generation**: AI creates detailed feature specifications before code generation
-  - **Advanced Prompt Engineering**: Demands enterprise-grade, production-ready implementations with proper algorithms (e.g., expression parsers for calculators, not sequential operators)
-  - **E2E Feature Verification (NEW)**: Automated Playwright-based browser testing that validates features actually work at runtime (tests operator precedence, scientific functions, memory systems, keyboard shortcuts, persistence, etc.)
-  - **Runtime Validation**: System launches apps in real browsers and tests interactive behaviors to ensure no broken functionality
-  - **Feature Coverage Verification**: Automated validation to ensure all advertised features are fully functional (no placeholders or "coming soon" features)
-  - **Quality Gates**: Code must pass E2E tests (70%+ coverage) with zero critical issues before delivery
-  - **Multi-file project generation**, real dependency installation, automated testing, security scanning
-  - **Production outputs** (Dockerfile, CI/CD, documentation)
-- **Code Quality & Reliability:** Features a 4-layer Hallucination Fixer, a 2-Supervisor System with a Supreme Agent, ML-based error prevention, a dedicated Code Review System with security scanning, and an Autonomous Self-Repair System. Includes a 5-tier quality framework for UX, design, responsiveness, features, and production polish. **NEW**: Automated E2E testing with Playwright validates features work at runtime - system actually clicks buttons, types input, and verifies correct behavior in real browsers. Detects broken features like missing expression parsers, non-functional memory buttons, broken keyboard shortcuts, etc.
+- **Core AI Capabilities:** Natural language processing for autonomous planning, multi-step execution, code generation, Tool-Calling System, and advanced-intent detection. Features tiered guidance for different request complexities (Standard vs. Advanced).
+- **Multi-Provider AI System:** Utilizes GROQ (`llama-3.3-70b-versatile`) for speed and Google Gemini AI (`gemini-2.0-flash`) for a large free tier. Includes a custom API key system for user-provided keys and automatic rate limit failover between providers, ensuring zero-downtime AI generation.
+- **Enterprise Build System:** An 11-stage build process with spec-driven generation, advanced prompt engineering for production-ready code, multi-file project generation, real dependency installation, automated testing, and security scanning. Features E2E verification using Playwright for runtime validation of features and quality gates requiring high test coverage.
+- **Code Quality & Reliability:** Incorporates a 4-layer Hallucination Fixer, a 2-Supervisor System with a Supreme Agent, ML-based error prevention, a dedicated Code Review System with security scanning, and an Autonomous Self-Repair System. Includes a 5-tier quality framework and automated E2E testing with Playwright to validate interactive behaviors.
 - **Development Workflow Enhancements:** Git integration, automated Pytest and documentation generation, a Refactoring Engine, AI-driven debugging, and a Rollback System.
 - **System Management:** Secure file operations, safe shell command execution, Environment Manager, and deployment configuration tools.
 - **Advanced Platform Tools:** Extensible Plugin System, Docker Sandboxed Execution, Codebase Query Engine, Long-Term Memory (SQLite-based), and an Autonomous Planner.
 - **User Interaction:** Enhanced Voice Interface, CLI Interface, structured JSON logging, and inline status messages.
-- **Replit Agent Parity & Extensions:** Includes "Build Modes", App Testing with Playwright, Agents & Automations, Dynamic Intelligence, First-Party Connectors, a Visual Editor, and an **Intelligent Plan Mode** for clarifying questions and feature suggestions.
-- **User Management & Security:** PostgreSQL-backed user management with Bcrypt hashing, session-based authentication, admin controls, and Cybersecurity AI. Secure video upload with UUID-based filenames to prevent path traversal.
+- **Replit Agent Parity & Extensions:** Includes "Build Modes", App Testing with Playwright, Agents & Automations, Dynamic Intelligence, First-Party Connectors, a Visual Editor, and an Intelligent Plan Mode for clarifying questions and feature suggestions.
+- **User Management & Security:** PostgreSQL-backed user management with Bcrypt hashing, session-based authentication, admin controls, and Cybersecurity AI. Secure video upload with UUID-based filenames.
 - **Project Management:** Project import/export (ZIP), multi-language detection, production-ready scaffolding (Dockerfiles, CI/CD), and GitHub integration.
 - **Multi-Platform Deployment:** One-click deployment instructions for platforms like Railway, Render, Fly.io, and Replit.
-- **Video-to-App Feature:** Allows AI to analyze video content (UI, interactions, user flow) and generate applications based on the visual input and user instructions.
+- **Video-to-App Feature:** Allows AI to analyze video content (UI, interactions, user flow) and generate applications.
 
 ## External Dependencies
 - **AI Models:** Google Gemini AI (`gemini-2.0-flash`, `gemini-2.0-flash-thinking-exp`), OpenAI, Claude, Groq (`llama-3.1-70b-versatile`), Runway ML Gen-3 Alpha.
@@ -55,104 +42,3 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 - **Bot Frameworks:** `slack-bolt`, `python-telegram-bot`.
 - **Scheduling:** APScheduler.
 - **Deployment Platforms:** Railway, Render, Fly.io, Koyeb, Replit.
-
-## Recent Changes (November 9, 2025)
-### Automatic Rate Limit Failover System
-
-1. **Intelligent Provider Failover**:
-   - Implemented automatic failover between GROQ and Gemini when rate limits are hit
-   - System detects rate limit errors (429, "quota exceeded", "too many requests")
-   - Extracts reset time from error messages and tracks when providers become available
-   - Automatically switches to backup provider and retries generation
-   - Returns to preferred provider (GROQ) when rate limits reset
-   - Zero manual intervention required - completely transparent to users
-
-2. **Rate Limit Tracking System**:
-   - Created `rate_limit_failover.py` for tracking provider availability
-   - Persists rate limit state in `/tmp/rate_limits.json`
-   - Monitors reset times for both GROQ and Gemini
-   - Smart provider selection based on current availability
-
-3. **Enhanced Enterprise Builder**:
-   - Modified `_initialize_ai_model()` to check rate limit status before selection
-   - Updated `_generate_content()` with automatic failover logic
-   - Catches rate limit exceptions and switches providers automatically
-   - Parses reset times from GROQ error messages (e.g., "try again in 3m12s")
-
-4. **New API Endpoints**:
-   - `/api/v1/rate-limit-status` - Check current provider availability and reset times
-   - Returns detailed status for GROQ and Gemini with seconds until reset
-   - Shows recommended provider based on availability
-
-5. **Rate Limit Details Confirmed**:
-   - GROQ Free Tier: 100K tokens/day, 12K tokens/min, 30 req/min, 1K req/day
-   - Gemini Free Tier: 1,500 requests/day with large context windows
-   - System optimizes usage by prioritizing GROQ speed, falling back to Gemini capacity
-
-## Recent Changes (November 9, 2025)
-### UI/UX Improvements
-
-1. **Copy-Paste Fix - Mobile & Touch Devices**:
-   - Fixed copy-paste functionality not working on mobile devices and tablets
-   - Added `touch-action: manipulation` to prevent 3D transform interference
-   - Added explicit `user-select: text` for cross-browser compatibility
-   - Users can now long-press to copy-paste on iOS/Android devices
-   - Issue was caused by rotating sphere animation blocking touch context menus
-
-## Recent Changes (November 8, 2025)
-### Critical Bug Fixes & Quality Improvements
-
-1. **Language Detection Fix - Visual Apps Now Generate Correctly**:
-   - Fixed critical bug where calculators/todo apps generated Python backend APIs instead of HTML/CSS/JS visual interfaces
-   - Implemented word-boundary regex detection to differentiate backend keywords (api, server, webhook) from visual requests (calculator, todo, game)
-   - Changed EnterpriseBuildRequest default language from "python" to "html" for no-code platform alignment
-   - System now correctly generates beautiful HTML/CSS/JavaScript apps with:
-     - 800+ lines of sophisticated JavaScript (Shunting Yard expression parsers, scientific functions, memory operations)
-     - 200+ lines of premium CSS (gradients, animations, responsive design)
-     - Full keyboard shortcuts, localStorage persistence, error handling
-     - Proper mathematical symbols (÷ × − + √ π) and ARIA labels for accessibility
-
-2. **E2E Quality Gate Enhancement**:
-   - Fixed E2E runner to return empty critical_issues array for browser dependency errors
-   - Quality gate properly handles graceful E2E skip when browser dependencies unavailable
-   - BrowserType.launch errors no longer block builds (allows development in Replit environment)
-   - E2E tests still run and validate features when browser dependencies available (Railway, Render, Fly.io)
-   - Builds now complete successfully with 200 OK status instead of being blocked
-
-3. **Type Safety Improvements**:
-   - Fixed all 8 LSP type errors in enterprise_builder.py
-   - Added None-safety to `_clean_code()` function
-   - Added defensive checks at all AI response handling points
-   - Zero runtime errors from type mismatches
-
-4. **Browser Dependency Handling**:
-   - Playwright E2E testing gracefully handles missing browser dependencies in Replit environment
-   - Falls back to static code analysis when browser automation unavailable
-   - Full E2E functionality available when deployed to Railway, Render, Fly.io
-   - User receives clear warnings but builds continue when deps unavailable
-
-5. **Production Deployment Fix - Playwright Import (CRITICAL)**:
-   - Fixed ModuleNotFoundError crashes on Render deployment when playwright browsers not installed
-   - Changed playwright imports from module-level to lazy runtime imports
-   - E2E test runner now only imports playwright when actually running tests
-   - Production deployments work even without browser dependencies installed
-   - Changed type annotations from `page: Page` to `page: object` to avoid import-time errors
-   - App can now start successfully on Render, Railway, Fly.io without playwright browsers
-
-6. **JavaScript File Generation Fix (CRITICAL)**:
-   - Fixed webapp builds missing script.js files entirely - calculators/apps were non-functional without JavaScript
-   - Modified `_plan_file_structure()` to include `{"name": "script", "type": "script"}` in webapp file list
-   - Enhanced `_create_file_prompt()` with JavaScript-specific prompt for "script" and "js" file types
-   - AI now explicitly instructed to generate pure JavaScript code (300+ lines) with no HTML/CSS tags
-   - Prompt demands: event listeners, state management, localStorage, keyboard shortcuts, error handling
-   - **Enhanced `_clean_code()` to strip explanatory prose and code fences** (identified by architect):
-     - Removes markdown prose markers (**Explanation:**, **Usage:**, **Notes:** etc.)
-     - Removes closing code fences (```) that appear after prose
-     - Three-step process: remove opening fences → strip prose → remove closing fences
-     - Verified: 208-line broken file → 190-line clean JavaScript with zero markers
-   - Calculator apps now generate with proper:
-     - 200+ lines of sophisticated JavaScript (not HTML embedded in .js files)
-     - Expression parsers, math operations, memory functions
-     - Full keyboard support and localStorage persistence
-     - Event listeners on all buttons and proper DOM manipulation
-   - All HTML files properly link to script.js with `<script src="script.js" defer></script>`
