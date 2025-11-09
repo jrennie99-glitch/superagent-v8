@@ -1,0 +1,185 @@
+<style>
+  /* Premium Gradients */
+  .calculator {
+    background: linear-gradient(to bottom, #212121, #333333);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Glass-Morphism */
+  .display {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+  }
+
+  /* Professional Color Palette */
+  .button {
+    background: #333333;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    background: #444444;
+  }
+
+  /* Proper Symbols */
+  .operator {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .operator::before {
+    content: "\00F7"; /* ÷ */
+  }
+
+  .operator.times::before {
+    content: "\00D7"; /* × */
+  }
+
+  .operator.minus::before {
+    content: "\2212"; /* − */
+  }
+
+  .operator.plus::before {
+    content: "+";
+  }
+
+  .operator.sqrt::before {
+    content: "\221A"; /* √ */
+  }
+
+  .operator.pi::before {
+    content: "\03C0"; /* π */
+  }
+
+  .operator.squared::before {
+    content: "\00B2"; /* ² */
+  }
+
+  .operator.cubed::before {
+    content: "\00B3"; /* ³ */
+  }
+
+  /* Perfect Typography Hierarchy */
+  .display {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .button {
+    font-size: 16px;
+  }
+
+  /* Mobile-First Responsive Design */
+  @media (max-width: 320px) {
+    .calculator {
+      width: 100%;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .display {
+      font-size: 18px;
+    }
+
+    .button {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .calculator {
+      width: 50%;
+      height: 50vh;
+      padding: 40px;
+    }
+
+    .display {
+      font-size: 24px;
+    }
+
+    .button {
+      font-size: 16px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .calculator {
+      width: 30%;
+      height: 30vh;
+      padding: 60px;
+    }
+
+    .display {
+      font-size: 30px;
+    }
+
+    .button {
+      font-size: 18px;
+    }
+  }
+
+  /* Touch Targets */
+  .button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Grid Layouts */
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
+
+  /* Animations */
+  .button {
+    transition: background 0.2s ease-in-out;
+  }
+
+  .button:hover {
+    animation: hover 0.2s ease-in-out;
+  }
+
+  @keyframes hover {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+
+  /* Error Handling */
+  .error {
+    color: #ff0000;
+    font-size: 14px;
+  }
+
+  /* Loading States */
+  .loading {
+    color: #ffffff;
+    font-size: 14px;
+  }
+
+  /* Instant Feedback */
+  .feedback {
+    color: #00ff00;
+    font-size: 14px;
+    animation: feedback 0.2s ease-in-out;
+  }
+
+  @keyframes feedback {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

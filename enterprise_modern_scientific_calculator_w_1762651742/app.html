@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Scientific Calculator</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="help-button">Help</a></li>
+                <li><a href="#" id="settings-button">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="calculator">
+            <input type="text" id="display" disabled>
+            <div class="keyboard">
+                <button id="clear-button">C</button>
+                <button id="backspace-button"><span>&#8592;</span></button>
+                <button id="equals-button">=</button>
+                <button id="divide-button">÷</button>
+                <button id="multiply-button">×</button>
+                <button id="subtract-button">−</button>
+                <button id="add-button">+</button>
+                <button id="sqrt-button">√</button>
+                <button id="pi-button">π</button>
+                <button id="exp-button">e^x</button>
+                <button id="log-button">log</button>
+                <button id="sin-button">sin</button>
+                <button id="cos-button">cos</button>
+                <button id="tan-button">tan</button>
+                <button id="memory-button">M</button>
+                <button id="memory-clear-button">MC</button>
+                <button id="memory-add-button">M+</button>
+                <button id="memory-subtract-button">M-</button>
+                <button id="number-0-button">0</button>
+                <button id="number-1-button">1</button>
+                <button id="number-2-button">2</button>
+                <button id="number-3-button">3</button>
+                <button id="number-4-button">4</button>
+                <button id="number-5-button">5</button>
+                <button id="number-6-button">6</button>
+                <button id="number-7-button">7</button>
+                <button id="number-8-button">8</button>
+                <button id="number-9-button">9</button>
+                <button id="decimal-button">.</button>
+                <button id="power-button">^</button>
+            </div>
+        </section>
+        <section class="history">
+            <h2>Calculation History</h2>
+            <ul id="history-list"></ul>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

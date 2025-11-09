@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        /* Premium CSS - Glassmorphism, Gradients, Shadows */
+        :root {
+            --primary-color: #2980b9;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .calculator {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+        }
+
+        .display {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px var(--shadow-color);
+            font-size: 2em;
+            text-align: right;
+            width: 90%;
+            color: var(--text-color);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            background-color: var(--secondary-color);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px var(--shadow-color);
+        }
+
+        .operator {
+            background-color: #e74c3c; /* Red */
+        }
+
+        .equal {
+            background-color: #2ecc71; /* Green */
+            grid-column: span 2;
+        }
+
+        .memory {
+            background-color: #f39c12; /* Orange */
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .calculator {
+                width: 90%;
+            }
+
+            .buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .equal {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            button {
+                padding: 10px;
+                font-size: 1em;
+            }
+        }
+
+        /* Dark Mode (Optional) */
+        .dark-mode {
+            --primary-color: #34495e;
+            --secondary-color: #2c3e50;
+            --background-color: #343a40;
+            --text-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-border: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="display" id="display" value="0" readonly>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="backspace()">&#x232B;</button>
+            <button onclick="calculatePercentage()">%</button>
+            <button onclick="operate('/')" class="operator">÷</button>
+            <button onclick="calculateSquareRoot()">√</button>
+
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button onclick="operate('*')" class="operator">×</button>
+            <button onclick="calculatePower()">x²</button>
+
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button onclick="operate('-')" class="operator">−</button>
+            <button onclick="calculateCube()">x³</button>
+
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button onclick="operate('+')" class="operator">+</button>
+            <button onclick="calculatePi()">π</button>
+
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button onclick="toggleSign()">+/-</button>
+            <button onclick="calculate()" class="equal">=</button>
+            <button onclick="memoryRecall()" class="memory">MR</button>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        let firstOperand = null;
+        let operator = null;
+        let memory = 0;
+
+        function updateDisplay() {
+            const displayElement = document.getElementById('display');
+            displayElement.value = displayValue;
+        }
+
+        function appendNumber(number) {
+            if (displayValue === '0' || displayValue === null) {
+                displayValue = number;
+            } else {
+                displayValue += number;
+            }
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (!displayValue.includes('.')) {
+                displayValue += '.';
+                updateDisplay();
+            }
+        }
+
+        function clearDisplay() {
+            displayValue = '0';
+            firstOperand = null;
+            operator = null;
+            updateDisplay();
+        }
+
+        function backspace() {
+            displayValue = displayValue.slice(0, -1);
+            if (displayValue === '') {
+                displayValue = '0';
+            }
+            updateDisplay();
+        }
+
+        function operate(op) {
+            if (operator !== null) {
+                calculate();
+            }
+            firstOperand = parseFloat(displayValue);
+            operator = op;
+            displayValue = '0';
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (operator === null || firstOperand === null) return;
+
+            let secondOperand = parseFloat(displayValue);
+            let result;
+
+            try {
+                switch (operator) {
+                    case '+':
+                        result = firstOperand + secondOperand;
+                        break;
+                    case '-':
+                        result = firstOperand - secondOperand;
+                        break;
+                    case '*':
+                        result = firstOperand * secondOperand;
+                        break;
+                    case '/':
+                        if (secondOperand === 0) {
+                            throw new Error("Division by zero!");
+                        }
+                        result = firstOperand / secondOperand;
+                        break;
+                    default:
+                        return;
+                }
+
+                displayValue = result.toString();
+                firstOperand = null;
+                operator = null;
+                updateDisplay();
+            } catch (error) {
+                displayValue = "Error";
+                updateDisplay();
+                console.error(error); // Log the error for debugging purposes
+            }
+        }
+
+        function calculatePercentage() {
+            try {
+                displayValue = (parseFloat(displayValue) / 100).toString();
+                updateDisplay();
+            } catch (error) {
+                displayValue = "Error";
+                updateDisplay();
+                console.error(error);
+            }
+        }
+
+        function calculateSquareRoot() {
+            try {
+                const num = parseFloat(displayValue);
+                if (num < 0) {
+                    throw new Error("Invalid input");
+                }
+                displayValue = Math.sqrt(num).toString();
+                updateDisplay();
+            } catch (error) {
+                displayValue = "Error";
+                updateDisplay();
+                console.error(error);
+            }
+        }
+
+        function calculatePower() {
+             try {
+                const num = parseFloat(displayValue);
+                displayValue = Math.pow(num, 2).toString();
+                updateDisplay();
+            } catch (error) {
+                displayValue = "Error";
+                updateDisplay();
+                console.error(error);
+            }
+        }
+
+        function calculateCube() {
+            try {
+                const num = parseFloat(displayValue);
+                displayValue = Math.pow(num, 3).toString();
+                updateDisplay();
+            } catch (error) {
+                displayValue = "Error";
+                updateDisplay();
+                console.error(error);
+            }
+        }
+
+        function calculatePi() {
+           displayValue = Math.PI.toString();
+           updateDisplay();
+        }
+
+        function toggleSign() {
+             try {
+                 displayValue = (parseFloat(displayValue) * -1).toString();
+                 updateDisplay();
+             } catch (error) {
+                 displayValue = "Error";
+                 updateDisplay();
+                 console.error(error);
+             }
+        }
+
+        function memoryRecall() {
+            displayValue = memory.toString();
+            updateDisplay();
+        }
+
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (!isNaN(key) || key === '.') {
+                appendNumber(key);
+            } else if (key === '+') {
+                operate('+');
+            } else if (key === '-') {
+                operate('-');
+            } else if (key === '*') {
+                operate('*');
+            } else if (key === '/') {
+                operate('/');
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Backspace') {
+                backspace();
+            } else if (key === 'c' || key === 'C') {
+                clearDisplay();
+            }
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scientific Calculator Tests</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.19.1.css">
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- Fixture for calculator DOM elements -->
+        <div id="calculator">
+            <div id="display">
+                <input type="text" id="display-input" value="0">
+            </div>
+            <div id="buttons">
+                <button id="btn-clear">C</button>
+                <button id="btn-backspace">←</button>
+                <button id="btn-percent">%</button>
+                <button id="btn-divide">÷</button>
+                <button id="btn-7">7</button>
+                <button id="btn-8">8</button>
+                <button id="btn-9">9</button>
+                <button id="btn-multiply">×</button>
+                <button id="btn-4">4</button>
+                <button id="btn-5">5</button>
+                <button id="btn-6">6</button>
+                <button id="btn-subtract">−</button>
+                <button id="btn-1">1</button>
+                <button id="btn-2">2</button>
+                <button id="btn-3">3</button>
+                <button id="btn-add">+</button>
+                <button id="btn-negate">+/-</button>
+                <button id="btn-0">0</button>
+                <button id="btn-decimal">.</button>
+                <button id="btn-equals">=</button>
+                <button id="btn-sin">sin</button>
+                <button id="btn-cos">cos</button>
+                <button id="btn-tan">tan</button>
+                <button id="btn-sqrt">√</button>
+                <button id="btn-pi">π</button>
+                <button id="btn-x2">x²</button>
+                <button id="btn-log">log</button>
+                <button id="btn-ln">ln</button>
+                <button id="btn-fact">x!</button>
+                <button id="btn-pow">x^y</button>
+                <button id="btn-e">e</button>
+                <button id="btn-inv">1/x</button>
+                <button id="btn-rand">rand</button>
+                <button id="btn-ans">Ans</button>
+                <button id="btn-memory-save">MS</button>
+                <button id="btn-memory-recall">MR</button>
+                <button id="btn-memory-clear">MC</button>
+                <button id="btn-memory-add">M+</button>
+                <button id="btn-memory-subtract">M-</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-2.19.1.js"></script>
+    <script src="../js/calculator.js"></script> <!--  Relative path to your calculator.js -->
+    <script>
+        QUnit.module('Basic Operations', {
+            beforeEach: function() {
+                // Setup fixture state (if needed) before each test
+                $('#display-input').val('0'); // Reset the display
+            }
+        });
+
+        QUnit.test('Addition', function(assert) {
+            $('#btn-1').click();
+            $('#btn-add').click();
+            $('#btn-2').click();
+            $('#btn-equals').click();
+            assert.equal($('#display-input').val(), '3', '1 + 2 should equal 3');
+        });
+
+        QUnit.test('Subtraction', function(assert) {
+            $('#btn-5').click();
+            $('#btn-subtract').click();
+            $('#btn-3').click();
+            $('#btn-equals').click();
+            assert.equal($('#display-input').val(), '2', '5 - 3 should equal 2');
+        });
+
+        QUnit.test('Multiplication', function(assert) {
+            $('#btn-4').click();
+            $('#btn-multiply').click();
+            $('#btn-6').click();
+            $('#btn-equals').click();
+            assert.equal($('#display-input').val(), '24', '4 × 6 should equal 24');
+        });
+
+        QUnit.test('Division', function(assert) {
+            $('#btn-8').click();
+            $('#btn-divide').click();
+            $('#btn-2').click();
+            $('#btn-equals').click();
+            assert.equal($('#display-input').val(), '4', '8 ÷ 2 should equal 4');
+        });
+
+        QUnit.test('Clear Function', function(assert) {
+            $('#btn-5').click();
+            $('#btn-clear').click();
+            assert.equal($('#display-input').val(), '0', 'Display should be cleared to 0');
+        });
+
+        QUnit.test('Decimal Input', function(assert) {
+            $('#btn-1').click();
+            $('#btn-decimal').click();
+            $('#btn-5').click();
+            assert.equal($('#display-input').val(), '1.5', 'Should input 1.5');
+        });
+
+        QUnit.test('Chained operations', function(assert) {
+             $('#btn-2').click();
+             $('#btn-add').click();
+             $('#btn-3').click();
+             $('#btn-multiply').click();
+             $('#btn-4').click();
+             $('#btn-equals').click();
+             assert.equal($('#display-input').val(), '20', '2 + 3 * 4 should equal 20');
+        });
+
+        QUnit.module('Scientific Functions', {
+            beforeEach: function() {
+                $('#display-input').val('0');
+            }
+        });
+
+        QUnit.test('Square Root', function(assert) {
+            $('#btn-9').click();
+            $('#btn-sqrt').click();
+            assert.equal($('#display-input').val(), '3', 'Square root of 9 should be 3');
+        });
+
+        QUnit.test('Sine Function', function(assert) {
+            $('#btn-0').click();
+            $('#btn-sin').click(); // Sine of 0
+            assert.equal($('#display-input').val(), '0', 'Sine of 0 should be 0'); // Adjust for approximate values
+        });
+
+        QUnit.test('Cosine Function', function(assert) {
+             $('#btn-0').click();
+             $('#btn-cos').click(); // Cosine of 0
+             assert.equal($('#display-input').val(), '1', 'Cosine of 0 should be 1');
+        });
+
+        QUnit.test('Tangent Function', function(assert) {
+             $('#btn-0').click();
+             $('#btn-tan').click(); // Tangent of 0
+             assert.equal($('#display-input').val(), '0', 'Tangent of 0 should be 0');
+        });
+
+        QUnit.test('Logarithm Function', function(assert) {
+            $('#btn-1').click();
+            $('#btn-0').click();
+            $('#btn-log').click();
+            assert.equal($('#display-input').val(), '1', 'Log base 10 of 10 should be 1');
+        });
+
+        QUnit.test('Natural Logarithm Function', function(assert) {
+             $('#btn-e').click();
+             $('#btn-ln').click();
+             assert.equal($('#display-input').val(), '1', 'Natural log of e should be 1');
+        });
+
+        QUnit.test('Factorial Function', function(assert) {
+            $('#btn-5').click();
+            $('#btn-fact').click();
+            assert.equal($('#display-input').val(), '120', 'Factorial of 5 should be 120');
+        });
+
+        QUnit.test('Power Function', function(assert) {
+             $('#btn-2').click();
+             $('#btn-pow').click();
+             $('#btn-3').click();
+             $('#btn-equals').click();
+             assert.equal($('#display-input').val(), '8', '2 to the power of 3 should be 8');
+        });
+
+        QUnit.test('Inverse Function', function(assert) {
+             $('#btn-2').click();
+             $('#btn-inv').click();
+             assert.equal($('#display-input').val(), '0.5', 'Inverse of 2 should be 0.5');
+        });
+
+        QUnit.test('Random Number Generation', function(assert) {
+            $('#btn-rand').click();
+            var randomNumber = parseFloat($('#display-input').val());
+            assert.ok(randomNumber >= 0 && randomNumber < 1, 'Random number should be between 0 and 1');
+        });
+
+        QUnit.module('Memory Functions', {
+            beforeEach: function() {
+                $('#display-input').val('0');
+                localStorage.removeItem('calculatorMemory'); // Clear memory before each test
+                window.calculatorMemory = 0; //Reset memory var as well.
+            }
+        });
+
+        QUnit.test('Memory Save and Recall', function(assert) {
+            $('#btn-5').click();
+            $('#btn-memory-save').click();
+            $('#btn-clear').click();
+            $('#btn-memory-recall').click();
+            assert.equal($('#display-input').val(), '5', 'Memory should recall 5');
+        });
+
+         QUnit.test('Memory Clear', function(assert) {
+             $('#btn-5').click();
+             $('#btn-memory-save').click();
+             $('#btn-memory-clear').click();
+             $('#btn-memory-recall').click();
+             assert.equal($('#display-input').val(), '0', 'Memory should be cleared');
+        });
+
+         QUnit.test('Memory Add', function(assert) {
+             $('#btn-5').click();
+             $('#btn-memory-save').click();
+             $('#btn-2').click();
+             $('#btn-memory-add').click();
+             $('#btn-memory-recall').click();
+             assert.equal($('#display-input').val(), '7', 'Memory should add 2 to 5');
+        });
+
+        QUnit.test('Memory Subtract', function(assert) {
+             $('#btn-5').click();
+             $('#btn-memory-save').click();
+             $('#btn-2').click();
+             $('#btn-memory-subtract').click();
+             $('#btn-memory-recall').click();
+             assert.equal($('#display-input').val(), '3', 'Memory should subtract 2 from 5');
+        });
+
+        QUnit.module('Edge Cases and Error Handling', {
+            beforeEach: function() {
+                $('#display-input').val('0');
+            }
+        });
+
+        QUnit.test('Division by Zero', function(assert) {
+            $('#btn-5').click();
+            $('#btn-divide').click();
+            $('#btn-0').click();
+            $('#btn-equals').click();
+            assert.equal($('#display-input').val(), 'Infinity', 'Division by zero should return Infinity');
+        });
+
+         QUnit.test('Multiple Decimal Points', function(assert) {
+             $('#btn-1').click();
+             $('#btn-decimal').click();
+             $('#btn-5').click();
+             $('#btn-decimal').click();
+             $('#btn-equals').click();
+             assert.equal($('#display-input').val(), '1.5', 'Second decimal should be ignored');
+        });
+
+        QUnit.test('Large Number Input', function(assert) {
+             var largeNumber = '12345678901234567890';
+             $('#display-input').val(largeNumber); // Direct input
+             $('#btn-equals').click();
+             assert.equal($('#display-input').val(), largeNumber, 'Large number input should be handled');
+        });
+
+        QUnit.test('Negative Number Input & Negate', function(assert) {
+            $('#btn-5').click();
+            $('#btn-negate').click();
+            assert.equal($('#display-input').val(), '-5', 'Number should become negative');
+        });
+
+        QUnit.test('Pi Value', function(assert) {
+            $('#btn-pi').click();
+            assert.equal($('#display-input').val(), Math.PI.toString(), 'Pi should be displayed');
+        });
+
+    </script>
+</body>
+</html>
