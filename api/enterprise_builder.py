@@ -401,13 +401,15 @@ class EnterpriseBuildSystem:
             }
     
     def _initialize_ai_model(self):
-        """Initialize AI model based on available API keys
+        """Initialize AI model based on available API keys and rate limits
         
         Returns: (model, provider_name)
         """
-        from api.custom_key_manager import get_ai_provider, get_custom_groq_key, get_custom_gemini_key
+        from api.custom_key_manager import get_custom_groq_key, get_custom_gemini_key
+        from api.rate_limit_failover import get_rate_limit_tracker
         
-        provider = get_ai_provider()
+        tracker = get_rate_limit_tracker()
+        provider = tracker.get_available_provider()
         
         if provider == "groq":
             # GROQ - Ultra-fast inference
@@ -417,29 +419,77 @@ class EnterpriseBuildSystem:
             print(f"🚀 Using GROQ AI (blazing fast inference)")
             return client, "groq"
         else:
-            # Gemini - Default
+            # Gemini - Default or failover
             import google.generativeai as genai
             gemini_key = get_custom_gemini_key()
             genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel('gemini-2.0-flash')
-            print(f"🤖 Using Gemini AI")
+            print(f"🤖 Using Gemini AI (failover or primary)")
             return model, "gemini"
     
-    def _generate_content(self, model, provider, prompt):
-        """Universal content generation across providers"""
-        if provider == "groq":
-            # GROQ uses OpenAI-compatible API
-            response = model.chat.completions.create(
-                model="llama-3.3-70b-versatile",  # Best GROQ model
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.7,
-                max_tokens=8000
+    def _generate_content(self, model, provider, prompt, retry_on_rate_limit=True):
+        """Universal content generation across providers with automatic failover"""
+        from api.rate_limit_failover import get_rate_limit_tracker
+        
+        try:
+            if provider == "groq":
+                # GROQ uses OpenAI-compatible API
+                response = model.chat.completions.create(
+                    model="llama-3.3-70b-versatile",  # Best GROQ model
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.7,
+                    max_tokens=8000
+                )
+                return response.choices[0].message.content
+            else:
+                # Gemini
+                response = model.generate_content(prompt)
+                return response.text
+        
+        except Exception as e:
+            error_str = str(e)
+            
+            # Check if it's a rate limit error
+            is_rate_limit = (
+                "rate_limit" in error_str.lower() or 
+                "429" in error_str or
+                "quota" in error_str.lower() or
+                "too many requests" in error_str.lower()
             )
-            return response.choices[0].message.content
-        else:
-            # Gemini
-            response = model.generate_content(prompt)
-            return response.text
+            
+            if is_rate_limit and retry_on_rate_limit:
+                print(f"⚠️ {provider.upper()} hit rate limit! Attempting failover...")
+                
+                # Extract reset time from error if available
+                reset_seconds = None
+                if "try again in" in error_str.lower():
+                    # Parse reset time from GROQ error format
+                    import re
+                    match = re.search(r'(\d+)m(\d+)', error_str)
+                    if match:
+                        minutes = int(match.group(1))
+                        seconds = int(match.group(2).split('.')[0])
+                        reset_seconds = minutes * 60 + seconds
+                
+                # Mark provider as rate limited
+                tracker = get_rate_limit_tracker()
+                tracker.mark_rate_limited(provider, reset_seconds)
+                
+                # Get alternative provider
+                alt_provider = tracker.get_available_provider()
+                
+                if alt_provider != provider:
+                    print(f"✅ Switching to {alt_provider.upper()} as backup provider")
+                    # Reinitialize with alternative provider
+                    alt_model, alt_provider_name = self._initialize_ai_model()
+                    # Retry with alternative provider (no further retries to avoid loops)
+                    return self._generate_content(alt_model, alt_provider_name, prompt, retry_on_rate_limit=False)
+                else:
+                    # No alternative available
+                    raise Exception(f"Both providers rate limited. GROQ resets in {tracker.get_status()['groq']['seconds_until_reset']}s, Gemini resets in {tracker.get_status()['gemini']['seconds_until_reset']}s")
+            else:
+                # Not a rate limit error, or already retried
+                raise
     
     async def _stage_code_generation(self, instruction: str, language: str, architecture: Dict) -> Dict:
         """Stage 3: Generate code for all files"""
