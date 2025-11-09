@@ -1686,6 +1686,256 @@ TECHNICAL REQUIREMENTS:
 
 Generate ONLY the complete HTML code with ALL sections:"""
         
+        # Special handling for general HTML files (non-API web apps)
+        elif file_plan['type'] in ['html', 'frontend'] and architecture.get('type') != 'api':
+            return f"""You are a SENIOR FRONTEND DEVELOPER creating a STUNNING, PROFESSIONAL WEB APPLICATION.
+
+USER REQUEST: "{instruction}"
+FILE: {file_plan['name']}.html
+
+🎯 MISSION: Create a beautiful, production-ready web app that matches Replit Agent quality.
+
+MANDATORY HTML STRUCTURE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="[App description for SEO]">
+    <title>[Professional App Name]</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hero/Header Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="app-title">[Professional App Name]</h1>
+            <p class="app-subtitle">[Compelling tagline or description]</p>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="app-container">
+        <div class="app-content">
+            <!-- Your main interface here with semantic IDs -->
+            <!-- Use data-action attributes for JS hooks -->
+        </div>
+        
+        <!-- Feature Panels/Sections (if applicable) -->
+        <aside class="side-panel">
+            <!-- History, settings, or additional features -->
+        </aside>
+    </main>
+
+    <!-- Footer (optional) -->
+    <footer class="app-footer">
+        <p>© 2025 [App Name] - Built with SuperAgent</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
+
+CRITICAL REQUIREMENTS:
+✅ Semantic HTML5 tags (<header>, <main>, <section>, <aside>, <footer>)
+✅ Meaningful IDs and classes (app-container, hero, feature-card, NOT div1, btn2)
+✅ NO inline event handlers (onclick, onsubmit, etc.) - JavaScript will add listeners
+✅ Use data-attributes for JS hooks (data-action="calculate", data-value="7")
+✅ Accessible: ARIA labels, semantic tags, proper heading hierarchy (h1→h2→h3)
+✅ Meta tags for SEO and mobile responsiveness
+✅ Professional naming: "Premium Calculator" not "calc", "Dashboard" not "page"
+
+DESIGN PATTERNS TO FOLLOW:
+- Hero section with gradient background
+- Card-based layouts with proper spacing
+- Input fields with clear labels
+- Button groups with visual hierarchy
+- Responsive grid layouts
+- Professional color scheme (purple/blue gradients)
+
+Generate ONLY the complete HTML code:"""
+        
+        # Special handling for CSS files
+        elif file_plan['type'] in ['css', 'styles']:
+            return f"""You are a SENIOR CSS DEVELOPER creating STUNNING, PROFESSIONAL STYLES.
+
+USER REQUEST: "{instruction}"
+FILE: {file_plan['name']}.css
+
+🎯 MISSION: Create beautiful, production-ready CSS that matches Replit Agent quality.
+
+MANDATORY DESIGN SYSTEM:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/* COLORS - Use these exact values */
+:root {{
+    /* Purple Gradient Theme (Primary) */
+    --primary-gradient: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    --primary: #8B5CF6;
+    --primary-dark: #7C3AED;
+    --primary-light: #A78BFA;
+    
+    /* Accent Colors */
+    --accent: #6366F1;
+    --accent-light: #818CF8;
+    
+    /* Neutrals */
+    --bg-dark: #0F172A;
+    --bg-card: #1E293B;
+    --bg-hover: #334155;
+    --text-primary: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    
+    /* Functional Colors */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    
+    /* Spacing System */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.4);
+}}
+
+/* BASE STYLES - Always include */
+* {{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}}
+
+body {{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}}
+
+/* HERO/HEADER - Gradient background */
+.hero {{
+    background: var(--primary-gradient);
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}}
+
+.app-title {{
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}}
+
+.app-subtitle {{
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+}}
+
+/* CARDS - Glass-morphism effect */
+.card {{
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}}
+
+.card:hover {{
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    border-color: var(--primary-light);
+}}
+
+/* BUTTONS - Gradient with hover effects */
+button, .btn {{
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}}
+
+button:hover, .btn:hover {{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
+    filter: brightness(1.1);
+}}
+
+button:active, .btn:active {{
+    transform: translateY(0);
+}}
+
+/* INPUTS - Modern styling */
+input, textarea, select {{
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}}
+
+input:focus, textarea:focus, select:focus {{
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}}
+
+/* RESPONSIVE - Mobile first */
+@media (max-width: 768px) {{
+    .app-title {{ font-size: 2rem; }}
+    .hero {{ padding: var(--space-lg) var(--space-md); }}
+    .card {{ padding: var(--space-md); }}
+}}
+
+/* ANIMATIONS - Smooth transitions */
+@keyframes fadeIn {{
+    from {{ opacity: 0; transform: translateY(20px); }}
+    to {{ opacity: 1; transform: translateY(0); }}
+}}
+
+.fade-in {{
+    animation: fadeIn 0.5s ease-out;
+}}
+
+/* Add your specific component styles below... */
+
+REQUIREMENTS:
+✅ 300+ lines of comprehensive CSS
+✅ Use CSS variables from design system above
+✅ Glass-morphism effects (backdrop-filter: blur)
+✅ Smooth animations and transitions
+✅ Responsive breakpoints (mobile, tablet, desktop)
+✅ Hover states with transform and shadows
+✅ Professional color palette (purple/blue theme)
+✅ Typography scale with proper hierarchy
+
+Generate ONLY pure CSS code (no HTML/JS):"""
+        
         # Special handling for script/JavaScript files
         elif file_plan['type'] in ['script', 'js']:
             return f"""You are a SENIOR JAVASCRIPT DEVELOPER creating ENTERPRISE-GRADE, PRODUCTION-READY JavaScript code.
