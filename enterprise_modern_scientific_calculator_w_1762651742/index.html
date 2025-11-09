@@ -12,60 +12,58 @@
             <h1>Scientific Calculator</h1>
         </div>
         <div class="calculator-display">
-            <input type="text" id="display" disabled>
+            <input type="text" id="display" value="0" readonly>
         </div>
         <div class="calculator-keys">
             <div class="row">
-                <button id="clear" onclick="clearDisplay()">C</button>
-                <button id="backspace" onclick="backspace()">DEL</button>
-                <button id="equals" onclick="calculate()">=</button>
-                <button id="divide" onclick="appendOperator('/')">÷</button>
+                <button>AC</button>
+                <button>⌫</button>
+                <button>=</button>
+                <button>÷</button>
             </div>
             <div class="row">
-                <button id="seven" onclick="appendNumber(7)">7</button>
-                <button id="eight" onclick="appendNumber(8)">8</button>
-                <button id="nine" onclick="appendNumber(9)">9</button>
-                <button id="multiply" onclick="appendOperator('*')">×</button>
+                <button>7</button>
+                <button>8</button>
+                <button>9</button>
+                <button>×</button>
             </div>
             <div class="row">
-                <button id="four" onclick="appendNumber(4)">4</button>
-                <button id="five" onclick="appendNumber(5)">5</button>
-                <button id="six" onclick="appendNumber(6)">6</button>
-                <button id="subtract" onclick="appendOperator('-')">−</button>
+                <button>4</button>
+                <button>5</button>
+                <button>6</button>
+                <button>-</button>
             </div>
             <div class="row">
-                <button id="one" onclick="appendNumber(1)">1</button>
-                <button id="two" onclick="appendNumber(2)">2</button>
-                <button id="three" onclick="appendNumber(3)">3</button>
-                <button id="add" onclick="appendOperator('+')">+</button>
+                <button>1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>+</button>
             </div>
             <div class="row">
-                <button id="zero" onclick="appendNumber(0)">0</button>
-                <button id="decimal" onclick="appendDecimal()">.</button>
-                <button id="sqrt" onclick="calculateSquareRoot()">√</button>
-                <button id="pi" onclick="appendPi()">π</button>
+                <button>0</button>
+                <button>.</button>
+                <button>√</button>
+                <button>π</button>
             </div>
             <div class="row">
-                <button id="sin" onclick="calculateSin()">sin</button>
-                <button id="cos" onclick="calculateCos()">cos</button>
-                <button id="tan" onclick="calculateTan()">tan</button>
-                <button id="log" onclick="calculateLog()">log</button>
+                <button>sin</button>
+                <button>cos</button>
+                <button>tan</button>
+                <button>log</button>
             </div>
             <div class="row">
-                <button id="memory-clear" onclick="clearMemory()">MC</button>
-                <button id="memory-store" onclick="storeMemory()">MS</button>
-                <button id="memory-recall" onclick="recallMemory()">MR</button>
-                <button id="memory-add" onclick="addMemory()">M+</button>
+                <button>MC</button>
+                <button>MS</button>
+                <button>MR</button>
+                <button>M+</button>
             </div>
         </div>
         <div class="calculator-memory">
             <p id="memory-display">Memory: 0</p>
         </div>
-        <div class="calculator-settings">
-            <button id="settings" onclick="openSettings()">Settings</button>
-        </div>
-        <div class="calculator-tooltips">
-            <p id="tooltip">Press 'C' to clear the display</p>
+        <div class="calculator-history">
+            <h3>History</h3>
+            <div id="history"></div>
         </div>
     </div>
 

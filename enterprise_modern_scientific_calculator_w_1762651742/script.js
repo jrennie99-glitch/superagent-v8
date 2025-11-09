@@ -184,7 +184,7 @@ function processInput(value) {
                 console.warn('Unknown input:', value);
         }
     } catch (error) {
-        display.textContent = 'Error';
+        display.value = 'Error';
         console.error('Calculation error:', error);
         currentValue = '0';
         previousValue = null;
@@ -223,8 +223,10 @@ function handleOperatorInput(op) {
 
 function handleEquals() {
     if (previousValue !== null && operator) {
-        currentValue = calculate(previousValue, parseFloat(currentValue), operator).toString();
-        saveToHistory(`${previousValue} ${operator} ${parseFloat(currentValue)} = ${currentValue}`);
+        const secondOperand = parseFloat(currentValue);
+        const result = calculate(previousValue, secondOperand, operator);
+        saveToHistory(`${previousValue} ${operator} ${secondOperand} = ${result}`);
+        currentValue = result.toString();
         previousValue = null;
         operator = null;
         updateDisplay();
@@ -358,7 +360,7 @@ function formatNumber(number) {
 
 // Update display
 function updateDisplay() {
-    display.textContent = currentValue;
+    display.value = currentValue;
 }
 
 // History functions
