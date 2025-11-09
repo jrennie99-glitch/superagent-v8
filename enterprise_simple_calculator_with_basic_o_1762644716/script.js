@@ -186,5 +186,171 @@ function handleButtonClick(e) {
   }
 }
 
-// Initialize
-loadHistory();
+// Attach button click listeners
+function initializeCalculator() {
+  const display = document.getElementById('display');
+  
+  // Number buttons
+  document.getElementById('zero').addEventListener('click', () => appendNumber('0'));
+  document.getElementById('one').addEventListener('click', () => appendNumber('1'));
+  document.getElementById('two').addEventListener('click', () => appendNumber('2'));
+  document.getElementById('three').addEventListener('click', () => appendNumber('3'));
+  document.getElementById('four').addEventListener('click', () => appendNumber('4'));
+  document.getElementById('five').addEventListener('click', () => appendNumber('5'));
+  document.getElementById('six').addEventListener('click', () => appendNumber('6'));
+  document.getElementById('seven').addEventListener('click', () => appendNumber('7'));
+  document.getElementById('eight').addEventListener('click', () => appendNumber('8'));
+  document.getElementById('nine').addEventListener('click', () => appendNumber('9'));
+  
+  // Operation buttons
+  document.getElementById('add').addEventListener('click', () => appendOperator('+'));
+  document.getElementById('subtract').addEventListener('click', () => appendOperator('-'));
+  document.getElementById('multiply').addEventListener('click', () => appendOperator('*'));
+  document.getElementById('divide').addEventListener('click', () => appendOperator('/'));
+  
+  // Special buttons
+  document.getElementById('decimal').addEventListener('click', () => appendDecimal());
+  document.getElementById('equals').addEventListener('click', () => calculateResult());
+  document.getElementById('clear').addEventListener('click', () => clearDisplay());
+  document.getElementById('backspace').addEventListener('click', () => backspace());
+  
+  // Scientific functions
+  document.getElementById('sqrt').addEventListener('click', () => calculateSqrt());
+  document.getElementById('pi').addEventListener('click', () => appendPi());
+  document.getElementById('square').addEventListener('click', () => calculateSquare());
+  document.getElementById('cube').addEventListener('click', () => calculateCube());
+  
+  updateDisplay();
+}
+
+// Display functions
+function updateDisplay() {
+  const display = document.getElementById('display');
+  display.value = currentValue;
+}
+
+function appendNumber(num) {
+  if (currentValue === '0' || currentValue === 'Error') {
+    currentValue = num;
+  } else {
+    currentValue += num;
+  }
+  updateDisplay();
+}
+
+function appendOperator(op) {
+  if (currentValue !== '' && currentValue !== '0' && currentValue !== 'Error') {
+    // Don't add operator if last character is already an operator
+    const lastChar = currentValue.trim().slice(-1);
+    if (!['+', '-', '*', '/'].includes(lastChar)) {
+      currentValue += ' ' + op + ' ';
+      updateDisplay();
+    }
+  }
+}
+
+function appendDecimal() {
+  const parts = currentValue.split(' ');
+  const lastPart = parts[parts.length - 1];
+  if (!lastPart.includes('.')) {
+    currentValue += '.';
+    updateDisplay();
+  }
+}
+
+function clearDisplay() {
+  currentValue = '0';
+  memory = 0;
+  updateDisplay();
+}
+
+function backspace() {
+  if (currentValue.length > 1 && currentValue !== 'Error') {
+    currentValue = currentValue.slice(0, -1);
+  } else {
+    currentValue = '0';
+  }
+  updateDisplay();
+}
+
+function calculateResult() {
+  try {
+    const result = calculate(currentValue);
+    if (result !== 'Error') {
+      saveToHistory(`${currentValue} = ${result}`);
+      updateHistoryDisplay();
+      currentValue = result;
+    } else {
+      currentValue = 'Error';
+    }
+    updateDisplay();
+  } catch (error) {
+    currentValue = 'Error';
+    updateDisplay();
+  }
+}
+
+function calculateSqrt() {
+  try {
+    const num = parseFloat(currentValue);
+    if (!isNaN(num)) {
+      currentValue = Math.sqrt(num).toFixed(decimalPlaces);
+      updateDisplay();
+    }
+  } catch (error) {
+    currentValue = 'Error';
+    updateDisplay();
+  }
+}
+
+function calculateSquare() {
+  try {
+    const num = parseFloat(currentValue);
+    if (!isNaN(num)) {
+      currentValue = Math.pow(num, 2).toFixed(decimalPlaces);
+      updateDisplay();
+    }
+  } catch (error) {
+    currentValue = 'Error';
+    updateDisplay();
+  }
+}
+
+function calculateCube() {
+  try {
+    const num = parseFloat(currentValue);
+    if (!isNaN(num)) {
+      currentValue = Math.pow(num, 3).toFixed(decimalPlaces);
+      updateDisplay();
+    }
+  } catch (error) {
+    currentValue = 'Error';
+    updateDisplay();
+  }
+}
+
+function appendPi() {
+  if (currentValue === '0' || currentValue === 'Error') {
+    currentValue = Math.PI.toFixed(decimalPlaces);
+  } else {
+    currentValue += Math.PI.toFixed(decimalPlaces);
+  }
+  updateDisplay();
+}
+
+function updateHistoryDisplay() {
+  const historyList = document.getElementById('history-list');
+  historyList.innerHTML = '';
+  history.slice(-10).reverse().forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    historyList.appendChild(li);
+  });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadHistory();
+  initializeCalculator();
+  updateHistoryDisplay();
+});
