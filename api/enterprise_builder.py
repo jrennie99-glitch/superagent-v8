@@ -72,9 +72,19 @@ class EnterpriseBuildSystem:
         import re
         instruction_lower = instruction.lower()
         
-        # Backend/API/CLI keywords - with word boundaries to avoid false matches
-        backend_patterns = [
-            # API & Web Services (word boundaries to avoid matching "application")
+        # TRUE CLI-ONLY keywords (terminal tools with no web interface needed)
+        cli_only_patterns = [
+            # Explicit CLI requests
+            r'\bcli\b', r'command line', r'terminal', r'command tool', r'cli tool',
+            r'shell script', r'\bcron\b', r'batch script',
+            # Infrastructure/Background (no UI needed)
+            r'\bworker\b', r'\bqueue\b', r'background job', r'data migration',
+            r'etl script', r'data pipeline'
+        ]
+        
+        # Backend/API keywords (these should get FULL-STACK: landing page + backend)
+        backend_with_ui_patterns = [
+            # API & Web Services
             r'\bapi\b', r'\bbackend\b', r'\bserver\b', r'\bendpoint\b',
             r'rest api', r'graphql', r'\brest\b',
             r'microservice', r'\bwebhook\b', r'api gateway', r'service endpoint',
@@ -84,11 +94,8 @@ class EnterpriseBuildSystem:
             r'\bdatabase\b', r'\bsql\b', r'\bcrud\b', r'postgres', r'mysql', r'mongodb',
             # Authentication & Security
             r'authentication', r'auth api', r'login api', r'\bjwt\b', r'oauth',
-            # Infrastructure
-            r'serverless', r'\blambda\b', r'cloud function', r'\bworker\b', r'\bqueue\b',
-            # CLI & Scripts
-            r'\bcli\b', r'command line', r'\bscript\b', r'automation', r'\bcron\b',
-            r'command tool', r'cli tool', r'terminal'
+            # Infrastructure (cloud functions should have web UI)
+            r'serverless', r'\blambda\b', r'cloud function'
         ]
         
         # Visual/interactive keywords - phrases don't need word boundaries
@@ -110,22 +117,33 @@ class EnterpriseBuildSystem:
             'animated', 'responsive', 'mobile app'
         ]
         
-        # Check with word-boundary regex for backend (prevents "application" → "api" match)
-        is_backend = any(re.search(pattern, instruction_lower) for pattern in backend_patterns)
-        # Simple substring for visual (phrases like "calculator" are safe)
+        # Check intent
+        is_cli_only = any(re.search(pattern, instruction_lower) for pattern in cli_only_patterns)
+        is_backend_with_ui = any(re.search(pattern, instruction_lower) for pattern in backend_with_ui_patterns)
         is_visual = any(keyword in instruction_lower for keyword in visual_keywords)
         
-        if is_backend:
-            # Keep or force Python for backend/API/CLI
+        # 🚨 NEW LOGIC: Default to FULL-STACK unless explicitly CLI-only
+        if is_cli_only:
+            # ONLY terminal/CLI tools get Python-only backend
             if language.lower() in ["html", "web", "javascript"]:
-                print(f"🔧 Smart Detection: '{instruction[:50]}...' is a backend/API/CLI")
-                print(f"   Overriding language from '{language}' → 'python' for backend")
+                print(f"⚙️ Smart Detection: '{instruction[:50]}...' is a CLI-only tool")
+                print(f"   Overriding language from '{language}' → 'python' for terminal use")
                 language = "python"
-        elif is_visual:
-            # Force HTML for visual/interactive apps
+        elif is_backend_with_ui or is_visual:
+            # APIs, backends, and visual apps ALL get full-stack with landing page
             if language.lower() not in ["html", "web", "javascript"]:
-                print(f"🎨 Smart Detection: '{instruction[:50]}...' is a visual app")
-                print(f"   Overriding language from '{language}' → 'html' for better UX")
+                if is_backend_with_ui:
+                    print(f"🌐 Smart Detection: '{instruction[:50]}...' is an API/backend service")
+                    print(f"   Generating FULL-STACK: Landing page + Python backend")
+                else:
+                    print(f"🎨 Smart Detection: '{instruction[:50]}...' is a visual app")
+                print(f"   Overriding language from '{language}' → 'html' for web interface")
+                language = "html"
+        else:
+            # DEFAULT: When unclear, generate full-stack web app (Replit Agent behavior)
+            if language.lower() not in ["html", "web", "javascript"]:
+                print(f"✨ No-Code Platform: Defaulting to full-stack web app for '{instruction[:50]}...'")
+                print(f"   Overriding language from '{language}' → 'html' for visual interface")
                 language = "html"
         
         try:
@@ -1570,16 +1588,22 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
         language = architecture["language"]
         
         if project_type == "api":
-            files.append({"name": "main", "type": "entry"})
-            files.append({"name": "routes", "type": "routes"})
-            files.append({"name": "models", "type": "models"})
+            # 🌐 FULL-STACK API: Landing page + Python backend (Replit Agent parity)
+            # Frontend files for landing page with docs, API key management, demo
+            files.append({"name": "index", "type": "html"})
+            files.append({"name": "styles", "type": "css"})
+            files.append({"name": "script", "type": "js"})
+            # Backend files for API
+            files.append({"name": "main", "type": "py"})
+            files.append({"name": "routes", "type": "py"})
+            files.append({"name": "models", "type": "py"})
             if architecture["needs_database"]:
-                files.append({"name": "database", "type": "database"})
+                files.append({"name": "database", "type": "py"})
         elif project_type == "webapp":
             files.append({"name": "app", "type": "entry"})
             files.append({"name": "index", "type": "frontend"})
             files.append({"name": "styles", "type": "styles"})
-            files.append({"name": "script", "type": "script"})  # ADD JAVASCRIPT FILE!
+            files.append({"name": "script", "type": "script"})
         else:
             files.append({"name": "main", "type": "entry"})
         
@@ -1592,8 +1616,77 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
     def _create_file_prompt(self, instruction: str, language: str, file_plan: Dict, architecture: Dict) -> str:
         """Create AI prompt for specific file with enterprise-grade quality standards"""
         
+        # Special handling for HTML landing pages in API projects (Replit Agent parity)
+        if file_plan['type'] == 'html' and architecture.get('type') == 'api':
+            # Extract API name from instruction (e.g., "ReviewHub API" from "review aggregation api")
+            import re
+            words = re.findall(r'\b\w+\b', instruction)
+            api_name = ' '.join(words[:3]).title() + " API"
+            
+            return f"""You are a SENIOR FRONTEND DEVELOPER creating a PROFESSIONAL LANDING PAGE for an API service.
+
+USER REQUEST: "{instruction}"
+FILE: {file_plan['name']}.html (Landing Page for API)
+
+🎯 MISSION: Create a stunning, production-ready landing page that matches Replit Agent quality.
+
+REQUIRED SECTIONS (ALL MANDATORY):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. HERO SECTION:
+   - Professional branding: "{api_name}"
+   - Tagline describing the API's value proposition
+   - Subtitle explaining key features (e.g., "Unified API for Google, Yelp, and TripAdvisor reviews with real-time sentiment analysis")
+   - Two prominent CTA buttons:
+     * "Get API Key" (primary - bright blue/purple gradient)
+     * "View Documentation" (secondary - outlined)
+   - Modern gradient background (purple/blue theme matching SuperAgent style)
+
+2. FEATURES SECTION:
+   - 3-4 key features with icons
+   - Each feature has title + description
+   - Beautiful card layout with hover effects
+   - Icons using emoji or SVG
+
+3. API QUICK START:
+   - Code example showing how to use the API
+   - Copy button for code
+   - Language tabs (Python, JavaScript, cURL)
+   - Syntax highlighting with <pre><code> blocks
+
+4. ENDPOINTS DOCUMENTATION:
+   - Table or cards showing main API endpoints
+   - Method (GET/POST/PUT/DELETE)
+   - Endpoint path
+   - Brief description
+   - Example response
+
+5. CALL TO ACTION:
+   - Footer section with "Get Started Today"
+   - Sign-up form or API key generation
+   - Links to full documentation
+
+DESIGN REQUIREMENTS:
+✅ Purple gradient theme (#8B5CF6 to #6366F1)
+✅ Glass-morphism cards (backdrop-filter: blur)
+✅ Smooth animations on scroll
+✅ Responsive design (mobile-first)
+✅ Professional typography (system fonts or Google Fonts)
+✅ Clean, modern layout with proper spacing
+✅ Dark mode friendly colors
+
+TECHNICAL REQUIREMENTS:
+✅ Semantic HTML5 (<header>, <main>, <section>, <footer>)
+✅ NO inline event handlers (onclick, onchange, etc.)
+✅ Use IDs and data-attributes for JavaScript hooks
+✅ Link to styles.css and script.js with defer
+✅ Accessible (ARIA labels, alt text)
+✅ Meta tags for SEO and social sharing
+
+Generate ONLY the complete HTML code with ALL sections:"""
+        
         # Special handling for script/JavaScript files
-        if file_plan['type'] in ['script', 'js']:
+        elif file_plan['type'] in ['script', 'js']:
             return f"""You are a SENIOR JAVASCRIPT DEVELOPER creating ENTERPRISE-GRADE, PRODUCTION-READY JavaScript code.
 
 USER REQUEST: "{instruction}"
