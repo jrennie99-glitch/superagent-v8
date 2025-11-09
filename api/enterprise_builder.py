@@ -465,11 +465,17 @@ class EnterpriseBuildSystem:
                 if "try again in" in error_str.lower():
                     # Parse reset time from GROQ error format
                     import re
+                    # Try minutes + seconds format (e.g., "3m12s")
                     match = re.search(r'(\d+)m(\d+)', error_str)
                     if match:
                         minutes = int(match.group(1))
                         seconds = int(match.group(2).split('.')[0])
                         reset_seconds = minutes * 60 + seconds
+                    else:
+                        # Try seconds-only format (e.g., "45s")
+                        match = re.search(r'(\d+)s', error_str)
+                        if match:
+                            reset_seconds = int(match.group(1).split('.')[0])
                 
                 # Mark provider as rate limited
                 tracker = get_rate_limit_tracker()
@@ -485,8 +491,16 @@ class EnterpriseBuildSystem:
                     # Retry with alternative provider (no further retries to avoid loops)
                     return self._generate_content(alt_model, alt_provider_name, prompt, retry_on_rate_limit=False)
                 else:
-                    # No alternative available
-                    raise Exception(f"Both providers rate limited. GROQ resets in {tracker.get_status()['groq']['seconds_until_reset']}s, Gemini resets in {tracker.get_status()['gemini']['seconds_until_reset']}s")
+                    # No alternative available - provide clear user message
+                    status = tracker.get_status()
+                    groq_wait = status['groq']['seconds_until_reset']
+                    gemini_wait = status['gemini']['seconds_until_reset']
+                    raise Exception(
+                        f"⚠️ Both AI providers are rate limited. Please wait:\n"
+                        f"  • GROQ: {groq_wait}s ({groq_wait // 60}min {groq_wait % 60}sec)\n"
+                        f"  • Gemini: {gemini_wait}s ({gemini_wait // 60}min {gemini_wait % 60}sec)\n"
+                        f"The system will automatically retry when limits reset."
+                    )
             else:
                 # Not a rate limit error, or already retried
                 raise
