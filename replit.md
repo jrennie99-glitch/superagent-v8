@@ -14,10 +14,11 @@ SuperAgent is a complete Replit Agent clone providing an autonomous development 
 - I want the agent to use the most efficient and relevant AI model for the task
 
 ## System Architecture
-SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It features a **Multi-Provider AI System** with automatic provider detection:
+SuperAgent is built on a stateless FastAPI REST API backend using Python 3.11 and Uvicorn. It features a **Multi-Provider AI System** with automatic provider detection and intelligent failover:
 - **Primary Providers**: GROQ (`llama-3.3-70b-versatile`) for blazing-fast inference, Google Gemini AI (`gemini-2.0-flash`) for large free tier
 - **Custom API Key System**: USER_GROQ_API_KEY and USER_GEMINI_API_KEY environment variables for user's personal keys with their own quotas
 - **Auto-Detection**: System automatically selects the best available provider based on configured keys (GROQ prioritized for speed)
+- **Automatic Rate Limit Failover (NEW Nov 2025)**: When one provider hits rate limits, system automatically switches to backup provider without manual intervention. Tracks reset times and returns to preferred provider when available. Zero-downtime AI generation with transparent failover between GROQ and Gemini.
 - **Universal Generation**: Single codebase supports multiple AI providers seamlessly
 - Complemented by a 2-Supervisor System that utilizes multiple AI providers for enhanced code verification and security scanning.
 
@@ -54,6 +55,39 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 - **Bot Frameworks:** `slack-bolt`, `python-telegram-bot`.
 - **Scheduling:** APScheduler.
 - **Deployment Platforms:** Railway, Render, Fly.io, Koyeb, Replit.
+
+## Recent Changes (November 9, 2025)
+### Automatic Rate Limit Failover System
+
+1. **Intelligent Provider Failover**:
+   - Implemented automatic failover between GROQ and Gemini when rate limits are hit
+   - System detects rate limit errors (429, "quota exceeded", "too many requests")
+   - Extracts reset time from error messages and tracks when providers become available
+   - Automatically switches to backup provider and retries generation
+   - Returns to preferred provider (GROQ) when rate limits reset
+   - Zero manual intervention required - completely transparent to users
+
+2. **Rate Limit Tracking System**:
+   - Created `rate_limit_failover.py` for tracking provider availability
+   - Persists rate limit state in `/tmp/rate_limits.json`
+   - Monitors reset times for both GROQ and Gemini
+   - Smart provider selection based on current availability
+
+3. **Enhanced Enterprise Builder**:
+   - Modified `_initialize_ai_model()` to check rate limit status before selection
+   - Updated `_generate_content()` with automatic failover logic
+   - Catches rate limit exceptions and switches providers automatically
+   - Parses reset times from GROQ error messages (e.g., "try again in 3m12s")
+
+4. **New API Endpoints**:
+   - `/api/v1/rate-limit-status` - Check current provider availability and reset times
+   - Returns detailed status for GROQ and Gemini with seconds until reset
+   - Shows recommended provider based on availability
+
+5. **Rate Limit Details Confirmed**:
+   - GROQ Free Tier: 100K tokens/day, 12K tokens/min, 30 req/min, 1K req/day
+   - Gemini Free Tier: 1,500 requests/day with large context windows
+   - System optimizes usage by prioritizing GROQ speed, falling back to Gemini capacity
 
 ## Recent Changes (November 8, 2025)
 ### Critical Bug Fixes & Quality Improvements
