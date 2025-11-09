@@ -42,3 +42,46 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 - **Bot Frameworks:** `slack-bolt`, `python-telegram-bot`.
 - **Scheduling:** APScheduler.
 - **Deployment Platforms:** Railway, Render, Fly.io, Koyeb, Replit.
+
+## Recent Changes (November 9, 2025)
+
+### CRITICAL: Full-Stack Generation System - Replit Agent Parity Achieved
+
+**Problem Solved:** SuperAgent was generating Python-only backend code for API requests, requiring users to run terminal commands. Replit Agent generates beautiful landing pages with professional branding, API documentation, and "Get Started" buttons. This violated the core requirement: *"users shouldn't need technical knowledge to build anything"*.
+
+**Solution Implemented:**
+
+1. **Intent Detection Rewrite** (Lines 78-150):
+   - Split backend detection: `cli_only_patterns` (terminal tools) vs `backend_with_ui_patterns` (APIs needing landing pages)
+   - **NEW DEFAULT**: ALL requests generate full-stack web apps unless explicitly CLI-only
+   - Requests with "api", "rest", "endpoint", "backend" → Full-stack (HTML + CSS + JS + Python)
+   - Only "cli", "command line", "terminal" → Python-only backend
+   - **Result**: API requests now generate visual interfaces matching Replit Agent behavior
+
+2. **Architecture Planning Enhancement** (Lines 1593-1604):
+   - For `project_type="api"`: Mandates frontend files alongside backend
+   - **Files Generated**: index.html, styles.css, script.js + main.py, routes.py, models.py, config.py, test_main.py
+   - Comment: "FULL-STACK API: Landing page + Python backend (Replit Agent parity)"
+
+3. **API Landing Page Generation** (Lines 1619-1686):
+   - New specialized HTML prompt for API projects
+   - **Mandatory Sections**:
+     * Hero: API branding, tagline, CTA buttons ("Get API Key", "View Documentation")
+     * Features: 3-4 cards with icons showing key capabilities
+     * Quick Start: Code examples with language tabs (Python, JavaScript, cURL), copy buttons
+     * Endpoints: Documentation table with methods, paths, descriptions, example responses
+     * CTA Footer: Sign-up form, API key generation, documentation links
+   - **Design**: Purple gradient theme (#8B5CF6 to #6366F1), glass-morphism, responsive, professional typography
+   - **Technical**: Semantic HTML5, no inline handlers, accessible, SEO meta tags
+
+4. **HTML/JavaScript Coordination Fix**:
+   - Three-layer prompt reinforcement for input element handling (.value not .textContent)
+   - HTML prompts forbid inline event handlers (onclick, onchange, etc.)
+   - JavaScript prompts require addEventListener with semantic IDs/data-attributes
+   - Prevents buttons calling non-existent functions
+
+**Expected Behavior Change:**
+- **Before**: "Design REST API for reviews" → Python files only, terminal commands required
+- **After**: "Design REST API for reviews" → Professional "ReviewHub API" landing page + Python backend, ready to use immediately
+
+**Testing Required:** Run same review aggregation API build to verify landing page generation.
