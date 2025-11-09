@@ -1540,8 +1540,9 @@ Generate ONLY the code (no explanations). Make it {"EXCEPTIONAL" if wants_advanc
         """Detect project type from instruction with visual/interactive bias"""
         instruction_lower = instruction.lower()
         
-        # Explicitly API/backend requests
-        if "api" in instruction_lower or "backend" in instruction_lower:
+        # 🚨 PRIORITY 1: API/backend requests (must check BEFORE language=="html")
+        # Use robust _needs_api() method for better pattern matching
+        if self._needs_api(instruction):
             return "api"
         
         # Explicitly CLI/script requests
