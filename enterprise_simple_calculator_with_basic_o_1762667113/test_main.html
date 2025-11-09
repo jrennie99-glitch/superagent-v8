@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator - Tests</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Test-specific CSS.  Keep styling separate. */
+        #test-container {
+            padding: 20px;
+            font-family: sans-serif;
+        }
+
+        .test-case {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .test-case h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .result {
+            font-weight: bold;
+        }
+
+        .passed {
+            color: green;
+        }
+
+        .failed {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="test-container">
+        <h1>Advanced Calculator Tests</h1>
+
+        <div class="test-case">
+            <h3>Addition Test</h3>
+            <p>Input: 5 + 3</p>
+            <p>Expected: 8</p>
+            <p>Result: <span id="addition-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Subtraction Test</h3>
+            <p>Input: 10 − 4</p>
+            <p>Expected: 6</p>
+            <p>Result: <span id="subtraction-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Multiplication Test</h3>
+            <p>Input: 6 × 7</p>
+            <p>Expected: 42</p>
+            <p>Result: <span id="multiplication-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Division Test</h3>
+            <p>Input: 21 ÷ 3</p>
+            <p>Expected: 7</p>
+            <p>Result: <span id="division-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Square Root Test</h3>
+            <p>Input: √25</p>
+            <p>Expected: 5</p>
+            <p>Result: <span id="sqrt-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Power Test</h3>
+            <p>Input: 2³</p>
+            <p>Expected: 8</p>
+            <p>Result: <span id="power-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Negative Number Test</h3>
+            <p>Input: -5 + 2</p>
+            <p>Expected: -3</p>
+            <p>Result: <span id="negative-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Decimal Test</h3>
+            <p>Input: 2.5 + 3.5</p>
+            <p>Expected: 6</p>
+            <p>Result: <span id="decimal-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Complex Expression Test</h3>
+            <p>Input: (5 + 3) × 2 - 10 ÷ 2</p>
+            <p>Expected: 11</p>
+            <p>Result: <span id="complex-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Division by Zero Test</h3>
+            <p>Input: 10 ÷ 0</p>
+            <p>Expected: Error</p>
+            <p>Result: <span id="division-zero-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Pi Test</h3>
+            <p>Input: π</p>
+            <p>Expected: 3.14159265359</p>
+            <p>Result: <span id="pi-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Memory Recall Test</h3>
+            <p>Input: Store 10 in Memory; Recall Memory + 5</p>
+            <p>Expected: 15</p>
+            <p>Result: <span id="memory-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Percent Test</h3>
+            <p>Input: 200 + 10%</p>
+            <p>Expected: 220</p>
+            <p>Result: <span id="percent-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Factorial Test</h3>
+            <p>Input: 5!</p>
+            <p>Expected: 120</p>
+            <p>Result: <span id="factorial-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Logarithm Test (base 10)</h3>
+            <p>Input: log(100)</p>
+            <p>Expected: 2</p>
+            <p>Result: <span id="logarithm-result" class="result">Running...</span></p>
+        </div>
+
+        <div class="test-case">
+            <h3>Natural Logarithm Test</h3>
+            <p>Input: ln(e)</p>
+            <p>Expected: 1</p>
+            <p>Result: <span id="natural-logarithm-result" class="result">Running...</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function runTest(input, expected, resultElementId, tolerance = 0.00001) {
+                try {
+                    calculator.clearDisplay(); // Ensure clean state. Necessary for memory, etc.
+                    calculator.input(input);
+
+                    let actual = calculator.evaluate();
+                    if (typeof actual === 'string' && actual.toLowerCase().includes('error')) {
+                        if (expected.toLowerCase() === 'error') {
+                            document.getElementById(resultElementId).textContent = "Passed";
+                            document.getElementById(resultElementId).classList.add("passed");
+                        } else {
+                            document.getElementById(resultElementId).textContent = "Failed (Error returned, but expected a value)";
+                            document.getElementById(resultElementId).classList.add("failed");
+                        }
+                        return; // Stop execution if an error is encountered
+                    }
+
+                    let diff = Math.abs(actual - expected);
+                    if (isNaN(diff)) {
+                         if (String(actual) === String(expected)) {
+                                document.getElementById(resultElementId).textContent = "Passed";
+                                document.getElementById(resultElementId).classList.add("passed");
+                         } else {
+                            document.getElementById(resultElementId).textContent = "Failed (NaN and expected value mismatch: Expected " + expected + ", got " + actual + ")";
+                            document.getElementById(resultElementId).classList.add("failed");
+                         }
+                    }
+                    else if (diff < tolerance) {
+                        document.getElementById(resultElementId).textContent = "Passed";
+                        document.getElementById(resultElementId).classList.add("passed");
+                    } else {
+                        document.getElementById(resultElementId).textContent = "Failed (Expected " + expected + ", got " + actual + ")";
+                        document.getElementById(resultElementId).classList.add("failed");
+                    }
+                } catch (e) {
+                    document.getElementById(resultElementId).textContent = "Failed (Exception: " + e.message + ")";
+                    document.getElementById(resultElementId).classList.add("failed");
+                }
+            }
+
+            // Test Cases
+            runTest("5 + 3", 8, "addition-result");
+            runTest("10 − 4", 6, "subtraction-result");
+            runTest("6 × 7", 42, "multiplication-result");
+            runTest("21 ÷ 3", 7, "division-result");
+            runTest("√25", 5, "sqrt-result");
+            runTest("2³", 8, "power-result");
+            runTest("-5 + 2", -3, "negative-result");
+            runTest("2.5 + 3.5", 6, "decimal-result");
+            runTest("(5 + 3) × 2 - 10 ÷ 2", 11, "complex-result");
+            runTest("10 ÷ 0", 'Error', "division-zero-result");
+            runTest("π", 3.14159265359, "pi-result");
+
+            // Memory Test - Requires custom logic
+            try {
+                calculator.clearMemory();
+                calculator.input("10");
+                calculator.memoryStore();
+                calculator.clearDisplay();
+                calculator.memoryRecall();
+                calculator.input("+ 5");
+                let memoryResult = calculator.evaluate();
+                if (Math.abs(memoryResult - 15) < 0.00001) {
+                    document.getElementById("memory-result").textContent = "Passed";
+                    document.getElementById("memory-result").classList.add("passed");
+                } else {
+                    document.getElementById("memory-result").textContent = "Failed (Expected 15, got " + memoryResult + ")";
+                    document.getElementById("memory-result").classList.add("failed");
+                }
+            } catch (e) {
+                document.getElementById("memory-result").textContent = "Failed (Exception: " + e.message + ")";
+                document.getElementById("memory-result").classList.add("failed");
+            }
+
+            runTest("200 + 10%", 220, "percent-result");
+
+            try {
+                calculator.clearDisplay();
+                calculator.input("5!");
+                let factorialResult = calculator.evaluate();
+
+                if (Math.abs(factorialResult - 120) < 0.00001) {
+                    document.getElementById("factorial-result").textContent = "Passed";
+                    document.getElementById("factorial-result").classList.add("passed");
+                } else {
+                    document.getElementById("factorial-result").textContent = "Failed (Expected 120, got " + factorialResult + ")";
+                    document.getElementById("factorial-result").classList.add("failed");
+                }
+            } catch (e) {
+                document.getElementById("factorial-result").textContent = "Failed (Exception: " + e.message + ")";
+                document.getElementById("factorial-result").classList.add("failed");
+            }
+
+            runTest("log(100)", 2, "logarithm-result");
+            runTest("ln(e)", 1, "natural-logarithm-result");
+        });
+    </script>
+</body>
+</html>

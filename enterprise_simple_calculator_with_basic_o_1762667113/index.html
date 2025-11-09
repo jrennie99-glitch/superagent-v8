@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Premium Calculator</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="settings-button">Settings</a></li>
+                <li><a href="#" id="help-button">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="calculator">
+            <input type="text" id="display" readonly>
+            <div class="keyboard">
+                <button id="clear-button">C</button>
+                <button id="backspace-button">&lt;</button>
+                <button id="divide-button">÷</button>
+                <button id="multiply-button">×</button>
+                <button id="seven-button">7</button>
+                <button id="eight-button">8</button>
+                <button id="nine-button">9</button>
+                <button id="subtract-button">−</button>
+                <button id="four-button">4</button>
+                <button id="five-button">5</button>
+                <button id="six-button">6</button>
+                <button id="add-button">+</button>
+                <button id="one-button">1</button>
+                <button id="two-button">2</button>
+                <button id="three-button">3</button>
+                <button id="equals-button">=</button>
+                <button id="zero-button">0</button>
+                <button id="decimal-button">.</button>
+                <button id="sqrt-button">√</button>
+                <button id="pi-button">π</button>
+                <button id="square-button">²</button>
+                <button id="cube-button">³</button>
+            </div>
+        </section>
+        <section class="history">
+            <h2>Calculation History</h2>
+            <ul id="history-list"></ul>
+        </section>
+        <section class="settings" id="settings-section">
+            <h2>Settings</h2>
+            <form id="settings-form">
+                <label for="theme">Theme:</label>
+                <select id="theme" name="theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+                <br>
+                <label for="precision">Precision:</label>
+                <input type="number" id="precision" name="precision" value="2">
+                <br>
+                <button id="save-settings-button">Save</button>
+            </form>
+        </section>
+        <section class="help" id="help-section">
+            <h2>Help</h2>
+            <p>Welcome to the Premium Calculator! This calculator supports basic arithmetic operations, as well as advanced functions like square root, pi, and exponentiation.</p>
+            <p>Use the keyboard shortcuts to navigate the calculator:</p>
+            <ul>
+                <li>C: Clear the display</li>
+                <li>&lt;: Backspace</li>
+                <li>÷: Divide</li>
+                <li>×: Multiply</li>
+                <li>−: Subtract</li>
+                <li>+: Add</li>
+                <li>=: Equals</li>
+                <li>√: Square root</li>
+                <li>π: Pi</li>
+                <li>²: Square</li>
+                <li>³: Cube</li>
+            </ul>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

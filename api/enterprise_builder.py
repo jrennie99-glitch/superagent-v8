@@ -629,8 +629,29 @@ MANDATORY FEATURE SPECIFICATION - ALL MUST BE FULLY FUNCTIONAL:
 - HTML has NO inline event handlers (no onclick attributes)
 - You MUST attach ALL event listeners using addEventListener
 - Query elements by ID: document.getElementById('btn-7')
-- For <input> elements, use .value property (NOT .textContent)
-- Example: display.value = '0' (correct) vs display.textContent = '0' (wrong for inputs)
+
+🚨 CRITICAL: INPUT ELEMENT HANDLING (READ THIS CAREFULLY!) 🚨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For <input> or <textarea> elements, you MUST use the .value property.
+NEVER use .textContent or .innerText for input elements - they will not work!
+
+CORRECT updateDisplay() implementation:
+```javascript
+function updateDisplay() {{
+  const display = document.getElementById('display');
+  display.value = currentValue;  // ✅ CORRECT for <input>
+}}
+```
+
+WRONG (DO NOT USE):
+```javascript
+display.textContent = currentValue;  // ❌ WRONG for <input>
+display.innerText = currentValue;     // ❌ WRONG for <input>
+```
+
+REMEMBER: <input> and <textarea> = .value property
+           <div> and <span> = .textContent property
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 CRITICAL IMPLEMENTATION REQUIREMENTS:
 

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sophisticated Calculator Config</title>
+  <style>
+    /* Theme variables (CSS Custom Properties) */
+    :root {
+      --primary-color: #4CAF50; /* Vibrant green */
+      --secondary-color: #2196F3; /* Electric blue */
+      --background-color: #f0f4f8; /* Light grey background */
+      --panel-background: rgba(255, 255, 255, 0.7); /* Glassmorphism effect */
+      --text-color: #333; /* Dark grey text */
+      --button-color: #e0e0e0; /* Light grey buttons */
+      --button-hover-color: #c5cae9; /* Lighter button hover */
+      --button-active-color: #9fa8da; /* Darker button active */
+      --display-background: #fff; /* White display */
+      --shadow-color: rgba(0, 0, 0, 0.2); /* Subtle shadow */
+      --error-color: #f44336; /* Red error color */
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --border-radius: 8px;
+      --transition-duration: 0.2s;
+    }
+
+    /* Dark theme override (example) */
+    .dark-theme {
+      --background-color: #303030;
+      --panel-background: rgba(48, 48, 48, 0.8);
+      --text-color: #fff;
+      --button-color: #424242;
+      --button-hover-color: #616161;
+      --button-active-color: #757575;
+      --display-background: #424242;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+
+    /* Responsive breakpoints */
+    @media (max-width: 768px) {
+      /* Tablet styles */
+      :root {
+        --font-size-base: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      /* Mobile styles */
+      :root {
+        --font-size-base: 14px;
+        --border-radius: 4px;
+      }
+    }
+
+    /* Global styles */
+    body {
+      font-family: var(--font-family);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color var(--transition-duration), color var(--transition-duration);
+    }
+
+    #calculator-container {
+      background: var(--panel-background);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px var(--shadow-color);
+      padding: 20px;
+      width: 400px; /* Adjust as needed */
+      transition: background var(--transition-duration), box-shadow var(--transition-duration);
+    }
+
+    #display {
+      background-color: var(--display-background);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      font-size: 24px;
+      text-align: right;
+      width: 100%;
+      margin-bottom: 15px;
+      box-shadow: inset 0 2px 4px var(--shadow-color);
+      color: var(--text-color);
+      transition: background-color var(--transition-duration), color var(--transition-duration);
+    }
+
+    .buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+    }
+
+    button {
+      background-color: var(--button-color);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px var(--shadow-color);
+      transition: background-color var(--transition-duration), transform 0.1s, box-shadow var(--transition-duration);
+      color: var(--text-color);
+    }
+
+    button:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    button:active {
+      background-color: var(--button-active-color);
+      transform: scale(0.95);
+      box-shadow: 0 1px 2px var(--shadow-color);
+    }
+
+    .operator {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .equals {
+      background-color: var(--primary-color);
+      color: white;
+      grid-column: span 2; /* Span two columns for the equals button */
+    }
+
+    #error-message {
+      color: var(--error-color);
+      font-size: 14px;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    /* Tooltip styles */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Settings Panel (Initially Hidden) */
+    #settings-panel {
+      position: fixed;
+      top: 0;
+      right: -300px; /* Initially hidden off-screen */
+      width: 300px;
+      height: 100%;
+      background: var(--panel-background);
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      transition: right 0.3s ease-in-out, background var(--transition-duration);
+      z-index: 10;
+    }
+
+    #settings-panel.open {
+      right: 0; /* Slide in when open */
+    }
+
+    #settings-panel h2 {
+      margin-bottom: 15px;
+    }
+
+    #settings-panel label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    #settings-panel select,
+    #settings-panel input[type="color"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+    }
+
+    #settings-panel-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--button-color);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 10px 15px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px var(--shadow-color);
+      transition: background-color var(--transition-duration);
+      z-index: 11;
+    }
+
+    #settings-panel-toggle:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    .gradient-background {
+      background: linear-gradient(to right, #4a148c, #004d40);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .advanced-functions {
+      margin-top: 10px;
+    }
+
+    .advanced-functions button {
+      font-size: 16px;
+      padding: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="calculator-container">
+    <input type="text" id="display" value="0" readonly>
+    <div class="buttons-grid">
+      <button onclick="clearDisplay()">AC</button>
+      <button onclick="backspace()">DEL</button>
+      <button onclick="appendValue('%')">%</button>
+      <button onclick="appendValue('/')" class="operator">÷</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('*')" class="operator">×</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('-')" class="operator">−</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('+')" class="operator">+</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('00')">00</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="calculate()" class="equals">=</button>
+    </div>
+
+    <div class="advanced-functions">
+      <button onclick="squareRoot()">√</button>
+      <button onclick="powerOfTwo()">x²</button>
+      <button onclick="powerOfThree()">x³</button>
+      <button onclick="oneOverX()">1/x</button>
+      <button onclick="pi()">π</button>
+      <button onclick="exponent()">e</button>
+      <button onclick="logBase10()">log₁₀</button>
+      <button onclick="naturalLog()">ln</button>
+      <button onclick="factorial()">x!</button>
+      <button onclick="plusMinus()">+/-</button>
+      <button onclick="sin()">sin</button>
+      <button onclick="cos()">cos</button>
+      <button onclick="tan()">tan</button>
+    </div>
+
+    <div id="error-message"></div>
+  </div>
+
+  <button id="settings-panel-toggle">⚙️ Settings</button>
+
+  <div id="settings-panel">
+    <h2>Calculator Settings</h2>
+
+    <label for="theme-select">Theme:</label>
+    <select id="theme-select">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+
+    <label for="primary-color-picker">Primary Color:</label>
+    <input type="color" id="primary-color-picker" value="#4CAF50">
+
+    <label for="secondary-color-picker">Secondary Color:</label>
+    <input type="color" id="secondary-color-picker" value="#2196F3">
+
+    <label for="font-family-select">Font Family:</label>
+    <select id="font-family-select">
+      <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+      <option value="Arial, sans-serif">Arial</option>
+      <option value="Helvetica, sans-serif">Helvetica</option>
+      <option value="monospace">Monospace</option>
+    </select>
+
+    <button onclick="resetSettings()">Reset to Defaults</button>
+  </div>
+
+
+  <script>
+    const display = document.getElementById('display');
+    const errorMessage = document.getElementById('error-message');
+    const settingsPanel = document.getElementById('settings-panel');
+    const settingsPanelToggle = document.getElementById('settings-panel-toggle');
+    const themeSelect = document.getElementById('theme-select');
+    const primaryColorPicker = document.getElementById('primary-color-picker');
+    const secondaryColorPicker = document.getElementById('secondary-color-picker');
+    const fontFamilySelect = document.getElementById('font-family-select');
+
+    let history = [];
+    let historyIndex = -1;
+
+    // Initialize settings from localStorage
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    let currentPrimaryColor = localStorage.getItem('primaryColor') || '#4CAF50';
+    let currentSecondaryColor = localStorage.getItem('secondaryColor') || '#2196F3';
+    let currentFontFamily = localStorage.getItem('fontFamily') || "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+    setTheme(currentTheme);
+    setPrimaryColor(currentPrimaryColor);
+    setSecondaryColor(currentSecondaryColor);
+    setFontFamily(currentFontFamily);
+
+    themeSelect.value = currentTheme;
+    primaryColorPicker.value = currentPrimaryColor;
+    secondaryColorPicker.value = currentSecondaryColor;
+    fontFamilySelect.value = currentFontFamily;
+
+    function updateHistory(expression, result) {
+        history = history.slice(0, historyIndex + 1); // Remove future history
+        history.push({ expression, result });
+        historyIndex = history.length - 1;
+    }
+
+    function undo() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            display.value = history[historyIndex].result;
+        }
+    }
+
+    function redo() {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            display.value = history[historyIndex].result;
+        }
+    }
+
+
+    // Keyboard support
+    document.addEventListener('keydown', (event) => {
+      const key = event.key;
+
+      if (/[0-9\+\-\*\/\.]/.test(key)) {
+        appendValue(key);
+      } else if (key === 'Enter' || key === '=') {
+        calculate();
+      } else if (key === 'Backspace') {
+        backspace();
+      } else if (key === 'Escape') {
+        clearDisplay();
+      } else if (key === 'Delete') {
+        clearDisplay();
+      } else if (event.ctrlKey && key === 'z') {
+          undo();
+      } else if (event.ctrlKey && key === 'y') {
+          redo();
+      }
+    });
+
+    function appendValue(value) {
+      if (display.value === '0' && value !== '.') {
+        display.value = value;
+      } else {
+        display.value += value;
+      }
+    }
+
+    function clearDisplay() {
+      display.value = '0';
+      errorMessage.textContent = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+      if (display.value === '') {
+        display.value = '0';
+      }
+    }
+
+    function calculate() {
+      try {
+        // Replace symbols for evaluation
+        let expression = display.value.replace('÷', '/').replace('×', '*');
+
+        // Input validation
+        if (!isValidExpression(expression)) {
+          throw new Error("Invalid input");
+        }
+
+        // Sanitize input (more comprehensive)
+        expression = sanitizeInput(expression);
+
+        let result = eval(expression);
+
+        if (!isFinite(result)) {
+          throw new Error("Cannot divide by zero or result is undefined");
+        }
+
+        display.value = result;
+        errorMessage.textContent = '';
+        updateHistory(expression, result);
+      } catch (error) {
+        errorMessage.textContent = 'Error: ' + error.message;
+        display.value = 'Error';
+      }
+    }
+
+    function isValidExpression(expression) {
+      // Check for multiple operators in a row (e.g., 2++3)
+      if (/[\+\-\*\/]{2,}/.test(expression)) {
+          return false;
+      }
+
+      // Check for unbalanced parentheses (not fully implemented in basic calculator but good practice)
+      const openParens = (expression.match(/\(/g) || []).length;
+      const closeParens = (expression.match(/\)/g) || []).length;
+      if (openParens !== closeParens) {
+          return false;
+      }
+
+      return true;
+    }
+
+    function sanitizeInput(expression) {
+        // Remove potentially harmful characters and limit length
+        let sanitized = expression.replace(/[^0-9\+\-\*\/\.\(\)]/g, '').substring(0, 100); // Limit to 100 chars
+
+        // Prevent leading zeros in numbers (e.g., 007 becomes 7)
+        sanitized = sanitized.replace(/0+(?=[1-9])/g, '');
+
+        return sanitized;
+    }
+
+
+    function squareRoot() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num) || num < 0) {
+                throw new Error("Invalid input for square root");
+            }
+            const result = Math.sqrt(num);
+            display.value = result;
+            errorMessage.textContent = '';
+            updateHistory(`√(${num})`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function powerOfTwo() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num)) {
+                throw new Error("Invalid input for power of two");
+            }
+            const result = Math.pow(num, 2);
+            display.value = result;
+            errorMessage.textContent = '';
+             updateHistory(`${num}²`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function powerOfThree() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num)) {
+                throw new Error("Invalid input for power of three");
+            }
+            const result = Math.pow(num, 3);
+            display.value = result;
+            errorMessage.textContent = '';
+            updateHistory(`${num}³`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function oneOverX() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num) || num === 0) {
+                throw new Error("Cannot divide by zero");
+            }
+            const result = 1 / num;
+            display.value = result;
+            errorMessage.textContent = '';
+             updateHistory(`1/${num}`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function pi() {
+        display.value = Math.PI;
+         updateHistory("π", Math.PI);
+    }
+
+    function exponent() {
+        display.value = Math.E;
+        updateHistory("e", Math.E);
+    }
+
+    function logBase10() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num) || num <= 0) {
+                throw new Error("Invalid input for log base 10");
+            }
+            const result = Math.log10(num);
+            display.value = result;
+            errorMessage.textContent = '';
+            updateHistory(`log₁₀(${num})`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function naturalLog() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num) || num <= 0) {
+                throw new Error("Invalid input for natural log");
+            }
+            const result = Math.log(num);
+            display.value = result;
+            errorMessage.textContent = '';
+            updateHistory(`ln(${num})`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function factorial() {
+        try {
+            const num = parseInt(display.value);
+            if (isNaN(num) || num < 0) {
+                throw new Error("Invalid input for factorial");
+            }
+            let result = 1;
+            for (let i = 2; i <= num; i++) {
+                result *= i;
+            }
+            display.value = result;
+            errorMessage.textContent = '';
+             updateHistory(`${num}!`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function plusMinus() {
+        try {
+            const num = parseFloat(display.value);
+            if (isNaN(num)) {
+                throw new Error("Invalid input for plus/minus");
+            }
+            const result = -num;
+            display.value = result;
+            errorMessage.textContent = '';
+             updateHistory(`-${num}`, result);
+        } catch (error) {
+            errorMessage.textContent = 'Error: ' + error.message;
+            display.value = 'Error';
+        }
+    }
+
+    function sin() {
+      try {
+        const num = parseFloat(display.value);
+        if (isNaN(num)) {
+          throw new Error("Invalid input for sine");
+        }
+        const result = Math.sin(num);
+        display.value = result;
+        errorMessage.textContent = '';
+        updateHistory(`sin(${num})`, result);
+      } catch (error) {
+        errorMessage.textContent = 'Error: ' + error.message;
+        display.value = 'Error';
+      }
+    }
+
+    function cos() {
+      try {
+        const num = parseFloat(display.value);
+        if (isNaN(num)) {
+          throw new Error("Invalid input for cosine");
+        }
+        const result = Math.cos(num);
+        display.value = result;
+        errorMessage.textContent = '';
+         updateHistory(`cos(${num})`, result);
+      } catch (error) {
+        errorMessage.textContent = 'Error: ' + error.message;
+        display.value = 'Error';
+      }
+    }
+
+    function tan() {
+      try {
+        const num = parseFloat(display.value);
+        if (isNaN(num)) {
+          throw new Error("Invalid input for tangent");
+        }
+        const result = Math.tan(num);
+        display.value = result;
+        errorMessage.textContent = '';
+        updateHistory(`tan(${num})`, result);
+      } catch (error) {
+        errorMessage.textContent = 'Error: ' + error.message;
+        display.value = 'Error';
+      }
+    }
+
+
+    // Settings Panel Functionality
+    settingsPanelToggle.addEventListener('click', () => {
+      settingsPanel.classList.toggle('open');
+    });
+
+    themeSelect.addEventListener('change', () => {
+      setTheme(themeSelect.value);
+      localStorage.setItem('theme', themeSelect.value);
+    });
+
+    primaryColorPicker.addEventListener('input', () => {
+      setPrimaryColor(primaryColorPicker.value);
+      localStorage.setItem('primaryColor', primaryColorPicker.value);
+    });
+
+    secondaryColorPicker.addEventListener('input', () => {
+      setSecondaryColor(secondaryColorPicker.value);
+      localStorage.setItem('secondaryColor', secondaryColorPicker.value);
+    });
+
+    fontFamilySelect.addEventListener('change', () => {
+      setFontFamily(fontFamilySelect.value);
+      localStorage.setItem('fontFamily', fontFamilySelect.value);
+    });
+
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    }
+
+    function setPrimaryColor(color) {
+      document.documentElement.style.setProperty('--primary-color', color);
+    }
+
+    function setSecondaryColor(color) {
+      document.documentElement.style.setProperty('--secondary-color', color);
+    }
+
+    function setFontFamily(fontFamily) {
+      document.documentElement.style.setProperty('--font-family', fontFamily);
+    }
+
+    function resetSettings() {
+      localStorage.removeItem('theme');
+      localStorage.removeItem('primaryColor');
+      localStorage.removeItem('secondaryColor');
+      localStorage.removeItem('fontFamily');
+
+      // Reset to default values
+      setTheme('light');
+      setPrimaryColor('#4CAF50');
+      setSecondaryColor('#2196F3');
+      setFontFamily("'Segoe UI', Tahoma, Geneva, Verdana, sans-serif");
+
+      // Update UI
+      themeSelect.value = 'light';
+      primaryColorPicker.value = '#4CAF50';
+      secondaryColorPicker.value = '#2196F3';
+      fontFamilySelect.value = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+       // Force re-render by toggling a dummy style.
+       document.body.classList.toggle("dummy-class");
+       setTimeout(() => {
+           document.body.classList.toggle("dummy-class");
+       }, 50);
+    }
+  </script>
+
+</body>
+</html>
