@@ -7,12 +7,14 @@ import asyncio
 import logging
 from typing import Dict, List, Optional
 from pathlib import Path
-from playwright.async_api import async_playwright, Browser, Page, TimeoutError as PlaywrightTimeout
 import http.server
 import socketserver
 import threading
 import time
 import re
+
+# NOTE: Playwright is imported lazily inside verify_app_features() 
+# to avoid crashes in production if browser dependencies are not installed
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +23,7 @@ class E2ETestRunner:
     """Automated E2E testing system for generated applications"""
     
     def __init__(self):
-        self.browser: Optional[Browser] = None
+        self.browser: Optional[object] = None  # Changed from Browser to object for lazy import
         self.server_thread: Optional[threading.Thread] = None
         self.server: Optional[socketserver.TCPServer] = None
         self.test_port = 8765
@@ -44,6 +46,9 @@ class E2ETestRunner:
             Dict with test results, passed/failed features, critical issues
         """
         try:
+            # Lazy import playwright only when actually running E2E tests
+            from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
+            
             logger.info(f"🧪 Starting E2E verification for {app_type}")
             
             # Start local web server to serve the app
@@ -95,7 +100,7 @@ class E2ETestRunner:
                 "critical_issues": []  # Empty - let quality gate decide based on error message
             }
     
-    async def _test_calculator(self, page: Page, features: List[str]) -> Dict:
+    async def _test_calculator(self, page: object, features: List[str]) -> Dict:
         """Test calculator-specific features"""
         passed_tests = []
         failed_tests = []
@@ -202,7 +207,7 @@ class E2ETestRunner:
             "coverage_percent": (len(passed_tests) / max(len(passed_tests) + len(failed_tests), 1)) * 100
         }
     
-    async def _test_todo_app(self, page: Page, features: List[str]) -> Dict:
+    async def _test_todo_app(self, page: object, features: List[str]) -> Dict:
         """Test todo app features"""
         passed_tests = []
         failed_tests = []
@@ -259,7 +264,7 @@ class E2ETestRunner:
             "coverage_percent": (len(passed_tests) / max(len(passed_tests) + len(failed_tests), 1)) * 100
         }
     
-    async def _test_dashboard(self, page: Page, features: List[str]) -> Dict:
+    async def _test_dashboard(self, page: object, features: List[str]) -> Dict:
         """Test dashboard features"""
         passed_tests = []
         failed_tests = []
@@ -296,7 +301,7 @@ class E2ETestRunner:
             "coverage_percent": (len(passed_tests) / max(len(passed_tests) + len(failed_tests), 1)) * 100
         }
     
-    async def _test_game(self, page: Page, features: List[str]) -> Dict:
+    async def _test_game(self, page: object, features: List[str]) -> Dict:
         """Test game features"""
         passed_tests = []
         failed_tests = []
@@ -340,7 +345,7 @@ class E2ETestRunner:
             "coverage_percent": (len(passed_tests) / max(len(passed_tests) + len(failed_tests), 1)) * 100
         }
     
-    async def _test_generic_app(self, page: Page, features: List[str]) -> Dict:
+    async def _test_generic_app(self, page: object, features: List[str]) -> Dict:
         """Test generic app features"""
         passed_tests = []
         failed_tests = []

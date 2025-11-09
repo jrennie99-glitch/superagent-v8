@@ -87,7 +87,15 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
    - Full E2E functionality available when deployed to Railway, Render, Fly.io
    - User receives clear warnings but builds continue when deps unavailable
 
-5. **JavaScript File Generation Fix (CRITICAL)**:
+5. **Production Deployment Fix - Playwright Import (CRITICAL)**:
+   - Fixed ModuleNotFoundError crashes on Render deployment when playwright browsers not installed
+   - Changed playwright imports from module-level to lazy runtime imports
+   - E2E test runner now only imports playwright when actually running tests
+   - Production deployments work even without browser dependencies installed
+   - Changed type annotations from `page: Page` to `page: object` to avoid import-time errors
+   - App can now start successfully on Render, Railway, Fly.io without playwright browsers
+
+6. **JavaScript File Generation Fix (CRITICAL)**:
    - Fixed webapp builds missing script.js files entirely - calculators/apps were non-functional without JavaScript
    - Modified `_plan_file_structure()` to include `{"name": "script", "type": "script"}` in webapp file list
    - Enhanced `_create_file_prompt()` with JavaScript-specific prompt for "script" and "js" file types
