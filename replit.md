@@ -89,6 +89,16 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
    - Gemini Free Tier: 1,500 requests/day with large context windows
    - System optimizes usage by prioritizing GROQ speed, falling back to Gemini capacity
 
+## Recent Changes (November 9, 2025)
+### UI/UX Improvements
+
+1. **Copy-Paste Fix - Mobile & Touch Devices**:
+   - Fixed copy-paste functionality not working on mobile devices and tablets
+   - Added `touch-action: manipulation` to prevent 3D transform interference
+   - Added explicit `user-select: text` for cross-browser compatibility
+   - Users can now long-press to copy-paste on iOS/Android devices
+   - Issue was caused by rotating sphere animation blocking touch context menus
+
 ## Recent Changes (November 8, 2025)
 ### Critical Bug Fixes & Quality Improvements
 
