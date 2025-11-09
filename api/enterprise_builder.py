@@ -580,14 +580,26 @@ Return ONLY a numbered list of features (no code):
 FEATURE SPECIFICATION:
 {feature_spec}
 
+⚠️ CRITICAL HTML RULES:
+- NO inline event handlers (no onclick, onchange, oninput, onsubmit, etc.)
+- Use semantic IDs and data-attributes for JavaScript hooks
+- JavaScript will attach ALL event listeners via addEventListener
+- All interactive elements need descriptive IDs or data-action attributes
+- For display/input elements, use <input type="text" id="display"> (not div with class)
+
 Create a complete HTML file with:
 - Semantic HTML5 structure
 - All UI elements for every feature in the spec
-- Proper IDs and classes for JavaScript hooks
+- Proper IDs and data-attributes for JavaScript (NO inline events!)
 - Mobile-responsive meta tags
-- Links to style.css and script.js
+- Links to <link rel="stylesheet" href="styles.css"> and <script src="script.js" defer></script>
 
-Generate ONLY the HTML code:"""
+EXAMPLE STRUCTURE (for reference):
+<button id="btn-7" data-action="number" data-value="7">7</button>
+<button id="btn-add" data-action="operator" data-value="+">+</button>
+<input type="text" id="display" readonly>
+
+Generate ONLY the HTML code (no inline event handlers):"""
                         
                         elif file_plan["type"] == "css":
                             prompt = f"""Generate the CSS styling for an ADVANCED {instruction}.
@@ -613,6 +625,13 @@ Generate ONLY the CSS code:"""
 MANDATORY FEATURE SPECIFICATION - ALL MUST BE FULLY FUNCTIONAL:
 {feature_spec}
 
+⚠️ CRITICAL HTML/JS COORDINATION:
+- HTML has NO inline event handlers (no onclick attributes)
+- You MUST attach ALL event listeners using addEventListener
+- Query elements by ID: document.getElementById('btn-7')
+- For <input> elements, use .value property (NOT .textContent)
+- Example: display.value = '0' (correct) vs display.textContent = '0' (wrong for inputs)
+
 CRITICAL IMPLEMENTATION REQUIREMENTS:
 
 1. EXPRESSION PARSER (MANDATORY for calculators):
@@ -622,18 +641,18 @@ CRITICAL IMPLEMENTATION REQUIREMENTS:
    - Handle unary operators (negation, positive)
 
 2. ALL FEATURES MUST WORK:
-   - Every button must have a working click handler
+   - Every button must have a working click handler via addEventListener
    - Every advertised function must be implemented
    - No placeholder text or "coming soon" features
    - All modes must be fully functional (no empty tabs)
 
 3. CODE QUALITY:
    - Use proper state management
-   - Implement clean event handling
+   - Implement clean event handling with addEventListener
    - Add comprehensive error handling
    - Include input validation
    - Use localStorage for persistence
-   - Add keyboard shortcut support
+   - Add keyboard shortcut support with addEventListener('keydown')
    - Modular, well-organized code structure
 
 4. USER EXPERIENCE:
