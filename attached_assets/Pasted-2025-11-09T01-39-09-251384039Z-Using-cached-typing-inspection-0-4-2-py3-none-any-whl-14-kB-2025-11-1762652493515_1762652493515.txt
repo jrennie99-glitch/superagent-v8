@@ -1,0 +1,50 @@
+2025-11-09T01:39:09.251384039Z Using cached typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+2025-11-09T01:39:09.252529922Z Using cached uvloop-0.22.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.4 MB)
+2025-11-09T01:39:09.257860113Z Using cached watchfiles-1.1.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (456 kB)
+2025-11-09T01:39:09.259481167Z Using cached websockets-15.0.1-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (182 kB)
+2025-11-09T01:39:09.260945867Z Using cached google_api_python_client-2.187.0-py3-none-any.whl (14.6 MB)
+2025-11-09T01:39:09.274718433Z Using cached google_auth_httplib2-0.2.1-py3-none-any.whl (9.5 kB)
+2025-11-09T01:39:09.275779765Z Using cached httplib2-0.31.0-py3-none-any.whl (91 kB)
+2025-11-09T01:39:09.276910419Z Using cached pyparsing-3.2.5-py3-none-any.whl (113 kB)
+2025-11-09T01:39:09.278136544Z Using cached uritemplate-4.2.0-py3-none-any.whl (11 kB)
+2025-11-09T01:39:09.279228817Z Using cached pycparser-2.23-py3-none-any.whl (118 kB)
+2025-11-09T01:39:09.280594005Z Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+2025-11-09T01:39:09.281661627Z Using cached tqdm-4.67.1-py3-none-any.whl (78 kB)
+2025-11-09T01:39:09.282886543Z Using cached webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+2025-11-09T01:39:09.549835585Z Installing collected packages: webencodings, wrapt, websockets, uvloop, urllib3, uritemplate, typing-extensions, tqdm, tomlkit, tenacity, structlog, sniffio, six, redis, qrcode, pyyaml, python-multipart, python-dotenv, pyparsing, pygments, pycparser, pyasn1, psycopg2-binary, protobuf, pluggy, platformdirs, pillow, packaging, networkx, mdurl, mccabe, jiter, isort, iniconfig, idna, httptools, h11, docstring-parser, distro, diskcache, dill, colorama, click, charset_normalizer, certifi, cachetools, bleach, bcrypt, asyncpg, astroid, annotated-types, annotated-doc, aiofiles, uvicorn, typing-inspection, rsa, requests, pytest, pylint, pydantic-core, pyasn1-modules, proto-plus, markdown-it-py, mando, httplib2, httpcore, grpcio, googleapis-common-protos, deprecated, cffi, anyio, watchfiles, starlette, rich, radon, pydantic, limits, httpx, grpcio-status, google-auth, docker, cryptography, slowapi, groq, google-auth-httplib2, google-api-core, fastapi, anthropic, google-api-python-client, google-ai-generativelanguage, google-generativeai
+2025-11-09T01:39:18.982693503Z 
+2025-11-09T01:39:18.991612348Z Successfully installed aiofiles-25.1.0 annotated-doc-0.0.3 annotated-types-0.7.0 anthropic-0.72.0 anyio-4.11.0 astroid-4.0.1 asyncpg-0.30.0 bcrypt-5.0.0 bleach-6.3.0 cachetools-6.2.1 certifi-2025.10.5 cffi-2.0.0 charset_normalizer-3.4.4 click-8.3.0 colorama-0.4.6 cryptography-46.0.3 deprecated-1.3.1 dill-0.4.0 diskcache-5.6.3 distro-1.9.0 docker-7.1.0 docstring-parser-0.17.0 fastapi-0.121.1 google-ai-generativelanguage-0.6.15 google-api-core-2.28.1 google-api-python-client-2.187.0 google-auth-2.43.0 google-auth-httplib2-0.2.1 google-generativeai-0.8.5 googleapis-common-protos-1.72.0 groq-0.33.0 grpcio-1.76.0 grpcio-status-1.71.2 h11-0.16.0 httpcore-1.0.9 httplib2-0.31.0 httptools-0.7.1 httpx-0.28.1 idna-3.11 iniconfig-2.3.0 isort-7.0.0 jiter-0.11.1 limits-5.6.0 mando-0.7.1 markdown-it-py-4.0.0 mccabe-0.7.0 mdurl-0.1.2 networkx-3.5 packaging-25.0 pillow-12.0.0 platformdirs-4.5.0 pluggy-1.6.0 proto-plus-1.26.1 protobuf-5.29.5 psycopg2-binary-2.9.11 pyasn1-0.6.1 pyasn1-modules-0.4.2 pycparser-2.23 pydantic-2.12.4 pydantic-core-2.41.5 pygments-2.19.2 pylint-4.0.2 pyparsing-3.2.5 pytest-9.0.0 python-dotenv-1.2.1 python-multipart-0.0.20 pyyaml-6.0.3 qrcode-8.2 radon-6.0.1 redis-7.0.1 requests-2.32.5 rich-14.2.0 rsa-4.9.1 six-1.17.0 slowapi-0.1.9 sniffio-1.3.1 starlette-0.49.3 structlog-25.5.0 tenacity-9.1.2 tomlkit-0.13.3 tqdm-4.67.1 typing-extensions-4.15.0 typing-inspection-0.4.2 uritemplate-4.2.0 urllib3-2.5.0 uvicorn-0.38.0 uvloop-0.22.1 watchfiles-1.1.1 webencodings-0.5.1 websockets-15.0.1 wrapt-2.0.1
+2025-11-09T01:39:18.999024342Z 
+2025-11-09T01:39:18.999039452Z [notice] A new release of pip is available: 25.1.1 -> 25.3
+2025-11-09T01:39:18.999043562Z [notice] To update, run: pip install --upgrade pip
+2025-11-09T01:39:22.633941883Z ==> Uploading build...
+2025-11-09T01:39:47.879472352Z ==> Uploaded in 20.8s. Compression took 4.4s
+2025-11-09T01:39:48.015130998Z ==> Build successful 🎉
+2025-11-09T01:39:50.126921709Z ==> Deploying...
+2025-11-09T01:40:21.218074316Z ==> Running 'uvicorn api.index:app --host 0.0.0.0 --port $PORT'
+2025-11-09T01:40:25.30846414Z [2025-11-09 01:40:25] INFO     🛡️ Cybersecurity AI initialized (Lakera Guard disabled - set LAKERA_API_KEY to enable)
+2025-11-09T01:40:25.308548332Z 2025-11-09 01:40:25,308 - SuperAgent - INFO - 🛡️ Cybersecurity AI initialized (Lakera Guard disabled - set LAKERA_API_KEY to enable)
+2025-11-09T01:40:27.276302291Z /opt/render/project/src/api/enhanced_endpoints.py:18: UserWarning: Field name "validate" in "Build100Request" shadows an attribute in parent "BaseModel"
+2025-11-09T01:40:27.276319221Z   class Build100Request(BaseModel):
+2025-11-09T01:40:27.612272724Z 2025-11-09 01:40:27,612 - api.multimodal_processor - INFO - MultiModalProcessor initialized with upload_dir: /tmp/superagent_uploads
+2025-11-09T01:40:27.673912013Z 2025-11-09 01:40:27,673 - api.autonomous_app_generator - INFO - AutonomousAppGenerator initialized
+2025-11-09T01:40:27.680723904Z 2025-11-09 01:40:27,680 - api.live_dashboard - INFO - LiveDashboardManager initialized
+2025-11-09T01:40:27.686107301Z 2025-11-09 01:40:27,685 - api.grok_copilot - INFO - GrokCoPilot initialized
+2025-11-09T01:40:27.718861307Z 2025-11-09 01:40:27,717 - api.deploy_share - INFO - DeployShareSystem initialized
+2025-11-09T01:40:27.794232841Z [2025-11-09 01:40:27] INFO     SuperAgent API starting
+2025-11-09T01:40:27.794261522Z 2025-11-09 01:40:27,793 - SuperAgent - INFO - SuperAgent API starting
+2025-11-09T01:40:28.085072805Z 2025-11-09 01:40:28,084 - superagent.modules.app_testing - WARNING - Playwright not installed. Browser testing unavailable.
+2025-11-09T01:40:28.280339338Z INFO:     Started server process [62]
+2025-11-09T01:40:28.280384839Z INFO:     Waiting for application startup.
+2025-11-09T01:40:28.280810109Z INFO:     Application startup complete.
+2025-11-09T01:40:28.281391653Z INFO:     Uvicorn running on http://0.0.0.0:10000 (Press CTRL+C to quit)
+2025-11-09T01:40:29.181301003Z ⚠️ DATABASE_URL not set - User management disabled
+2025-11-09T01:40:29.181320334Z ℹ️ Redis URL not found, using fallback cache
+2025-11-09T01:40:29.181325404Z INFO:     127.0.0.1:46486 - "HEAD / HTTP/1.1" 405 Method Not Allowed
+2025-11-09T01:40:33.531451056Z ==> Your service is live 🎉
+2025-11-09T01:40:34.038623879Z ==> 
+2025-11-09T01:40:34.514665604Z ==> ///////////////////////////////////////////////////////////
+2025-11-09T01:40:34.560369721Z ==> 
+2025-11-09T01:40:34.606034768Z ==> Available at your primary URL https://supermen-v8.onrender.com
+2025-11-09T01:40:34.648138074Z ==> 
+2025-11-09T01:40:34.690367302Z ==> ///////////////////////////////////////////////////////////
