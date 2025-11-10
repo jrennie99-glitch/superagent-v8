@@ -719,9 +719,40 @@ CRITICAL IMPLEMENTATION REQUIREMENTS:
    - Accessibility features (ARIA labels, keyboard navigation)
    - Loading states and error messages
 
-🚨 FINAL REMINDER BEFORE GENERATING CODE:
-For <input> elements: ALWAYS use .value property (display.value = currentValue)
-NEVER use .textContent for inputs - it will not work!
+🚨 MANDATORY CODE STRUCTURE - YOU MUST INCLUDE ALL OF THIS:
+
+Your JavaScript MUST follow this exact structure:
+
+STEP 1: Define state variables
+STEP 2: Create updateDisplay() function that calls display.value = currentValue
+STEP 3: Create handleButtonClick() function that calls updateDisplay() after every change
+STEP 4: CRITICAL - Add DOMContentLoaded listener that:
+   - Attaches click listeners to ALL buttons with querySelectorAll
+   - Calls updateDisplay() to initialize
+
+EXAMPLE STRUCTURE YOU MUST FOLLOW:
+
+let currentValue = '0';
+
+function updateDisplay() {
+  document.getElementById('display').value = currentValue;
+}
+
+function handleButtonClick(e) {
+  // process button
+  currentValue = newValue;
+  updateDisplay();  // REQUIRED!
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', handleButtonClick);
+  });
+  updateDisplay();
+});
+
+WITHOUT THE DOMContentLoaded SECTION, BUTTONS WILL NOT WORK!
+WITHOUT calling updateDisplay(), DISPLAY WILL NOT UPDATE!
 
 Generate ONLY the complete, working JavaScript code with ALL features functional:"""
                         
