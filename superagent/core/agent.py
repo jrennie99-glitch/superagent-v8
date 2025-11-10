@@ -10,6 +10,7 @@ from superagent.core.llm import LLMProvider
 from superagent.core.cache import CacheManager
 from superagent.core.multi_agent import SupervisorSystem
 from superagent.modules.code_generator import CodeGenerator
+from superagent.modules.code_generator_enhanced import EnterpriseCodeGenerator
 from superagent.modules.debugger import AdvancedDebugger
 from superagent.modules.tester import TestingEngine
 from superagent.modules.deployer import DeploymentEngine
@@ -66,6 +67,7 @@ class SuperAgent:
         
         # Initialize modules
         self.code_generator = CodeGenerator(self.llm, self.cache)
+        self.enterprise_generator = EnterpriseCodeGenerator(self.llm, self.cache)
         self.debugger = AdvancedDebugger(self.llm, self.config.debugging)
         self.tester = TestingEngine(self.config.testing)
         self.deployer = DeploymentEngine(self.config.deployment)

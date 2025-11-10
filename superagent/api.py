@@ -16,6 +16,8 @@ from superagent.core.config import Config
 from superagent.core.multi_agent import MultiAgentOrchestrator
 from superagent.core.memory import ProjectMemory
 from superagent.modules.hallucination_fixer import HallucinationFixer
+from superagent.modules.code_generator_enhanced import EnterpriseCodeGenerator
+from superagent.modules.quality_validator import QualityValidator
 
 logger = structlog.get_logger()
 
@@ -581,3 +583,106 @@ if __name__ == "__main__":
 
 
 
+
+
+# ============================================================================
+# ENTERPRISE QUALITY ENDPOINTS
+# Added for high-quality, fully functional code generation
+# ============================================================================
+
+class EnterpriseGenerateRequest(BaseModel):
+    """Request for enterprise-quality code generation."""
+    instruction: str
+    app_name: str
+    app_type: str = "calculator"
+    language: str = "html"
+
+
+class EnterpriseGenerateResponse(BaseModel):
+    """Response from enterprise code generation."""
+    success: bool
+    app_name: str
+    app_type: str
+    files: Dict[str, str]
+    quality_score: float
+    quality_report: Dict[str, Any]
+    ready_to_use: bool
+    instructions: str
+    error: Optional[str] = None
+
+
+@app.post("/generate-enterprise", response_model=EnterpriseGenerateResponse)
+async def generate_enterprise_app(
+    request: EnterpriseGenerateRequest,
+    api_key: str = Depends(verify_api_key)
+):
+    """Generate enterprise-quality, fully functional applications."""
+    try:
+        logger.info(f"Enterprise generation: {request.app_type} - {request.app_name}")
+        
+        from superagent.core.llm import LLMProvider
+        from superagent.core.cache import CacheManager
+        
+        anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+        if not anthropic_key:
+            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY required")
+        
+        llm = LLMProvider(
+            api_key=anthropic_key,
+            model="claude-sonnet-4-5-20250929",
+            temperature=0.7,
+            max_tokens=8000
+        )
+        
+        cache = CacheManager(
+            redis_url=f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}",
+            cache_dir="./cache",
+            ttl=3600
+        )
+        
+        try:
+            await cache.connect()
+        except:
+            pass
+        
+        generator = EnterpriseCodeGenerator(llm, cache)
+        result = await generator.generate_enterprise_web_app(
+            description=request.instruction,
+            app_name=request.app_name,
+            app_type=request.app_type
+        )
+        
+        await cache.close()
+        
+        qr = result.get('quality_report', {})
+        quality_score = (
+            (100 if qr.get('html_complete') else 0) +
+            (100 if qr.get('css_present') else 0) +
+            (100 if qr.get('js_functional') else 0)
+        ) / 3
+        
+        return EnterpriseGenerateResponse(
+            success=result.get('success', True),
+            app_name=result['app_name'],
+            app_type=result['app_type'],
+            files=result['files'],
+            quality_score=quality_score,
+            quality_report=result['quality_report'],
+            ready_to_use=result['ready_to_use'],
+            instructions=result['instructions'],
+            error=None
+        )
+        
+    except Exception as e:
+        logger.error(f"Enterprise generation failed: {e}")
+        return EnterpriseGenerateResponse(
+            success=False,
+            app_name=request.app_name,
+            app_type=request.app_type,
+            files={},
+            quality_score=0,
+            quality_report={},
+            ready_to_use=False,
+            instructions="",
+            error=str(e)
+        )
