@@ -734,22 +734,22 @@ EXAMPLE STRUCTURE YOU MUST FOLLOW:
 
 let currentValue = '0';
 
-function updateDisplay() {
+function updateDisplay() {{
   document.getElementById('display').value = currentValue;
-}
+}}
 
-function handleButtonClick(e) {
+function handleButtonClick(e) {{
   // process button
   currentValue = newValue;
   updateDisplay();  // REQUIRED!
-}
+}}
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('button').forEach(btn => {
+document.addEventListener('DOMContentLoaded', () => {{
+  document.querySelectorAll('button').forEach(btn => {{
     btn.addEventListener('click', handleButtonClick);
-  });
+  }});
   updateDisplay();
-});
+}});
 
 WITHOUT THE DOMContentLoaded SECTION, BUTTONS WILL NOT WORK!
 WITHOUT calling updateDisplay(), DISPLAY WILL NOT UPDATE!
