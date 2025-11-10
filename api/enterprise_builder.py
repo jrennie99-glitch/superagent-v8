@@ -647,11 +647,24 @@ MANDATORY FEATURE SPECIFICATION - ALL MUST BE FULLY FUNCTIONAL:
 - HTML has NO inline event handlers (no onclick attributes)
 - You MUST attach ALL event listeners using addEventListener
 - Query elements by ID: document.getElementById('btn-7')
+- EVERY button MUST have a working event listener attached
+- ALL functionality MUST be complete and tested
 
 🚨 CRITICAL: INPUT ELEMENT HANDLING (READ THIS CAREFULLY!) 🚨
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 For <input> or <textarea> elements, you MUST use the .value property.
 NEVER use .textContent or .innerText for input elements - they will not work!
+
+🚨 CALCULATOR-SPECIFIC REQUIREMENTS (IF APPLICABLE):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- ALL number buttons (0-9) MUST append to display when clicked
+- ALL operator buttons (+, -, *, /) MUST work correctly
+- Equals button (=) MUST calculate and show result
+- Clear button (C/AC) MUST reset calculator state
+- Display MUST update in real-time with every button click
+- Use eval() or proper expression parser for calculations
+- Handle decimal points and negative numbers
+- Prevent division by zero errors
 
 CORRECT updateDisplay() implementation:
 ```javascript
@@ -949,7 +962,19 @@ This means they want MORE than basic functionality - add power user features.
 ═══════════════════════════════════════════════════════════════════
 
 🧮 CALCULATOR - {"ADVANCED" if wants_advanced else "STANDARD"} VERSION:
-{"INCLUDE MANY OF THESE:" if wants_advanced else "CONSIDER INCLUDING:"}
+{"INCLUDE MANY OF THESE:" if wants_advanced else "MUST INCLUDE AT MINIMUM:"}
+
+⚠️ CRITICAL FOR ALL CALCULATORS (BASIC OR ADVANCED):
+- Display element MUST use <input type="text" id="display" readonly>
+- Update display using: document.getElementById('display').value = result
+- NEVER use .textContent or .innerText for display updates
+- ALL buttons MUST have click event listeners attached
+- Number buttons (0-9) MUST append digits to display
+- Operator buttons (+, -, *, /) MUST store operator and first number
+- Equals (=) MUST perform calculation and show result
+- Clear (C) MUST reset all calculator state
+- Use try-catch with eval() or implement expression parser
+- Test each button mentally before generating code
 ✅ Scientific Functions: sin, cos, tan, log, ln, sqrt, x², x³, xʸ, 1/x, n!, π, e
 ✅ Expression Evaluation: Parse & calculate full expressions like "3×(5+2)÷7"
 ✅ Keyboard Support: Full keyboard input + shortcuts (Enter=calculate, C=clear, Esc=clear)

@@ -1618,7 +1618,7 @@ async def build_complete_app(req: BuildAppRequest):
         genai.configure(api_key=gemini_key)
         model = genai.GenerativeModel('gemini-2.0-flash')
         
-        prompt = f"""You are an expert web developer. Create a COMPLETE, beautiful HTML website for: {req.instruction}
+        prompt = f"""You are an expert web developer. Create a COMPLETE, FULLY FUNCTIONAL HTML website for: {req.instruction}
 
 Requirements:
 - Generate a SINGLE, complete HTML file with inline CSS and JavaScript
@@ -1627,6 +1627,24 @@ Requirements:
 - Use gradients, animations, and modern styling
 - Make it fully responsive and mobile-friendly
 - NO external dependencies or imports
+
+🚨 CRITICAL FUNCTIONALITY REQUIREMENTS:
+- ALL interactive elements MUST work (buttons, inputs, forms, etc.)
+- For calculators: ALL buttons must have click handlers, display must update, calculations must work
+- For todo lists: Add, delete, edit, and mark complete must all work
+- For games: All game logic must be complete and playable
+- Use proper event listeners (addEventListener, not inline onclick)
+- Test each feature mentally before generating - it MUST work!
+
+🚨 CALCULATOR-SPECIFIC (if applicable):
+- Display MUST be: <input type="text" id="display" readonly>
+- Update display with: document.getElementById('display').value = newValue
+- NEVER use .textContent or .innerText for input elements
+- Number buttons (0-9) must append to display
+- Operators (+, -, *, /) must work correctly  
+- Equals (=) must calculate result using eval() or expression parser
+- Clear (C) must reset calculator state
+- Handle decimals and prevent errors
 
 CRITICAL LAYOUT REQUIREMENTS (for iframe compatibility):
 - Set body: margin: 0; padding: 20px 20px 20px 0; width: 100%; min-height: 100vh; overflow-x: hidden;
