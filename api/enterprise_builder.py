@@ -422,10 +422,23 @@ class EnterpriseBuildSystem:
         """Initialize AI model based on available API keys and rate limits
         
         Returns: (model, provider_name)
+        Priority: Claude > GROQ > Gemini
         """
-        from api.custom_key_manager import get_custom_groq_key, get_custom_gemini_key
+        from api.custom_key_manager import get_custom_groq_key, get_custom_gemini_key, get_custom_claude_key
         from api.rate_limit_failover import get_rate_limit_tracker
         
+        # Check for Claude first (BEST QUALITY)
+        claude_key = get_custom_claude_key()
+        if claude_key:
+            try:
+                from anthropic import Anthropic
+                client = Anthropic(api_key=claude_key)
+                print(f"🎯 Using Claude AI (BEST QUALITY - enterprise-level code generation)")
+                return client, "claude"
+            except Exception as e:
+                print(f"⚠️ Claude initialization failed: {e}, falling back...")
+        
+        # Fallback to GROQ/Gemini
         tracker = get_rate_limit_tracker()
         provider = tracker.get_available_provider()
         
@@ -444,7 +457,7 @@ class EnterpriseBuildSystem:
             model = genai.GenerativeModel('gemini-2.0-flash')
             print(f"🤖 Using Gemini AI (failover or primary)")
             return model, "gemini"
-    
+
     def _generate_content(self, model, provider, prompt, retry_on_rate_limit=True):
         """Universal content generation across providers with automatic failover"""
         from api.rate_limit_failover import get_rate_limit_tracker

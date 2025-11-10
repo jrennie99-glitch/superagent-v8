@@ -47,16 +47,41 @@ def get_custom_groq_key():
     print("❌ No GROQ API key found!")
     return None
 
+
+
+def get_custom_claude_key():
+    """Get Claude API key - Priority: USER_ANTHROPIC_API_KEY > ANTHROPIC_API_KEY (system default)"""
+    
+    # Priority 1: Check if user set their own key
+    user_key = os.getenv("USER_ANTHROPIC_API_KEY")
+    if user_key:
+        print("✅ Using USER_ANTHROPIC_API_KEY (your personal Claude key - best quality)")
+        return user_key
+    
+    # Priority 2: Fallback to default system key
+    system_key = os.getenv("ANTHROPIC_API_KEY")
+    if system_key:
+        print("✅ Using ANTHROPIC_API_KEY (Claude - enterprise-level code generation)")
+        return system_key
+    
+    print("❌ No Claude/Anthropic API key found!")
+    return None
+
 def get_ai_provider():
     """Determine which AI provider to use based on available keys
     
     Priority:
-    1. GROQ (if USER_GROQ_API_KEY is set) - Fastest inference
-    2. Gemini (if USER_GEMINI_API_KEY is set) - Large free tier
-    3. Gemini (system default)
+    1. Claude (if ANTHROPIC_API_KEY is set) - BEST QUALITY for enterprise apps
+    2. GROQ (if USER_GROQ_API_KEY is set) - Fastest inference
+    3. Gemini (if USER_GEMINI_API_KEY is set) - Large free tier
+    4. Gemini (system default)
     """
     
-    # Check for user's custom GROQ key (highest priority for performance)
+    # Check for Claude key (HIGHEST PRIORITY for quality)
+    if os.getenv("USER_ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_API_KEY"):
+        return "claude"
+    
+    # Check for user's custom GROQ key
     if os.getenv("USER_GROQ_API_KEY"):
         return "groq"
     
