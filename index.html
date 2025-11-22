@@ -173,6 +173,12 @@ function escapeHtml(txt){const div=document.createElement('div');div.textContent
 async function startBuilding(){
   const prompt=document.getElementById('userPrompt').value.trim();
   if(!prompt){alert("Please describe what you want to build first!");return}
+  
+  // Redirect to editor with prompt
+  sessionStorage.setItem('initialPrompt',prompt);
+  window.location.href='/editor.html';
+  return;
+  
   if(buildActive)return;
   buildActive=true;showBuildView();
   const btn=document.getElementById('createBtn');

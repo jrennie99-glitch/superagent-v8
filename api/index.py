@@ -575,6 +575,29 @@ def root():
             status_code=500
         )
 
+@app.get("/editor.html", response_class=HTMLResponse)
+def editor():
+    try:
+        # Load HTML relative to project root
+        base_dir = Path(__file__).parent.parent
+        html_path = base_dir / "editor.html"
+        with open(html_path, "r", encoding="utf-8") as f:
+            from fastapi import Response
+            return Response(
+                content=f.read(),
+                media_type="text/html",
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
+    except Exception as e:
+        return HTMLResponse(
+            content=f"<html><body><h1>Error Loading Editor</h1><p>{str(e)}</p></body></html>",
+            status_code=500
+        )
+
 @app.get("/pricing.html", response_class=HTMLResponse)
 def pricing():
     try:

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperAgent V9 - Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;overflow:hidden}
+    .editor-container{display:grid;grid-template-rows:60px 1fr 60px;height:100vh;width:100vw}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;background:#141414;border-bottom:1px solid #262626}
+    .logo{font-size:1.125rem;font-weight:700;background:linear-gradient(135deg,#06b6d4,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .top-actions{display:flex;gap:.75rem;align-items:center}
+    .icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#1a1a1a;border:1px solid #2a2a2a;cursor:pointer;transition:all .2s}
+    .icon-btn:hover{background:#2a2a2a;border-color:#3a3a3a}
+    .publish-btn{padding:0 1.25rem;height:36px;background:#000;color:#fff;border-radius:18px;font-weight:600;font-size:.875rem;border:none;cursor:pointer;transition:all .2s}
+    .publish-btn:hover{background:#1a1a1a}
+    .main-grid{display:grid;grid-template-columns:auto 1fr auto;height:100%;overflow:hidden}
+    .left-sidebar{width:280px;background:#0f0f0f;border-right:1px solid #262626;transition:width .3s;overflow:hidden}
+    .left-sidebar.collapsed{width:60px}
+    .sidebar-item{display:flex;align-items:center;gap:.75rem;padding:.875rem 1rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+    .sidebar-item:hover{background:#1a1a1a}
+    .sidebar-item.active{background:#1a1a1a;border-left-color:#8b5cf6}
+    .sidebar-icon{width:20px;height:20px;flex-shrink:0}
+    .sidebar-text{font-size:.875rem;font-weight:500;white-space:nowrap;opacity:1;transition:opacity .2s}
+    .collapsed .sidebar-text{opacity:0;width:0}
+    .chat-area{background:#0a0a0a;overflow-y:auto;padding:2rem;max-height:calc(100vh - 120px)}
+    .chat-area::-webkit-scrollbar{width:8px}
+    .chat-area::-webkit-scrollbar-track{background:#0f0f0f}
+    .chat-area::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:4px}
+    .message{margin-bottom:2rem}
+    .message-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.875rem}
+    .message-content{background:#141414;border-radius:12px;padding:1.25rem;border:1px solid #262626}
+    .step-number{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#1a1a1a;border:1px solid #3a3a3a;font-size:.75rem;font-weight:600;margin-right:.5rem}
+    .code-block{background:#0a0a0a;border:1px solid #262626;border-radius:8px;padding:1rem;margin:.75rem 0;font-family:monospace;font-size:.875rem;position:relative}
+    .copy-btn{position:absolute;top:.5rem;right:.5rem;padding:.375rem .75rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;font-size:.75rem;cursor:pointer;opacity:0;transition:all .2s}
+    .code-block:hover .copy-btn{opacity:1}
+    .copy-btn:hover{background:#2a2a2a}
+    .preview-pane{width:600px;background:#0f0f0f;border-left:1px solid #262626;transition:width .3s;overflow:hidden}
+    .preview-pane.hidden{width:0;border:none}
+    .preview-header{padding:1rem 1.5rem;border-bottom:1px solid #262626;font-weight:600;font-size:.875rem}
+    .preview-content{height:calc(100% - 60px);background:#fff}
+    .preview-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;gap:1rem}
+    .bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;background:#141414;border-top:1px solid #262626}
+    .bottom-left{display:flex;gap:.75rem;align-items:center}
+    .mode-btn{padding:.5rem 1rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;font-size:.875rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+    .mode-btn:hover{background:#2a2a2a}
+    .mode-btn.active{background:#8b5cf6;border-color:#8b5cf6}
+    .input-area{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 400px);max-width:800px;z-index:100}
+    .input-container{background:#141414;border:2px solid #2a2a2a;border-radius:16px;padding:1rem;transition:border-color .2s}
+    .input-container:focus-within{border-color:#8b5cf6}
+    .chat-input{width:100%;background:transparent;border:none;outline:none;color:#fff;font-size:.9375rem;resize:none;min-height:24px;max-height:200px}
+    .input-actions{display:flex;justify-content:space-between;align-items:center;margin-top:.75rem}
+    .send-btn{padding:.625rem 1.5rem;background:#8b5cf6;color:#fff;border:none;border-radius:12px;font-weight:600;font-size:.875rem;cursor:pointer;transition:all .2s}
+    .send-btn:hover{background:#7c4ee7}
+    .send-btn:disabled{opacity:.5;cursor:not-allowed}
+    .modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
+    .modal.show{display:flex}
+    .modal-content{background:#141414;border:1px solid #2a2a2a;border-radius:16px;padding:2rem;max-width:500px;width:90%}
+    .modal-header{font-size:1.25rem;font-weight:700;margin-bottom:1rem}
+    .modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;cursor:pointer;opacity:.7}
+    .modal-close:hover{opacity:1}
+  </style>
+</head>
+<body>
+
+<div class="editor-container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="logo">SuperAgent V9</div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="goHome()" title="Home">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </button>
+      <button class="icon-btn" onclick="toggleCode()" title="View Code">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="icon-btn" onclick="togglePreview()" title="Toggle Preview">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+      </button>
+      <button class="icon-btn" onclick="takeScreenshot()" title="Screenshot">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+      <button class="icon-btn" onclick="openSearch()" title="Search">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </button>
+      <button class="icon-btn" onclick="openInvite()" title="Invite">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </button>
+      <button class="icon-btn" onclick="openShare()" title="Share">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+      </button>
+      <button class="publish-btn" onclick="openPublish()">Publish</button>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    <!-- Left Sidebar -->
+    <div id="leftSidebar" class="left-sidebar">
+      <div class="sidebar-item active" onclick="toggleSidebar()">
+        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <span class="sidebar-text">See steps ›</span>
+      </div>
+      <div class="sidebar-item" onclick="alert('Files explorer - Coming soon!')">
+        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        <span class="sidebar-text">Files</span>
+      </div>
+      <div class="sidebar-item" onclick="alert('Git integration - Coming soon!')">
+        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        <span class="sidebar-text">Git</span>
+      </div>
+      <div class="sidebar-item">
+        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <span class="sidebar-text">AI Chat</span>
+      </div>
+      <div class="sidebar-item" onclick="alert('Settings - Coming soon!')">
+        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span class="sidebar-text">Settings</span>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area" id="chatArea">
+      <div class="message">
+        <div class="message-header">
+          <div class="avatar">AI</div>
+          <span style="font-weight:600">SuperAgent V9</span>
+        </div>
+        <div class="message-content">
+          <p style="margin-bottom:1rem">👋 Welcome to SuperAgent V9! I'm ready to build production-ready apps for you.</p>
+          <p style="color:#888;font-size:.875rem">Describe what you want to build, and I'll create it with Next.js 15, TypeScript, Tailwind CSS, and everything you need for deployment.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Pane -->
+    <div id="previewPane" class="preview-pane">
+      <div class="preview-header">Live Preview</div>
+      <div class="preview-content">
+        <div class="preview-placeholder">
+          <svg width="64" height="64" fill="none" stroke="#666" stroke-width="2"><rect x="8" y="8" width="48" height="48" rx="4"/><path d="M32 24v16M24 32h16"/></svg>
+          <p style="font-size:.9375rem">Your preview will appear here</p>
+          <p style="font-size:.8125rem;margin-top:.5rem">Start building to see live updates</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <button class="icon-btn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="mode-btn active" onclick="switchMode('auto')">
+        <span>Auto</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="mode-btn" onclick="switchMode('default')">
+        <span>Default</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="mode-btn" onclick="switchMode('max')" style="background:#ec4899;border-color:#ec4899">
+        <span>Try MAX</span>
+      </button>
+    </div>
+    <button class="icon-btn" onclick="scrollToTop()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Input Area -->
+<div class="input-area">
+  <div class="input-container">
+    <textarea id="chatInput" class="chat-input" placeholder="Describe what you want to build..." rows="1" onkeydown="handleInputKeydown(event)"></textarea>
+    <div class="input-actions">
+      <div style="display:flex;gap:.5rem">
+        <button class="icon-btn" title="Attach file">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+      </div>
+      <button id="sendBtn" class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Publish Modal -->
+<div id="publishModal" class="modal">
+  <div class="modal-content" style="position:relative">
+    <button class="modal-close" onclick="closePublish()">✕</button>
+    <div class="modal-header">Publish Your App</div>
+    <p style="color:#888;margin-bottom:1.5rem">Deploy your app to production with one click.</p>
+    <div style="display:flex;gap:1rem;flex-direction:column">
+      <button style="padding:1rem;background:#8b5cf6;border:none;border-radius:12px;font-weight:600;cursor:pointer" onclick="alert('Deploying to Vercel...')">Deploy to Vercel</button>
+      <button style="padding:1rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;font-weight:600;cursor:pointer" onclick="alert('Deploying to Netlify...')">Deploy to Netlify</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div id="shareModal" class="modal">
+  <div class="modal-content" style="position:relative">
+    <button class="modal-close" onclick="closeShare()">✕</button>
+    <div class="modal-header">Share Your Project</div>
+    <p style="color:#888;margin-bottom:1.5rem">Share this project with your team.</p>
+    <input type="text" value="https://superagent-v9.repl.co/project/123" readonly style="width:100%;padding:.875rem;background:#0a0a0a;border:1px solid#2a2a2a;border-radius:8px;color:#fff;margin-bottom:1rem">
+    <button style="width:100%;padding:1rem;background:#8b5cf6;border:none;border-radius:12px;font-weight:600;cursor:pointer" onclick="copyShareLink()">Copy Link</button>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div id="inviteModal" class="modal">
+  <div class="modal-content" style="position:relative">
+    <button class="modal-close" onclick="closeInvite()">✕</button>
+    <div class="modal-header">Invite Collaborators</div>
+    <p style="color:#888;margin-bottom:1.5rem">Add team members to this project.</p>
+    <input type="email" placeholder="Enter email address" style="width:100%;padding:.875rem;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#fff;margin-bottom:1rem">
+    <button style="width:100%;padding:1rem;background:#8b5cf6;border:none;border-radius:12px;font-weight:600;cursor:pointer" onclick="alert('Invitation sent!')">Send Invite</button>
+  </div>
+</div>
+
+<script>
+let currentMode='auto';
+let previewVisible=true;
+let sidebarCollapsed=false;
+let isBuilding=false;
+
+// Auto-resize textarea
+document.getElementById('chatInput').addEventListener('input',function(){
+  this.style.height='24px';
+  this.style.height=this.scrollHeight+'px';
+});
+
+function handleInputKeydown(e){
+  if(e.key==='Enter'&&!e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function goHome(){
+  window.location.href='/';
+}
+
+function toggleCode(){
+  alert('Code view - Coming soon! This will show the generated code in a modal.');
+}
+
+function togglePreview(){
+  previewVisible=!previewVisible;
+  const pane=document.getElementById('previewPane');
+  pane.classList.toggle('hidden');
+}
+
+function takeScreenshot(){
+  alert('Screenshot feature - Coming soon!');
+}
+
+function openSearch(){
+  alert('Search - Coming soon!');
+}
+
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed;
+  document.getElementById('leftSidebar').classList.toggle('collapsed');
+}
+
+function openPublish(){
+  document.getElementById('publishModal').classList.add('show');
+}
+
+function closePublish(){
+  document.getElementById('publishModal').classList.remove('show');
+}
+
+function openShare(){
+  document.getElementById('shareModal').classList.add('show');
+}
+
+function closeShare(){
+  document.getElementById('shareModal').classList.remove('show');
+}
+
+function openInvite(){
+  document.getElementById('inviteModal').classList.add('show');
+}
+
+function closeInvite(){
+  document.getElementById('inviteModal').classList.remove('show');
+}
+
+function copyShareLink(){
+  navigator.clipboard.writeText('https://superagent-v9.repl.co/project/123');
+  alert('Link copied to clipboard!');
+}
+
+function switchMode(mode){
+  currentMode=mode;
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.classList.remove('active');
+  });
+  event.target.closest('.mode-btn').classList.add('active');
+}
+
+function scrollToTop(){
+  document.getElementById('chatArea').scrollTop=0;
+}
+
+function addMessage(text,isUser=false){
+  const chatArea=document.getElementById('chatArea');
+  const msg=document.createElement('div');
+  msg.className='message';
+  msg.innerHTML=`
+    <div class="message-header">
+      <div class="avatar">${isUser?'U':'AI'}</div>
+      <span style="font-weight:600">${isUser?'You':'SuperAgent V9'}</span>
+    </div>
+    <div class="message-content">
+      <p>${escapeHtml(text)}</p>
+    </div>
+  `;
+  chatArea.appendChild(msg);
+  chatArea.scrollTop=chatArea.scrollHeight;
+}
+
+function addStepMessage(stepNum,title,content){
+  const chatArea=document.getElementById('chatArea');
+  const msg=document.createElement('div');
+  msg.className='message';
+  msg.innerHTML=`
+    <div class="message-header">
+      <div class="avatar">AI</div>
+      <span style="font-weight:600">SuperAgent V9</span>
+    </div>
+    <div class="message-content">
+      <p style="margin-bottom:.75rem"><span class="step-number">${stepNum}</span>${escapeHtml(title)}</p>
+      <p style="color:#aaa;font-size:.875rem">${escapeHtml(content)}</p>
+    </div>
+  `;
+  chatArea.appendChild(msg);
+  chatArea.scrollTop=chatArea.scrollHeight;
+}
+
+function addCodeBlock(code,lang='typescript'){
+  const chatArea=document.getElementById('chatArea');
+  const msg=document.createElement('div');
+  msg.className='message';
+  msg.innerHTML=`
+    <div class="message-header">
+      <div class="avatar">AI</div>
+      <span style="font-weight:600">SuperAgent V9</span>
+    </div>
+    <div class="message-content">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre><code>${escapeHtml(code)}</code></pre>
+      </div>
+    </div>
+  `;
+  chatArea.appendChild(msg);
+  chatArea.scrollTop=chatArea.scrollHeight;
+}
+
+function copyCode(btn){
+  const code=btn.nextElementSibling.textContent;
+  navigator.clipboard.writeText(code);
+  btn.textContent='Copied!';
+  setTimeout(()=>btn.textContent='Copy',2000);
+}
+
+function escapeHtml(text){
+  const div=document.createElement('div');
+  div.textContent=text;
+  return div.innerHTML;
+}
+
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text||isBuilding)return;
+  
+  isBuilding=true;
+  const sendBtn=document.getElementById('sendBtn');
+  sendBtn.disabled=true;
+  sendBtn.textContent='Building...';
+  
+  addMessage(text,true);
+  input.value='';
+  input.style.height='24px';
+  
+  addMessage('Starting build process... 🚀');
+  
+  try{
+    const res=await fetch('/api/v1/build-streaming',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        instruction:text,
+        plan_mode:true,
+        enterprise_mode:true,
+        live_preview:false,
+        auto_deploy:false
+      })
+    });
+    
+    if(!res.ok)throw new Error(`API returned ${res.status}`);
+    
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let buffer='';
+    let stepCount=0;
+    
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');
+      buffer=lines.pop()||'';
+      
+      for(const line of lines){
+        if(line.trim()===''||!line.startsWith('data: '))continue;
+        
+        try{
+          const data=JSON.parse(line.substring(6).trim());
+          
+          if(data.type==='log'||data.type==='log-stream'){
+            const msg=data.message||data.text||'';
+            if(msg)addMessage(msg);
+          }else if(data.type==='step'){
+            stepCount++;
+            addStepMessage(stepCount,data.title||'Step '+data.step,data.status||'Processing...');
+          }else if(data.type==='complete'){
+            addMessage('✅ Build completed successfully!');
+            addMessage('Your app is ready to deploy. Click the Publish button to go live!');
+          }else if(data.type==='error'){
+            addMessage('❌ Error: '+(data.message||'Unknown error'));
+          }
+        }catch(e){
+          console.error('Parse error:',e);
+        }
+      }
+    }
+  }catch(err){
+    console.error('Build error:',err);
+    addMessage('❌ Build failed: '+err.message);
+  }finally{
+    isBuilding=false;
+    sendBtn.disabled=false;
+    sendBtn.textContent='Send';
+  }
+}
+
+// Close modals on outside click
+window.onclick=function(e){
+  if(e.target.classList.contains('modal')){
+    e.target.classList.remove('show');
+  }
+}
+
+// Check for initial prompt from landing page
+window.addEventListener('DOMContentLoaded',function(){
+  const initialPrompt=sessionStorage.getItem('initialPrompt');
+  if(initialPrompt){
+    sessionStorage.removeItem('initialPrompt');
+    document.getElementById('chatInput').value=initialPrompt;
+    // Auto-send after a brief delay
+    setTimeout(()=>sendMessage(),500);
+  }
+});
+</script>
+
+</body>
+</html>
