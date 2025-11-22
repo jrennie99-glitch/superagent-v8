@@ -7,412 +7,234 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: #0a0e1a;
-      overflow-x: hidden;
-    }
-    .pulse-glow { animation: pulse 3s infinite; }
-    @keyframes pulse { 
-      0%, 100% { opacity: 0.9; } 
-      50% { opacity: 1; } 
-    }
-    .gradient-text {
-      background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .gradient-border {
-      position: relative;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(20px);
-    }
-    .gradient-border::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-    .float-animation {
-      animation: float 6s ease-in-out infinite;
-    }
-    #particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .particle {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: rgba(139, 92, 246, 0.6);
-      border-radius: 50%;
-      animation: particleFloat linear infinite;
-    }
-    @keyframes particleFloat {
-      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
-    }
-    .build-log {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      border-radius: 12px;
-      padding: 1.5rem;
-      max-height: 500px;
-      overflow-y: auto;
-    }
-    .build-log::-webkit-scrollbar {
-      width: 8px;
-    }
-    .build-log::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 4px;
-    }
-    .build-log::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.5);
-      border-radius: 4px;
-    }
-    .log-entry {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.875rem;
-      font-family: 'Courier New', monospace;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-top: 0.5rem;
-    }
-    .status-building {
-      background: rgba(139, 92, 246, 0.2);
-      color: #8b5cf6;
-      border: 1px solid rgba(139, 92, 246, 0.5);
-    }
-    .status-complete {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.5);
-    }
-    .hidden-section {
-      display: none;
-    }
+    body{font-family:'Inter',sans-serif;background:#0a0e1a;overflow-x:hidden}
+    .gradient-text{background:linear-gradient(135deg,#06b6d4 0%,#8b5cf6 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+    .float-animation{animation:float 6s ease-in-out infinite}
+    
+    /* Orbital Rings - Pure CSS */
+    .orbital-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;pointer-events:none;z-index:0;opacity:.15}
+    .orbital-ring{position:absolute;top:50%;left:50%;border:2px solid #8b5cf6;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 20px rgba(139,92,246,.4)}
+    .ring-1{width:400px;height:400px;animation:rotate1 20s linear infinite}
+    .ring-2{width:600px;height:600px;animation:rotate2 30s linear infinite reverse}
+    .ring-3{width:500px;height:500px;border-color:#06b6d4;animation:rotate3 25s linear infinite}
+    @keyframes rotate1{0%{transform:translate(-50%,-50%) rotateX(60deg) rotateZ(0deg)}100%{transform:translate(-50%,-50%) rotateX(60deg) rotateZ(360deg)}}
+    @keyframes rotate2{0%{transform:translate(-50%,-50%) rotateX(-60deg) rotateZ(0deg)}100%{transform:translate(-50%,-50%) rotateX(-60deg) rotateZ(360deg)}}
+    @keyframes rotate3{0%{transform:translate(-50%,-50%) rotateX(30deg) rotateZ(0deg)}100%{transform:translate(-50%,-50%) rotateX(30deg) rotateZ(360deg)}}
+    
+    /* Floating Particles */
+    .particle{position:absolute;width:3px;height:3px;background:rgba(6,182,212,.8);border-radius:50%;box-shadow:0 0 10px rgba(6,182,212,.6);animation:particle-float linear infinite}
+    @keyframes particle-float{0%{transform:translate(0,100vh);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translate(100px,-100px);opacity:0}}
+    
+    /* Breathing Button */
+    @keyframes breathe{0%,100%{box-shadow:0 0 30px rgba(6,182,212,.6),0 0 60px rgba(6,182,212,.3)}50%{box-shadow:0 0 50px rgba(6,182,212,.9),0 0 100px rgba(6,182,212,.5)}}
+    .breathe-btn{animation:breathe 3s ease-in-out infinite}
+    
+    /* Carousel */
+    .carousel{display:flex;gap:1.5rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:1rem 0;-ms-overflow-style:none;scrollbar-width:none}
+    .carousel::-webkit-scrollbar{display:none}
+    .carousel-item{min-width:300px;scroll-snap-align:start;background:rgba(0,0,0,.4);border:1px solid rgba(139,92,246,.3);border-radius:1rem;padding:1.5rem;backdrop-filter:blur(20px);transition:all .3s}
+    .carousel-item:hover{border-color:rgba(6,182,212,.6);transform:translateY(-5px)}
+    
+    /* Build View Styles */
+    .build-log{background:rgba(0,0,0,.6);border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:1.5rem;max-height:500px;overflow-y:auto}
+    .build-log::-webkit-scrollbar{width:8px}
+    .build-log::-webkit-scrollbar-track{background:rgba(0,0,0,.3);border-radius:4px}
+    .build-log::-webkit-scrollbar-thumb{background:rgba(139,92,246,.5);border-radius:4px}
+    .log-entry{padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.9);font-size:.875rem;font-family:'Courier New',monospace}
+    .status-badge{display:inline-block;padding:.25rem .75rem;border-radius:9999px;font-size:.75rem;font-weight:600;margin-top:.5rem}
+    .status-building{background:rgba(139,92,246,.2);color:#8b5cf6;border:1px solid rgba(139,92,246,.5)}
+    .status-complete{background:rgba(16,185,129,.2);color:#10b981;border:1px solid rgba(16,185,129,.5)}
+    .hidden-section{display:none}
   </style>
 </head>
 <body class="h-full text-white">
 
-<!-- Particle Background -->
-<div id="particles"></div>
+<!-- Orbital Rings Background -->
+<div class="orbital-container">
+  <div class="orbital-ring ring-1"></div>
+  <div class="orbital-ring ring-2"></div>
+  <div class="orbital-ring ring-3"></div>
+  <div class="particle" style="left:20%;animation-duration:15s;animation-delay:0s"></div>
+  <div class="particle" style="left:40%;animation-duration:12s;animation-delay:2s"></div>
+  <div class="particle" style="left:60%;animation-duration:18s;animation-delay:1s"></div>
+  <div class="particle" style="left:80%;animation-duration:14s;animation-delay:3s"></div>
+  <div class="particle" style="left:30%;animation-duration:16s;animation-delay:1.5s"></div>
+  <div class="particle" style="left:70%;animation-duration:13s;animation-delay:2.5s"></div>
+</div>
 
 <div class="relative min-h-screen flex flex-col">
   
-  <!-- Landing View (Initial State) -->
+  <!-- Landing View -->
   <div id="landingView" class="flex-1 flex flex-col items-center justify-center gap-8 px-8 py-16">
     
     <!-- Main Heading -->
-    <div class="z-10 text-center float-animation">
+    <div class="z-10 text-center float-animation" style="position:relative">
       <h1 class="text-6xl md:text-8xl font-black tracking-tighter gradient-text mb-4">
         SuperAgent V9
       </h1>
       <p class="mt-6 text-xl md:text-2xl text-gray-400 max-w-4xl leading-relaxed">
         Describe anything. I build the full production app instantly — with code, database, auth, payments, and one-click deploy.
       </p>
-      
-      <!-- Production App Showcase Button -->
-      <div class="mt-8">
-        <a href="/taskflow-preview.html" target="_blank" class="inline-block">
-          <button class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-base shadow-2xl hover:scale-105 transition-all">
-            ⚡ View Production App: TaskFlow
-          </button>
-        </a>
-        <p class="mt-2 text-sm text-purple-400">
-          Next.js 15 + TypeScript • Built in 3min 47sec
-        </p>
-      </div>
     </div>
 
     <!-- Input Area -->
     <div class="z-10 w-full max-w-5xl">
-      <textarea 
-        id="userPrompt" 
-        rows="5" 
-        placeholder="e.g. A Netflix clone with Stripe payments, Supabase auth, and infinite scrolling..."
-        class="w-full p-6 text-lg bg-black/40 border border-gray-700 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/20 outline-none transition-all resize-none backdrop-blur-xl text-white placeholder-gray-500"
-      ></textarea>
+      <textarea id="userPrompt" rows="5" placeholder="e.g. A Netflix clone with Stripe payments, Supabase auth, and infinite scrolling..." class="w-full p-6 text-lg bg-black/40 border border-gray-700 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/20 outline-none transition-all resize-none backdrop-blur-xl text-white placeholder-gray-500"></textarea>
       
       <div class="mt-6 flex justify-between items-center">
-        <div class="text-sm text-gray-500">
-          Press <kbd class="px-2 py-1 bg-gray-800 rounded border border-gray-700">Enter</kbd> to create
+        <div class="text-sm text-gray-500">Press <kbd class="px-2 py-1 bg-gray-800 rounded border border-gray-700">Enter</kbd> to create</div>
+        <button id="createBtn" onclick="startBuilding()" class="px-10 py-5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold text-xl hover:scale-105 transition-all breathe-btn">Create App</button>
+      </div>
+    </div>
+
+    <!-- App Carousel -->
+    <div class="z-10 w-full max-w-6xl mt-8">
+      <h3 class="text-center text-lg font-semibold text-gray-400 mb-4">Production Apps Built by SuperAgent V9</h3>
+      <div class="carousel">
+        <div class="carousel-item">
+          <div class="text-3xl mb-3">✅</div>
+          <h4 class="text-xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">TaskFlow</h4>
+          <p class="text-sm text-gray-400 mb-4">Next.js 15 task manager with local storage, filters, and beautiful UI</p>
+          <div class="text-xs text-gray-500 mb-4">Built in 3min 47sec • 16 files</div>
+          <a href="/taskflow-preview.html" target="_blank" class="inline-block px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold transition-all">View Live →</a>
         </div>
-        <button 
-          id="createBtn" 
-          onclick="startBuilding()" 
-          class="px-10 py-5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold text-xl shadow-2xl hover:scale-105 transition-all pulse-glow"
-        >
-          Create App
-        </button>
+        
+        <div class="carousel-item">
+          <div class="text-3xl mb-3">🔍</div>
+          <h4 class="text-xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">SearchAI</h4>
+          <p class="text-sm text-gray-400 mb-4">Perplexity-style AI search with streaming results and citations</p>
+          <div class="text-xs text-gray-500 mb-4">Production-ready • OpenAI integration</div>
+          <a href="/perplexity-preview.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold transition-all">View Live →</a>
+        </div>
+
+        <div class="carousel-item">
+          <div class="text-3xl mb-3">📊</div>
+          <h4 class="text-xl font-bold mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">FlowBoard</h4>
+          <p class="text-sm text-gray-400 mb-4">Lovable-style SaaS with team collaboration and analytics</p>
+          <div class="text-xs text-gray-500 mb-4">Full-stack • Supabase + Stripe</div>
+          <a href="/saas-preview.html" target="_blank" class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-semibold transition-all">View Live →</a>
+        </div>
       </div>
     </div>
 
     <!-- Bottom status -->
-    <div class="text-gray-500 text-sm text-center">
-      SuperAgent V9 • Production-ready apps in under 12 minutes
-    </div>
+    <div class="z-10 text-gray-500 text-sm text-center mt-4">SuperAgent V9 • Production-ready apps in under 12 minutes</div>
   </div>
 
-  <!-- Build View (Hidden Initially) -->
+  <!-- Build View -->
   <div id="buildView" class="hidden-section flex-1 px-8 py-12">
     <div class="max-w-7xl mx-auto">
-      
-      <!-- Header -->
       <div class="mb-8 text-center">
         <h2 class="text-4xl font-bold gradient-text mb-2">Building Your App</h2>
         <p class="text-gray-400">SuperAgent V9 is generating production-ready code...</p>
       </div>
-
-      <!-- Progress Bar -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm text-gray-400">Build Progress</span>
           <span id="progressPercent" class="text-sm font-semibold text-cyan-400">0%</span>
         </div>
         <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-          <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-600 transition-all duration-500" style="width: 0%"></div>
+          <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-500 to-purple-600 transition-all duration-500" style="width:0%"></div>
         </div>
       </div>
-
-      <!-- Build Status -->
       <div class="mb-8 flex justify-center gap-4">
-        <div id="buildStatus" class="status-badge status-building">
-          ⏳ Building
-        </div>
+        <div id="buildStatus" class="status-badge status-building">⏳ Building</div>
       </div>
-
-      <!-- Build Logs -->
       <div class="build-log">
         <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-700">
           <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
           <span class="font-semibold text-white">Build Console</span>
         </div>
-        <div id="buildLogContent">
-          <div class="log-entry">🚀 Initializing SuperAgent V9...</div>
-        </div>
+        <div id="buildLogContent"><div class="log-entry">🚀 Initializing SuperAgent V9...</div></div>
       </div>
-
-      <!-- Action Buttons -->
       <div class="mt-8 flex justify-center gap-4">
-        <button 
-          onclick="resetView()" 
-          class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-semibold transition-all"
-        >
-          ← Back to Home
-        </button>
-        <button 
-          id="deployBtn"
-          class="hidden px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-semibold hover:scale-105 transition-all"
-        >
-          🚀 Deploy to Production
-        </button>
+        <button onclick="resetView()" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-semibold transition-all">← Back to Home</button>
+        <button id="deployBtn" class="hidden px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-semibold hover:scale-105 transition-all">🚀 Deploy to Production</button>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
-  // Create particle effect
-  function createParticles() {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 50; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-      particle.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(particle);
-    }
-  }
-  createParticles();
+// Enter key
+document.getElementById('userPrompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();startBuilding()}});
 
-  // Enter key to submit
-  document.getElementById('userPrompt').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      startBuilding();
-    }
-  });
+let buildActive=false;
+function showBuildView(){document.getElementById('landingView').classList.add('hidden-section');document.getElementById('buildView').classList.remove('hidden-section')}
+function resetView(){document.getElementById('buildView').classList.add('hidden-section');document.getElementById('landingView').classList.remove('hidden-section');document.getElementById('buildLogContent').innerHTML='<div class="log-entry">🚀 Initializing SuperAgent V9...</div>';document.getElementById('progressBar').style.width='0%';document.getElementById('progressPercent').textContent='0%';document.getElementById('deployBtn').classList.add('hidden');buildActive=false}
 
-  // Build state management
-  let buildActive = false;
+function addBuildLog(msg,icon='📝'){const log=document.getElementById('buildLogContent');const entry=document.createElement('div');entry.className='log-entry';entry.innerHTML=`<span style="color:#8b5cf6">${icon}</span> ${escapeHtml(msg)}`;log.appendChild(entry);log.scrollTop=log.scrollHeight}
 
-  function showBuildView() {
-    document.getElementById('landingView').classList.add('hidden-section');
-    document.getElementById('buildView').classList.remove('hidden-section');
-  }
+function updateProgress(pct){document.getElementById('progressBar').style.width=pct+'%';document.getElementById('progressPercent').textContent=Math.round(pct)+'%'}
 
-  function resetView() {
-    document.getElementById('buildView').classList.add('hidden-section');
-    document.getElementById('landingView').classList.remove('hidden-section');
-    document.getElementById('buildLogContent').innerHTML = '<div class="log-entry">🚀 Initializing SuperAgent V9...</div>';
-    document.getElementById('progressBar').style.width = '0%';
-    document.getElementById('progressPercent').textContent = '0%';
-    document.getElementById('deployBtn').classList.add('hidden');
-    buildActive = false;
-  }
+function escapeHtml(txt){const div=document.createElement('div');div.textContent=txt;return div.innerHTML}
 
-  function addBuildLog(message, icon = '📝') {
-    const logContent = document.getElementById('buildLogContent');
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = `<span style="color: #8b5cf6">${icon}</span> ${escapeHtml(message)}`;
-    logContent.appendChild(entry);
-    logContent.scrollTop = logContent.scrollHeight;
-  }
+async function startBuilding(){
+  const prompt=document.getElementById('userPrompt').value.trim();
+  if(!prompt){alert("Please describe what you want to build first!");return}
+  if(buildActive)return;
+  buildActive=true;showBuildView();
+  const btn=document.getElementById('createBtn');
+  btn.disabled=true;btn.textContent='⏳ Building...';
+  document.getElementById('buildLogContent').innerHTML='';
+  addBuildLog('Starting build process...','🚀');
+  addBuildLog(`Building: ${prompt}`,'💡');
 
-  function updateProgress(percent) {
-    const progressBar = document.getElementById('progressBar');
-    const progressPercent = document.getElementById('progressPercent');
-    progressBar.style.width = percent + '%';
-    progressPercent.textContent = Math.round(percent) + '%';
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  async function startBuilding() {
-    const prompt = document.getElementById('userPrompt').value.trim();
-    if (!prompt) {
-      alert("Please describe what you want to build first!");
-      return;
-    }
-
-    if (buildActive) {
-      return;
-    }
-
-    buildActive = true;
-    showBuildView();
-
-    const createBtn = document.getElementById('createBtn');
-    createBtn.disabled = true;
-    createBtn.textContent = '⏳ Building...';
-
-    // Clear previous logs
-    document.getElementById('buildLogContent').innerHTML = '';
-    addBuildLog('Starting build process...', '🚀');
-    addBuildLog(`Building: ${prompt}`, '💡');
-
-    try {
-      const response = await fetch('/api/v1/build-streaming', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          instruction: prompt,
-          plan_mode: true,
-          enterprise_mode: true,
-          live_preview: false,
-          auto_deploy: false
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}: ${response.statusText}`);
-      }
-
-      // Read the streaming response
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.trim() === '' || !line.startsWith('data: ')) continue;
-
-          try {
-            const jsonData = line.substring(6).trim();
-            if (!jsonData) continue;
-
-            const data = JSON.parse(jsonData);
-
-            // Handle different message types
-            if (data.type === 'log' || data.type === 'log-stream') {
-              const message = data.message || data.text || '';
-              const icon = data.icon || '📝';
-              if (message) {
-                addBuildLog(message, icon);
-              }
-              
-              // Update progress if available
-              if (data.percent !== undefined) {
-                updateProgress(data.percent);
-              }
-            } else if (data.type === 'step') {
-              addBuildLog(`Step ${data.step}: ${data.title || data.status}`, '⚙️');
-              const progress = Math.round((data.step / 5) * 100);
-              updateProgress(progress);
-            } else if (data.type === 'complete') {
-              addBuildLog('Build completed successfully! ✅', '🎉');
-              updateProgress(100);
-              document.getElementById('buildStatus').textContent = '✅ Complete';
-              document.getElementById('buildStatus').className = 'status-badge status-complete';
-              document.getElementById('deployBtn').classList.remove('hidden');
-              
-              if (data.message) {
-                addBuildLog(data.message, '✨');
-              }
-            } else if (data.type === 'error') {
-              addBuildLog(`Error: ${data.message || 'Unknown error'}`, '❌');
-            }
-          } catch (parseError) {
-            console.error('Parse error:', parseError, 'Line:', line);
+  try{
+    const res=await fetch('/api/v1/build-streaming',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instruction:prompt,plan_mode:true,enterprise_mode:true,live_preview:false,auto_deploy:false})});
+    if(!res.ok)throw new Error(`API returned ${res.status}: ${res.statusText}`);
+    
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let buffer='';
+    
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');
+      buffer=lines.pop()||'';
+      
+      for(const line of lines){
+        if(line.trim()===''||!line.startsWith('data: '))continue;
+        try{
+          const jsonData=line.substring(6).trim();
+          if(!jsonData)continue;
+          const data=JSON.parse(jsonData);
+          
+          if(data.type==='log'||data.type==='log-stream'){
+            const msg=data.message||data.text||'';
+            const icon=data.icon||'📝';
+            if(msg)addBuildLog(msg,icon);
+            if(data.percent!==undefined)updateProgress(data.percent);
+          }else if(data.type==='step'){
+            addBuildLog(`Step ${data.step}: ${data.title||data.status}`,'⚙️');
+            updateProgress(Math.round((data.step/5)*100));
+          }else if(data.type==='complete'){
+            addBuildLog('Build completed successfully! ✅','🎉');
+            updateProgress(100);
+            document.getElementById('buildStatus').textContent='✅ Complete';
+            document.getElementById('buildStatus').className='status-badge status-complete';
+            document.getElementById('deployBtn').classList.remove('hidden');
+            if(data.message)addBuildLog(data.message,'✨');
+          }else if(data.type==='error'){
+            addBuildLog(`Error: ${data.message||'Unknown error'}`,'❌');
           }
-        }
+        }catch(e){console.error('Parse error:',e,'Line:',line)}
       }
-
-      addBuildLog('Stream completed', '✅');
-
-    } catch (error) {
-      console.error('Build error:', error);
-      addBuildLog(`Error: ${error.message}`, '❌');
-      document.getElementById('buildStatus').textContent = '❌ Failed';
-      document.getElementById('buildStatus').style.background = 'rgba(239, 68, 68, 0.2)';
-      document.getElementById('buildStatus').style.color = '#ef4444';
-    } finally {
-      createBtn.disabled = false;
-      createBtn.textContent = 'Create App';
-      buildActive = false;
     }
+    addBuildLog('Stream completed','✅');
+  }catch(err){
+    console.error('Build error:',err);
+    addBuildLog(`Error: ${err.message}`,'❌');
+    document.getElementById('buildStatus').textContent='❌ Failed';
+    document.getElementById('buildStatus').style.background='rgba(239,68,68,.2)';
+    document.getElementById('buildStatus').style.color='#ef4444';
+  }finally{
+    btn.disabled=false;btn.textContent='Create App';buildActive=false;
   }
+}
 </script>
-
 </body>
 </html>
