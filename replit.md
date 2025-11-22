@@ -58,7 +58,7 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 
 ### 🚀 SUPERAGENT V9 - WORLD'S MOST POWERFUL AI APP BUILDER
 
-**Revolutionary Upgrade:** SuperAgent has been transformed into V9 - the most powerful autonomous AI software engineer in the world. Complete paradigm shift from traditional web apps to modern Next.js 15 full-stack applications.
+**Revolutionary Upgrade:** SuperAgent V9 is the most powerful autonomous AI software engineer in the world. Generates production-ready Next.js 15 full-stack applications with zero placeholders, complete functionality, and instant deployment capability.
 
 **New V9 Tech Stack:**
 - **Framework**: Next.js 15 (App Router) - Latest React framework
@@ -70,13 +70,12 @@ The UI features a clean, minimal, and sophisticated aesthetic with a purple grad
 - **Validation**: Zod - Type-safe schema validation
 - **API**: Server Actions - Next.js native data mutations
 
-**V9 System Prompt** (src/agent/system-prompt.ts):
-```typescript
-You are SuperAgent V9 — the most powerful autonomous AI software engineer in the world.
-Mission: Take ANY description → Complete, production-ready, bug-free app in < 12 minutes.
-NEVER say "I can't" | NEVER use placeholders | ALWAYS fix bugs instantly
+**V9 Core Principle:**
+```
+Take ANY description → Complete, production-ready, bug-free app in < 12 minutes.
+NEVER use placeholders | NEVER say "I can't" | ALWAYS fix bugs instantly
 Tech Stack: Next.js 15 + TypeScript + Tailwind + shadcn/ui + Supabase + Stripe
-Output: Stunning, responsive, dark-mode ready apps with perfect error handling
+Output: Production-grade apps ready for immediate deployment
 ```
 
 **New V9 Capabilities:**
