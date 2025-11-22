@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SuperAgent v9</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@react-three/fiber@latest/dist/react-three-fiber.umd.js"></script>
+  <script src="https://unpkg.com/three@latest"></script>
+  <script src="https://unpkg.com/@react-three/drei@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0f0f12; }
+    .pulse-glow { animation: pulse 3s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
+  </style>
+</head>
+<body class="h-full text-white overflow-hidden">
+
+<div class="relative h-screen flex flex-col items-center justify-center gap-8 px-8">
+
+  <!-- 3D Orbital Core Background (subtle, CreateAnything-style) -->
+  <div class="absolute inset-0 overflow-hidden opacity-30">
+    <canvas id="three-canvas"></canvas>
+  </div>
+
+  <!-- Main Heading -->
+  <div class="z-10 text-center">
+    <h1 class="text-6xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600">
+      SuperAgent v9
+    </h1>
+    <p class="mt-4 text-xl md:text-2xl text-gray-400 max-w-4xl">
+      Describe anything. I build the full production app instantly — with code, database, auth, payments, and one-click deploy.
+    </p>
+  </div>
+
+  <!-- Input Area (exact CreateAnything textarea + button) -->
+  <div class="z-10 w-full max-w-5xl">
+    <textarea 
+      id="prompt" 
+      rows="4" 
+      placeholder="e.g. A Netflix clone with Stripe payments, Supabase auth, and infinite scrolling..."
+      class="w-full p-6 text-lg bg-black/40 border border-gray-800 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/20 outline-none transition-all resize-none backdrop-blur-xl"
+    ></textarea>
+    
+    <div class="mt-6 flex justify-end">
+      <button onclick="startBuilding()" class="px-10 py-5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold text-xl shadow-2xl hover:scale-105 transition-all pulse-glow">
+        Create App
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom status bar -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm">
+    Press ↲ Enter to create • SuperAgent v9 is alive and ready
+  </div>
+</div>
+
+<!-- Minimal 3D orbital effect (just like CreateAnything but branded) -->
+<script>
+  import { useRef, useEffect } from 'react';
+  const canvas = document.getElementById('three-canvas');
+  if (canvas) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const geometry = new THREE.TorusKnotGeometry(10, 1.5, 200, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, opacity: 0.1 });
+    const knot = new THREE.Mesh(geometry, material);
+    scene.add(knot);
+    camera.position.z = 30;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      knot.rotation.x += 0.003;
+      knot.rotation.y += 0.005;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  function startBuilding() {
+    const prompt = document.getElementById('prompt').value;
+    if (!prompt) return alert("Describe what you want to build first!");
+    // Here you connect to your existing SuperAgent backend
+    alert("SuperAgent v9 is now building: " + prompt);
+    // In production: send to /api/build or your WebSocket
+  }
+</script>
+
+</body>
+</html>
