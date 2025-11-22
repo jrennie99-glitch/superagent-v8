@@ -1,0 +1,50 @@
+2025-11-22T11:32:37.467014718Z INFO:     172.59.59.47:0 - "POST /api/v1/build-streaming HTTP/1.1" 200 OK
+2025-11-22T11:33:34.210062235Z ✅ Using USER_GEMINI_API_KEY (your personal key with your own quota)
+2025-11-22T11:33:34.210092277Z ✅ Using ANTHROPIC_API_KEY (Claude - enterprise-level code generation)
+2025-11-22T11:33:34.210097137Z 🎯 Using Claude AI (BEST QUALITY - enterprise-level code generation)
+2025-11-22T11:33:34.210100807Z 
+2025-11-22T11:33:34.210105268Z 🔨 Generating multi-file project with 6 files...
+2025-11-22T11:33:34.210108828Z INFO:     172.59.59.47:0 - "GET / HTTP/1.1" 200 OK
+2025-11-22T11:33:34.64472125Z ==> Detected service running on port 10000
+2025-11-22T11:33:34.792028752Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-11-22T11:33:53.048860448Z INFO:     172.59.59.47:0 - "POST /api/v1/build-streaming HTTP/1.1" 200 OK
+2025-11-22T11:37:10.821893652Z ==> Deploying...
+2025-11-22T11:37:40.411696089Z ==> Running 'uvicorn api.index:app --host 0.0.0.0 --port $PORT'
+2025-11-22T11:37:43.635502678Z [2025-11-22 11:37:43] INFO     🛡️ Cybersecurity AI initialized (Lakera Guard disabled - set LAKERA_API_KEY to enable)
+2025-11-22T11:37:43.635534048Z 2025-11-22 11:37:43,635 - SuperAgent - INFO - 🛡️ Cybersecurity AI initialized (Lakera Guard disabled - set LAKERA_API_KEY to enable)
+2025-11-22T11:37:44.516472383Z /opt/render/project/src/api/enhanced_endpoints.py:19: UserWarning: Field name "validate" in "Build100Request" shadows an attribute in parent "BaseModel"
+2025-11-22T11:37:44.516493834Z   class Build100Request(BaseModel):
+2025-11-22T11:37:44.925207972Z 2025-11-22 11:37:44,924 - api.multimodal_processor - INFO - MultiModalProcessor initialized with upload_dir: /tmp/superagent_uploads
+2025-11-22T11:37:44.934929102Z 2025-11-22 11:37:44,934 - api.autonomous_app_generator - INFO - AutonomousAppGenerator initialized
+2025-11-22T11:37:44.940023128Z 2025-11-22 11:37:44,939 - api.live_dashboard - INFO - LiveDashboardManager initialized
+2025-11-22T11:37:44.944372935Z 2025-11-22 11:37:44,944 - api.grok_copilot - INFO - GrokCoPilot initialized
+2025-11-22T11:37:45.047295198Z 2025-11-22 11:37:45,047 - api.deploy_share - INFO - DeployShareSystem initialized
+2025-11-22T11:37:45.073968627Z [2025-11-22 11:37:45] INFO     SuperAgent API starting
+2025-11-22T11:37:45.074002818Z 2025-11-22 11:37:45,073 - SuperAgent - INFO - SuperAgent API starting
+2025-11-22T11:37:45.520479109Z 2025-11-22 11:37:45,520 - superagent.modules.app_testing - WARNING - Playwright not installed. Browser testing unavailable.
+2025-11-22T11:37:45.545678431Z INFO:     Started server process [62]
+2025-11-22T11:37:45.545698292Z INFO:     Waiting for application startup.
+2025-11-22T11:37:45.5460105Z INFO:     Application startup complete.
+2025-11-22T11:37:45.546558433Z INFO:     Uvicorn running on http://0.0.0.0:10000 (Press CTRL+C to quit)
+2025-11-22T11:37:45.750174814Z ⚠️ DATABASE_URL not set - User management disabled
+2025-11-22T11:37:45.750198124Z ℹ️ Redis URL not found, using fallback cache
+2025-11-22T11:37:45.750202535Z INFO:     127.0.0.1:59292 - "HEAD / HTTP/1.1" 405 Method Not Allowed
+2025-11-22T11:37:52.076647799Z ==> Your service is live 🎉
+2025-11-22T11:37:52.110721456Z ==> 
+2025-11-22T11:37:52.147348393Z ==> ///////////////////////////////////////////////////////////
+2025-11-22T11:37:52.248777713Z ==> 
+2025-11-22T11:37:52.319323147Z ==> Available at your primary URL https://supermen-v8.onrender.com
+2025-11-22T11:37:52.355307044Z ==> 
+2025-11-22T11:37:52.392801041Z ==> ///////////////////////////////////////////////////////////
+2025-11-22T11:37:52.739704395Z ✅ Using USER_GEMINI_API_KEY (your personal key with your own quota)
+2025-11-22T11:37:52.739724976Z ✅ Using ANTHROPIC_API_KEY (Claude - enterprise-level code generation)
+2025-11-22T11:37:52.739729626Z 🎯 Using Claude AI (BEST QUALITY - enterprise-level code generation)
+2025-11-22T11:37:52.739733697Z 
+2025-11-22T11:37:52.739738587Z 🔨 Generating multi-file project with 6 files...
+2025-11-22T11:37:52.739742717Z INFO:     34.82.26.101:0 - "GET / HTTP/1.1" 200 OK
+2025-11-22T11:38:51.864556157Z INFO:     Shutting down
+2025-11-22T11:38:51.964990972Z INFO:     Waiting for application shutdown.
+2025-11-22T11:38:51.965243578Z INFO:     Application shutdown complete.
+2025-11-22T11:38:51.965338974Z INFO:     Finished server process [62]
+2025-11-22T11:40:36.958431181Z INFO:     172.59.59.47:0 - "GET / HTTP/1.1" 200 OK
+2025-11-22T11:40:47.007977169Z INFO:     172.59.59.47:0 - "GET / HTTP/1.1" 200 OK
